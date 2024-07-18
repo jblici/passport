@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { Panel } from "@/components/panel";
+import Navbar from "@/components/ui/navbar";
 
 const Home = () => {
   //const router = useRouter();
@@ -17,9 +17,9 @@ const Home = () => {
   }
 
   return (
-    <main>
-      <Panel />
-    </main>
+    <div className="flex flex-col sm:flex-row">
+      <Navbar />
+    </div>
   );
 };
 
