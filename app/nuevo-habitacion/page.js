@@ -14,44 +14,48 @@ import Navbar from "@/components/ui/navbar";
 
 const NuevoHotel = () => {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex flex-col sm:flex-row">
       <Navbar />
-      <div className="flex-1 p-8">
+      <div className="flex-1 p-4 sm:p-8">
         <div className="grid grid-cols-1 md:grid-cols-[1fr] gap-8">
           <section className="col-span-1 md:col-span-2">
             <Card>
               <CardHeader>
                 <CardTitle>Agrega una nueva habitacion</CardTitle>
-                <CardDescription>Llena el formulario para agregar la nueva habitacion.</CardDescription>
+                <CardDescription>
+                  Llena el formulario para agregar la nueva habitacion.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <form className="grid gap-4">
                   <div className="grid gap-2">
-                    <Label htmlFor="name">Nombre</Label>
-                    <Input id="name" placeholder="Enter hotel name" />
+                    <Label htmlFor="nombre">Nombre</Label>
+                    <Input id="nombre" placeholder="Indique nombre de habitacion" />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="location">Centro</Label>
-                    <Input id="location" placeholder="Enter hotel location" />
+                    <Label htmlFor="pax">Cantidad de personas</Label>
+                    <Input id="pax" type="number" placeholder="Indique cantidad de personas" />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="rating">Rating</Label>
-                    <Select id="rating" defaultValue="5">
+                    <Label htmlFor="precio">Precio</Label>
+                    <Input id="precio" type="number" placeholder="Indique precio de habitacion" />
+                  </div>
+                  <Select id="desayuno" defaultValue="1">
                       <SelectTrigger>
-                        <SelectValue placeholder="Select rating" />
+                        <SelectValue placeholder="Seleccion si tiene desayuno incluido" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="5">5 stars</SelectItem>
-                        <SelectItem value="4">4 stars</SelectItem>
-                        <SelectItem value="3">3 stars</SelectItem>
-                        <SelectItem value="2">2 stars</SelectItem>
-                        <SelectItem value="1">1 star</SelectItem>
+                        <SelectItem value="1">Si</SelectItem>
+                        <SelectItem value="2">No</SelectItem>
                       </SelectContent>
                     </Select>
+                  <div className="grid gap-2">
+                    <Label htmlFor="noches">Minimo de noches</Label>
+                    <Input id="noches" type="number" placeholder="Indique minimo de noches" />
                   </div>
                   <div className="grid gap-2">
-                    <Label htmlFor="rooms">Habitaciones</Label>
-                    <Input id="rooms" type="number" placeholder="Enter number of rooms" />
+                    <Label htmlFor="moneda">Moneda</Label>
+                    <Input id="moneda" placeholder="Indique la moneda" />
                   </div>
                   <Button type="submit" className="justify-self-end">
                     Guardar

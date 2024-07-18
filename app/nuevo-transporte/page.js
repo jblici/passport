@@ -14,9 +14,9 @@ import Navbar from "@/components/ui/navbar";
 
 const NuevoHotel = () => {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex flex-col sm:flex-row">
       <Navbar />
-      <div className="flex-1 p-8">
+      <div className="flex-1 p-4 sm:p-8">
         <div className="grid grid-cols-1 md:grid-cols-[1fr] gap-8">
           <section className="col-span-1 md:col-span-2">
             <Card>

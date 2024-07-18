@@ -13,12 +13,13 @@ import { FilePenIcon, TrashIcon } from "@/lib/utils";
 import Navbar from "@/components/ui/navbar";
 import Link from "next/link";
 import { PlusIcon } from "@/components/svg/svg";
+import Acciones from "@/components/ui/acciones";
 
 const Habitaciones = () => {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex flex-col sm:flex-row">
       <Navbar />
-      <div className="flex-1 p-8">
+      <div className="flex-1 p-4 sm:p-8">
         <section className="col-span-1 md:col-span-2">
           <Card>
             <CardHeader>
@@ -40,39 +41,36 @@ const Habitaciones = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Location</TableHead>
-                      <TableHead>Rating</TableHead>
-                      <TableHead>Rooms</TableHead>
+                      <TableHead>Nombre</TableHead>
+                      <TableHead>Cantidad de personas</TableHead>
+                      <TableHead>Precio</TableHead>
+                      <TableHead>Desayuno</TableHead>
+                      <TableHead>Minimo Noches</TableHead>
+                      <TableHead>Moneda</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     <TableRow>
                       <TableCell>
-                        <div className="font-medium">Luxury Resort</div>
+                        <div className="font-medium">Habitacion standard</div>
                       </TableCell>
                       <TableCell>
-                        <div>Aspen, Colorado</div>
+                        <div>2</div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-1">{/* Rating */}</div>
+                        <div className="flex items-center gap-1">$155.820</div>
                       </TableCell>
                       <TableCell>
-                        <div>125</div>
+                        <div>Si</div>
                       </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button size="icon" variant="outline">
-                            <FilePenIcon className="h-4 w-4" />
-                            <span className="sr-only">Edit</span>
-                          </Button>
-                          <Button size="icon" variant="outline">
-                            <TrashIcon className="h-4 w-4" />
-                            <span className="sr-only">Delete</span>
-                          </Button>
-                        </div>
+                      <TableCell>
+                        <div>7</div>
                       </TableCell>
+                      <TableCell>
+                        <div>Pesos</div>
+                      </TableCell>
+                      <Acciones />
                     </TableRow>
                   </TableBody>
                 </Table>
