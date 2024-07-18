@@ -17,7 +17,7 @@ const Home = () => {
   }
 
   return (
-    <div className="flex flex-col sm:flex-row">
+    <div className="flex flex-col sm:flex-row text-lg">
       <Navbar />
     </div>
   );
