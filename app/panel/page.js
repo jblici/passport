@@ -4,7 +4,6 @@ import withAuth from "@/lib/withAuth";
 
 
 const Home = () => {
-
   return (
     <div className="flex flex-col sm:flex-row text-lg">
       <Navbar />

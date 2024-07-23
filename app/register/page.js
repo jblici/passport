@@ -1,6 +1,6 @@
 'use client'
 import { useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { register } from "@/lib/auth";
 
 const Register = () => {
@@ -11,7 +11,6 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aquí se realiza la petición al backend
     try {
       await register(email, password);
       router.push("/panel");
