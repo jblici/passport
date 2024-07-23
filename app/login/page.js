@@ -1,35 +1,29 @@
 'use client'
 import { useState } from "react";
-//import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+import { login } from '../../lib/auth';
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  //const router = useRouter();
+  const [error, setError] = useState('');
+  const router = useRouter();
 
-  {/*const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Aquí se realiza la petición al backend
-    const response = await fetch("/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (response.ok) {
-      // Maneja el inicio de sesión exitoso, por ejemplo, redirige a otra página
-      router.push("/dashboard");
-    } else {
-      // Maneja errores
-      alert("Login failed");
+    try {
+      await login(email, password);
+      router.push("/panel");
+    } catch (error) {
+      alert('Login sin éxito. Revise su mail y contraseña.');
+      setError('Login sin exito. Revise su mail y contraseña.');
     }
-  }; */}
+  };
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <form className="w-1/3 bg-white p-8 rounded shadow-md">
+      <form onSubmit={handleSubmit} className="w-1/3 bg-white p-8 rounded shadow-md">
         <h1 className="text-2xl font-bold mb-6">Login</h1>
         <div className="mb-4">
           <label className="block mb-2">Email</label>
@@ -55,6 +49,7 @@ const Login = () => {
           Login
         </button>
       </form>
+      {/*error && <p>{error}</p>*/}
     </div>
   );
 };

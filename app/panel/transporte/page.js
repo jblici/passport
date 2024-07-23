@@ -1,5 +1,4 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import {
   Table,
@@ -9,7 +8,6 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import { FilePenIcon, TrashIcon } from "@/lib/utils";
 import Link from "next/link";
 import { PlusIcon } from "@/components/svg/svg";
 import Navbar from "@/components/ui/navbar";
@@ -67,4 +65,4 @@ const Transporte = () => {
   );
 };
 
-export default Transporte;
+export default withAuth(Transporte);

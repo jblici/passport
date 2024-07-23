@@ -1,6 +1,6 @@
 import React from "react";
 import { TableCell } from "@/components/ui/table";
-import { FilePenIcon, TrashIcon } from "@/lib/utils";
+import { FilePenIcon, TrashIcon } from "@/components/svg/svg";
 import { Button } from "./button";
 
 const Acciones = () => {

@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/ui/navbar";
+import withAuth from "@/lib/withAuth";
 
 const NuevoHotel = () => {
   return (
@@ -66,4 +67,4 @@ const NuevoHotel = () => {
   );
 };
 
-export default NuevoHotel;
+export default withAuth(NuevoHotel);

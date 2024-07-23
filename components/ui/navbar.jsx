@@ -3,7 +3,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { MenuIcon } from "../svg/svg";
-import { Button } from "@/components/ui/button";
+import Logout from "./logout";
 
 const Navbar = () => {
   const [activePath, setActivePath] = useState("");
@@ -182,6 +182,9 @@ const Navbar = () => {
               </Link>
             </nav>
           ) : null}
+          <div className="mt-auto">
+            <Logout />
+          </div>
         </aside>
       </div>
     </div>

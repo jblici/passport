@@ -12,6 +12,7 @@ import Navbar from "@/components/ui/navbar";
 import Link from "next/link";
 import { PlusIcon } from "@/components/svg/svg";
 import Acciones from "@/components/ui/acciones";
+import withAuth from "@/lib/withAuth";
 
 const Centros = () => {
   return (
@@ -69,4 +70,4 @@ const Centros = () => {
   );
 };
 
-export default Centros;
+export default withAuth(Centros);
