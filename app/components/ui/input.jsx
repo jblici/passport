@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { cn } from "@/components/svg/svg"
+import { cn } from "@/app/components/svg/svg"
 
 const Input = React.forwardRef(({ className, type, ...props }, ref) => {
   return (

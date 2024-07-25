@@ -1,6 +1,6 @@
 "use client";
-import Navbar from "@/components/ui/navbar";
-import withAuth from "@/lib/withAuth";
+import Navbar from "@/app/components/ui/navbar";
+import withAuth from "@/app/lib/withAuth";
 
 
 const Home = () => {

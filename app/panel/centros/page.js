@@ -1,5 +1,12 @@
+"use client";
 import React from "react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/app/components/ui/card";
 import {
   Table,
   TableHeader,
@@ -7,14 +14,18 @@ import {
   TableHead,
   TableBody,
   TableCell,
-} from "@/components/ui/table";
-import Navbar from "@/components/ui/navbar";
+} from "@/app/components/ui/table";
+import Navbar from "@/app/components/ui/navbar";
 import Link from "next/link";
-import { PlusIcon } from "@/components/svg/svg";
-import Acciones from "@/components/ui/acciones";
-import ProtectedLayout from "@/components/protectedroute";
+import { PlusIcon } from "@/app/components/svg/svg";
+import Acciones from "@/app/components/ui/acciones";
+import ProtectedLayout from "@/app/lib/protectedroute";
+import useFetch from "@/app/lib/useFetch";
 
 const Centros = () => {
+  const { centros } = useFetch();
+
+  if (!centros) return null;
   return (
     <ProtectedLayout>
       <div className="flex flex-col sm:flex-row">
@@ -40,26 +51,20 @@ const Centros = () => {
                 <div className="relative w-full overflow-auto">
                   <Table>
                     <TableHeader>
-                      <TableRow>
-                        <TableHead>Nombre</TableHead>
-                        <TableHead>Ubicacion</TableHead>
-                        <TableHead>Hoteles</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                      <TableRow className="border-black">
+                        <TableHead className="font-bold">Nombre</TableHead>
+                        <TableHead className="text-right font-bold">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      <TableRow>
-                        <TableCell>
-                          <div className="font-medium">Catedral</div>
-                        </TableCell>
-                        <TableCell>
-                          <div>Rio Negro</div>
-                        </TableCell>
-                        <TableCell>
-                          <div>20</div>
-                        </TableCell>
-                        <Acciones />
-                      </TableRow>
+                      {centros.map((centro) => (
+                        <TableRow key={centro.id}>
+                          <TableCell>
+                            <div className="font-medium">{centro.name}</div>
+                          </TableCell>
+                          <Acciones />
+                        </TableRow>
+                      ))}
                     </TableBody>
                   </Table>
                 </div>

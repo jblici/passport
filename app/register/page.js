@@ -1,7 +1,7 @@
 'use client'
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { register } from "@/lib/auth";
+import { register } from "@/app/lib/auth";
 
 const Register = () => {
   const [email, setEmail] = useState("");

@@ -1,6 +1,7 @@
-import { logout } from "@/lib/auth";
+import { logout } from "@/app/lib/auth";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { Signout } from "../svg/svg";
 
 const Logout = () => {
   const router = useRouter();
@@ -11,8 +12,8 @@ const Logout = () => {
   };
 
   return (
-    <button onClick={handleLogout} className="w-full p-2 bg-red-600 text-white rounded mt-4">
-      Logout
+    <button onClick={handleLogout} className="w-fit p-2 bg-red-600 text-white rounded-full mt-4">
+      <Signout />
     </button>
   );
 };

@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/app/components/ui/card";
 import {
   Table,
   TableHeader,
@@ -7,12 +7,12 @@ import {
   TableHead,
   TableBody,
   TableCell,
-} from "@/components/ui/table";
-import Navbar from "@/components/ui/navbar";
+} from "@/app/components/ui/table";
+import Navbar from "@/app/components/ui/navbar";
 import Link from "next/link";
-import { PlusIcon } from "@/components/svg/svg";
-import Acciones from "@/components/ui/acciones";
-import ProtectedLayout from "@/components/protectedroute";
+import { PlusIcon } from "@/app/components/svg/svg";
+import Acciones from "@/app/components/ui/acciones";
+import ProtectedLayout from "@/app/lib/protectedroute";
 
 const Pases = () => {
   return (

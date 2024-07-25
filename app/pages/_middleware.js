@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getToken } from '../../lib/auth';
+import { getToken } from '../lib/auth';
 
 export function middleware(req) {
   const token = getToken();

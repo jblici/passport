@@ -1,7 +1,7 @@
 'use client'
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getToken } from '../lib/auth';
+import { getToken } from './auth';
 
 const ProtectedLayout = ({ children }) => {
   const router = useRouter();

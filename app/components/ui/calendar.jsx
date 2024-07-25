@@ -3,8 +3,8 @@ import * as React from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { DayPicker } from "react-day-picker"
 
-import { cn } from "@/components/svg/svg"
-import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/app/components/svg/svg"
+import { buttonVariants } from "@/app/components/ui/button"
 
 function Calendar({
   className,

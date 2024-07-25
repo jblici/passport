@@ -1,5 +1,5 @@
 import { Inter } from 'next/font/google'
-import { cn } from '@/components/svg/svg';
+import { cn } from '@/app/components/svg/svg';
 import './globals.css'
 
 const fontHeading = Inter({

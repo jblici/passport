@@ -1,17 +1,17 @@
 import React from "react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/app/components/ui/card";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import Navbar from "@/components/ui/navbar";
-import ProtectedLayout from "@/components/protectedroute";
+} from "@/app/components/ui/select";
+import { Label } from "@/app/components/ui/label";
+import { Input } from "@/app/components/ui/input";
+import { Button } from "@/app/components/ui/button";
+import Navbar from "@/app/components/ui/navbar";
+import ProtectedLayout from "@/app/lib/protectedroute";
 
 const NuevoHotel = () => {
   return (

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetTrigger, SheetContent } from "@/app/components/ui/sheet";
 import { MenuIcon } from "../svg/svg";
 import Logout from "./logout";
 
@@ -28,7 +28,7 @@ const Navbar = () => {
           <Link
             href="/panel"
             className={`text-2xl font-bold py-2 ${
-              activePath.includes("/panel") ? "font-bold bg-blue-600 rounded" : null
+              activePath.includes("/panel") ? "font-bold underline" : null
             }`}
             prefetch={false}
           >
@@ -107,8 +107,8 @@ const Navbar = () => {
           <div className="flex flex-col">
             <Link
               href="/cotizador"
-              className={`text-2xl font-bold p-2 hover:bg-blue-600 hover:rounded-xl hover:text-black ${
-                activePath.includes("/cotizador") ? "font-bold bg-blue-600 rounded-xl" : null
+              className={`text-2xl font-bold p-2 hover:bg-blue-600 hover:rounded-xl ${
+                activePath.includes("/cotizador") ? "font-bold underline" : null
               }`}
               prefetch={false}
             >
@@ -116,8 +116,8 @@ const Navbar = () => {
             </Link>
             <Link
               href="/panel"
-              className={`text-2xl font-bold p-2 hover:bg-blue-600 hover:rounded-xl hover:text-black ${
-                activePath.includes("/panel") ? "font-bold bg-blue-600 rounded-xl" : null
+              className={`text-2xl font-bold p-2 hover:bg-blue-600 hover:rounded-xl ${
+                activePath.includes("/panel") ? "font-bold underline" : null
               }`}
               prefetch={false}
             >
