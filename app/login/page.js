@@ -17,6 +17,7 @@ const Login = () => {
       router.push("/panel");
     } catch (error) {
       alert('Login sin éxito. Revise su mail y contraseña.');
+      console.log(error);
       setError('Login sin exito. Revise su mail y contraseña.');
     }
   };

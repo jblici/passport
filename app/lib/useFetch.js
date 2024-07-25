@@ -2,7 +2,6 @@
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { getToken } from "./auth";
-import * as https from 'https';
 
 const useFetch = () => {
   const [paquetes, setPaquetes] = useState();
@@ -17,8 +16,6 @@ const useFetch = () => {
       const baseURL = process.env.NEXT_PUBLIC_API_URL;
       const token = getToken()
       const config = {
-        maxBodyLength: Infinity,
-        httpsAgent: new https.Agent({ rejectUnauthorized: false }),
         headers: {
           Authorization: `Bearer ${token}`,
         },
