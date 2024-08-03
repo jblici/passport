@@ -1,6 +1,6 @@
 "use client";
 import Navbar from "@/app/components/ui/navbar";
-import withAuth from "@/app/lib/withAuth";
+//import withAuth from "@/app/lib/withAuth";
 
 
 const Home = () => {
@@ -11,4 +11,4 @@ const Home = () => {
   );
 };
 
-export default withAuth(Home);
+export default (Home);

@@ -7,7 +7,10 @@ import ResumenPresupuesto from "../components/ui/resumenPresupuesto";
 import ResumenPaquetes from "../components/ui/resumenPaquete";
 import { generatePDF, handleSubmit } from "../lib/utils";
 
+
 export default function Cotizador() {
+  
+
   const { paquetes } = useFetch();
   const [resultados, setResultados] = useState();
   const [startDate, setStartDate] = useState("");
@@ -20,16 +23,27 @@ export default function Cotizador() {
   const [paquetesSeleccionados, setPaquetesSeleccionados] = useState([]);
   const [totalCompra, setTotalCompra] = useState(0);
 
+  
+
   const agregarPaquete = (paquete) => {
     setPaquetesSeleccionados((prev) => [...prev, paquete]);
     setTotalCompra((prev) => prev + paquete.price);
-  };
+
+
+  };    
 
   const eliminarPaquete = (index) => {
     const paqueteEliminado = paquetesSeleccionados[index];
     setPaquetesSeleccionados((prev) => prev.filter((_, i) => i !== index));
     setTotalCompra((prev) => prev - paqueteEliminado.price);
   };
+
+ 
+
+
+
+
+
 
   return (
     <div className="flex flex-col sm:flex-row">
@@ -70,6 +84,7 @@ export default function Cotizador() {
           )}
         </div>
       </div>
+      
     </div>
   );
 }
