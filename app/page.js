@@ -12,7 +12,18 @@ export default async function Home() {
       return {Provincia,	Cerro,	Hotel,	Habitacion, personas: Number(personas), precio: Number(precio), Fecha_Inicio, Fecha_Final: Date(Fecha_Final), Desayuno, Min_Noches: Number(Min_Noches), Currency, Tarifa, Fecha_Vigencia, Week }
     })
 
+    const csv2 = await fetch ('https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?output=csv')
+              .then((res)=> res.text()); 
+  const rentals = csv 
+    .split("\n")
+    .slice(1)
+    .map((row)=>{
+      const [Provincia,	Cerro,] = row.split(",");
+      return {Provincia,	Cerro}
+    })
+    
     console.log(paquetes);
+    console.log(rentals);
 
   
   return (
