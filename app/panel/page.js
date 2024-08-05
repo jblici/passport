@@ -6,9 +6,9 @@ import withAuth from "@/app/lib/withAuth";
 const Home = () => {
   return (
     <div className="flex flex-col sm:flex-row text-lg">
-      <Navbar />
+      <Navbar/>
     </div>
   );
 };
 
-export default withAuth(Home);
+export  default withAuth(Home);
