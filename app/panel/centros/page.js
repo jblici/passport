@@ -20,7 +20,7 @@ import Link from "next/link";
 import { PlusIcon } from "@/app/components/svg/svg";
 import Acciones from "@/app/components/ui/acciones";
 import ProtectedLayout from "@/app/lib/protectedroute";
-import useFetch from "@/app/lib/useFetch";
+import useFetch from "@/app/lib/hooks/useFetch";
 
 const Centros = () => {
   const { centros } = useFetch();

@@ -1,24 +1,23 @@
-'use client'
+"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { login } from '../lib/auth';
+import { login } from "../lib/auth";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aquí se realiza la petición al backend
     try {
       await login(email, password);
       router.push("/panel");
     } catch (error) {
-      alert('Login sin éxito. Revise su mail y contraseña.');
+      alert("Login sin éxito. Revise su mail y contraseña.");
       console.log(error);
-      setError('Login sin exito. Revise su mail y contraseña.');
+      setError("Login sin exito. Revise su mail y contraseña.");
     }
   };
 
@@ -50,7 +49,6 @@ const Login = () => {
           Login
         </button>
       </form>
-      {/*error && <p>{error}</p>*/}
     </div>
   );
 };

@@ -1,7 +1,7 @@
-'use client'
+"use client";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { getToken } from "./auth";
+import { getToken } from "../auth";
 
 const useFetch = () => {
   const [paquetes, setPaquetes] = useState();
@@ -14,7 +14,7 @@ const useFetch = () => {
     setLoading(true);
     try {
       const baseURL = process.env.NEXT_PUBLIC_API_URL;
-      const token = getToken()
+      const token = getToken();
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
