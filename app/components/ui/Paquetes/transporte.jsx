@@ -16,8 +16,9 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
             <TableRow>
               <TableHead>Cerro</TableHead>
               <TableHead>Recorrido</TableHead>
-              <TableHead>Precio por tramo</TableHead>
-              <TableHead>Precio Completo</TableHead>
+              <TableHead>Servicio</TableHead>
+              <TableHead>Precio</TableHead>
+              <TableHead>Pasajeros</TableHead>
               <TableHead>Agregar</TableHead>
             </TableRow>
           </TableHeader>
@@ -26,8 +27,10 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
               <TableRow key={Math.floor(Math.random() * 1000000)}>
                 <TableCell>{r.cerro}</TableCell>
                 <TableCell>{r.recorrido}</TableCell>
-                <TableCell>{`$ ${r.precioTramo}`}</TableCell>
-                <TableCell>{`$ ${r.precioCompleto}`}</TableCell>
+                <TableCell>{r.servicio}</TableCell>
+                <TableCell>{`$ ${r.precio}`}</TableCell>
+                <TableCell>{r.personas}</TableCell>
+               
                 <TableCell>
                   <Button
                     variant="outline"
@@ -35,7 +38,7 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                     onClick={() =>
                       agregarPaquete({
                         name: `Traslado Completo`,
-                        price: r.precioCompleto,
+                        price: r.precio,
                       })
                     }
                   >

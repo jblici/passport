@@ -125,13 +125,13 @@ const useSpeadsheets = () => {
       .split("\n")
       .slice(1)
       .map((row) => {
-        const [cerro, recorrido, servicio, precioTramo, precioCompleto, personas] = row.split(",");
+        const [cerro, recorrido, servicio, tramo, precio, personas] = row.split(",");
         return {
           cerro,
           recorrido,
           servicio,
-          precioTramo: Number(Math.round(precioTramo)),
-          precioCompleto: Number(Math.round(precioCompleto)),
+          tramo,
+          precio: Number(Math.round(precio)),
           personas,
         };
       });
