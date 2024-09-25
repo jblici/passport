@@ -41,6 +41,7 @@ export const handleHoteles = (
 ) => {
   try {
     const totalPersonas = calcularTotalPersonas(detalleHabitaciones);
+    console.log(totalPersonas);
     const busquedaHoteles = calcularHoteles(
       startDate,
       endDate,
@@ -53,7 +54,7 @@ export const handleHoteles = (
     console.log(busquedaHoteles);
     setHoteles(busquedaHoteles);
   } catch (error) {
-    console.error(error.message);
+    console.error(error);
   }
 };
 
@@ -70,10 +71,11 @@ function calcularHoteles(
 ) {
   const inicio = startDate;
   const fin = endDate;
-  const resultados = [];
+  let resultados = {};
   const totales = [totalPersonas.total, ...totalPersonas.habitaciones.map((h) => h.total)];
+  let paquetesFiltrados = paquetes;
 
-  let paquetesFiltrados = paquetes.filter((paquete) => totales.includes(Number(paquete.personas)));
+  //let paquetesFiltrados = paquetes.filter((paquete) => totales.includes(paquete.personas));
 
   if (cerro) {
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.cerro === cerro);
@@ -85,141 +87,224 @@ function calcularHoteles(
 
   // Filtrado adicional para "Las Leñas"
   if (cerro === "Las Leñas" && producto) {
-    console.log("entre");
+    const noches = calcularDiferenciaDiasProducto(producto);
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.week.includes(producto));
-    paquetesFiltrados.forEach((paquete) => {
-      const noches = calcularDiferenciaDiasProducto(inicio, producto);
-      const totalPrecio = noches * paquete.precio;
 
-      const resultado = {
-        cerro: paquete.cerro,
-        hotel: paquete.hotel,
-        habitacion: paquete.habitacion,
-        fechaInicio: paquete.fechaInicio,
-        fechaFinal: paquete.fechaFinal || null,
-        precio: paquete.precio,
-        noches,
-        personas: paquete.personas,
-        precioPromedio: Math.round(totalPrecio / noches),
-      };
+    totalPersonas.habitaciones.forEach((habitacion, index) => {
+      const { mayores, menores, total } = habitacion;
 
-      resultados.push({
-        id: resultados.length + 1,
-        total: totalPrecio,
-        personas: paquete.personas,
-        precioPromedio: Math.round(totalPrecio / noches),
-        paquetesUtilizados: resultado,
+      const paquetesPorHabitacion = paquetesFiltrados.filter(
+        (paquete) => paquete.personas === total
+      );
+
+      paquetesPorHabitacion.forEach((paquete) => {
+        let precioHabitacion;
+
+        if (paquete.camaExtra === "Si") {
+          // Si hay cama extra
+          if (menores > 0) {
+            // Calcular el precio si hay al menos un menor en la habitación
+            precioHabitacion =
+              paquete.extraMenor * 1 +
+              (paquete.precioMenor
+                ? paquete.precioMenor * (menores - 1)
+                : paquete.precio * (menores - 1)) +
+              paquete.precio * mayores;
+          } else {
+            // Si no hay menores, simplemente calcular el precio para los mayores
+            precioHabitacion = paquete.extraMayor * 1 + paquete.precio * (mayores - 1);
+          }
+        } else {
+          // Si no hay cama extra, simplemente calcular los precios normales
+          precioHabitacion =
+            paquete.precio * mayores +
+            (paquete.precioMenor ? paquete.precioMenor * menores : paquete.precio * menores);
+        }
+        const habitacionKey = `habitacion${index + 1}`;
+        if (!resultados[habitacionKey]) {
+          resultados[habitacionKey] = [];
+        }
+
+        resultados[habitacionKey].push({
+          id: index + paquete.id + 1,
+          totalPersonas: total,
+          mayores,
+          menores,
+          precioTotal: precioHabitacion * noches,
+          paquetesUtilizados: paquete,
+        });
       });
     });
   } else {
     // Agrupar paquetes por hotel, habitación y personas
-    const paquetesPorHabitacion = {};
-    paquetesFiltrados.forEach((paquete) => {
-      const clave = `${paquete.hotel}-${paquete.habitacion}-${paquete.personas}-${
-        paquete.minNoches
-      }-${paquete.menor ? paquete.menor : null}-${paquete.tarifa ? paquete.tarifa : null}`;
-      if (!paquetesPorHabitacion[clave]) {
-        paquetesPorHabitacion[clave] = [];
+    totalPersonas.habitaciones.forEach((habitacion, index) => {
+      const { mayores, menores, total } = habitacion;
+      console.log('entre')
+      console.log(total);
+      const paquetesPorHabitacion = {};
+      const paquetesHabitacion = paquetesFiltrados.filter((paquete) => paquete.personas === total);
+      console.log(paquetesHabitacion);
+
+      const habitacionKey = `habitacion${index + 1}`;
+      if (!resultados[habitacionKey]) {
+        resultados[habitacionKey] = [];
       }
-      paquetesPorHabitacion[clave].push(paquete);
-    });
 
-    // Verificar paquetes que cubren completamente las fechas seleccionadas y combinaciones continuas
-    for (const clave in paquetesPorHabitacion) {
-      const paquetes = paquetesPorHabitacion[clave];
-      paquetes.sort((a, b) => parseDate(a.fechaInicio) - parseDate(b.fechaInicio));
+      paquetesHabitacion.forEach((paquete) => {
+        const clave = `${paquete.hotel}-${paquete.habitacion}-${paquete.personas}-${
+          paquete.minNoches
+        }-${paquete.menor ? paquete.menor : null}-${paquete.tarifa ? paquete.tarifa : null}`;
+        if (!paquetesPorHabitacion[clave]) {
+          paquetesPorHabitacion[clave] = [];
+        }
+        paquetesPorHabitacion[clave].push(paquete);
+      });
 
-      for (let i = 0; i < paquetes.length; i++) {
-        const combinacionActual = [];
-        let totalNoches = 0;
-        let totalPrecio = 0;
-        let fechaContinua = inicio;
+      // Verificar paquetes que cubren completamente las fechas seleccionadas y combinaciones continuas
+      for (const clave in paquetesPorHabitacion) {
+        const paquetess = paquetesPorHabitacion[clave];
+        paquetess.sort((a, b) => parseDate(a.fechaInicio) - parseDate(b.fechaInicio));
 
-        for (let j = i; j < paquetes.length; j++) {
-          const paquete = paquetes[j];
-          const paqueteInicio = parseDate(paquete.fechaInicio);
-          const paqueteFin = parseDate(paquete.fechaFinal);
+        for (let i = 0; i < paquetess.length; i++) {
+          const combinacionActual = [];
+          let totalNoches = 0;
+          let totalPrecio = 0;
+          let fechaContinua = inicio;
 
-          // Verificar si el paquete es continuo con la última fecha de la combinación
-          if (paqueteInicio <= fechaContinua && paqueteFin >= fechaContinua) {
-            const noches = calcularDiferenciaDias(
-              Math.max(paqueteInicio, fechaContinua),
-              Math.min(paqueteFin, fin)
-            );
-            totalPrecio += noches * paquete.precio;
-            totalNoches += noches;
+          for (let j = i; j < paquetess.length; j++) {
+            const paquete = paquetess[j];
+            const paqueteInicio = parseDate(paquete.fechaInicio);
+            const paqueteFin = parseDate(paquete.fechaFinal);
 
-            combinacionActual.push({
-              cerro: paquete.cerro,
-              hotel: paquete.hotel,
-              habitacion: paquete.habitacion,
-              fechaInicio: paquete.fechaInicio,
-              fechaFinal: paquete.fechaFinal,
-              precio: paquete.precio,
-              noches,
-            });
+            // Verificar si el paquete es continuo con la última fecha de la combinación
+            if (paqueteInicio <= fechaContinua && paqueteFin >= fechaContinua) {
+              const noches = calcularDiferenciaDias(
+                Math.max(paqueteInicio, fechaContinua),
+                Math.min(paqueteFin, fin)
+              );
 
-            // Actualizar la fecha continua
-            fechaContinua = new Date(paqueteFin);
-            fechaContinua.setDate(fechaContinua.getDate() + 1);
+              if (cerro === "Castor") {
+                let precioHabitacion;
 
-            const combinacionInicio = parseDate(combinacionActual[0].fechaInicio);
-            const combinacionFin = parseDate(
-              combinacionActual[combinacionActual.length - 1].fechaFinal
-            );
+                if (paquete.camaExtra === "Si") {
+                  // Si hay cama extra
+                  if (menores > 0) {
+                    // Si hay al menos un menor en la habitación
+                    precioHabitacion =
+                      paquete.extraMenor * 1 + // Precio para la cama extra de un menor
+                      (paquete.precioMenor
+                        ? paquete.precioMenor * (menores - 1)
+                        : paquete.precio * (menores - 1)) + // Precio normal para los otros menores
+                      paquete.precio * mayores; // Precio normal para los mayores
+                  } else {
+                    // Si no hay menores, calcular el precio para los mayores
+                    precioHabitacion =
+                      paquete.extraMayor * 1 + // Precio para la cama extra de un mayor
+                      paquete.precio * (mayores - 1); // Precio normal para los otros mayores
+                  }
+                } else {
+                  // Si no hay cama extra, calcular los precios normales
+                  precioHabitacion =
+                    paquete.precio * mayores +
+                    (paquete.precioMenor
+                      ? paquete.precioMenor * menores
+                      : paquete.precio * menores);
+                }
 
-            if (combinacionInicio <= inicio && combinacionFin >= fin) {
-              resultados.push({
-                id: i + j + 1,
-                total: totalPrecio,
-                personas: paquete.personas,
-                precioPromedio: Math.round(totalPrecio / totalNoches),
-                paquetesUtilizados:
-                  combinacionActual.length > 1
-                    ? { paquetes: combinacionActual }
-                    : combinacionActual[0],
+                totalPrecio += noches * precioHabitacion;
+              }
+              totalPrecio += noches * (paquete.precio * total);
+              totalNoches += noches;
+
+              combinacionActual.push({
+                ...paquete,
               });
-              break; // Salir del loop si una combinación válida se encontró
+
+              // Actualizar la fecha continua
+              fechaContinua = new Date(paqueteFin);
+              fechaContinua.setDate(fechaContinua.getDate() + 1);
+
+              const combinacionInicio = parseDate(combinacionActual[0].fechaInicio);
+              const combinacionFin = parseDate(
+                combinacionActual[combinacionActual.length - 1].fechaFinal
+              );
+
+              if (combinacionInicio <= inicio && combinacionFin >= fin) {
+                resultados[habitacionKey].push({
+                  id: i + j + 1,
+                  totalPersonas: total,
+                  mayores,
+                  menores,
+                  noches: totalNoches,
+                  precioTotal: totalPrecio,
+                  precioPromedio: Math.round(totalPrecio / totalNoches),
+                  paquetesUtilizados:
+                    combinacionActual.length > 1
+                      ? { paquetes: combinacionActual }
+                      : combinacionActual[0],
+                });
+                break; // Salir del loop si una combinación válida se encontró
+              }
+            } else {
+              break; // Salir si no hay continuidad en las fechas
             }
-          } else {
-            break; // Salir si no hay continuidad en las fechas
           }
         }
       }
-    }
+    });
   }
 
   if (resultados.length === 0) {
     throw new Error("No se encontraron paquetes continuos que cubran las fechas seleccionadas.");
   }
 
-  const paquetePorTotal = {};
+  {
+    /*const paquetePorTotal = {};
 
   totales.forEach((valor) => {
     const paquetes = resultados.filter((paquete) => Number(paquete.personas) === valor);
     paquetePorTotal[`total_${valor}`] = paquetes;
   });
 
-  return paquetePorTotal;
+  return paquetePorTotal; */
+  }
+  return resultados;
 }
 
 //CALCULAR HABITACIONES
 
 function calcularTotalPersonas(detalleHabitaciones) {
   const resultado = { total: 0, habitaciones: [] };
+  let totalMayoresCombinado = 0;
+  let totalMenoresCombinado = 0;
 
-  detalleHabitaciones.forEach((habitacion, index) => {
+  // Recorremos las habitaciones
+  detalleHabitaciones.forEach((habitacion) => {
     const mayores = Number(habitacion.mayores) || 0;
     const menores = Number(habitacion.menores) || 0;
     const totalPersonas = mayores + menores;
 
+    // Sumar al total general de personas
     resultado.total += totalPersonas;
 
+    // Sumar al total combinado de mayores y menores
+    totalMayoresCombinado += mayores;
+    totalMenoresCombinado += menores;
+
+    // Agregar cada habitación individual al array
     resultado.habitaciones.push({
       total: totalPersonas,
       mayores: mayores,
       menores: menores,
     });
+  });
+
+  // Crear la habitación combinada
+  const totalPersonasCombinada = totalMayoresCombinado + totalMenoresCombinado;
+  resultado.habitaciones.push({
+    total: totalPersonasCombinada,
+    mayores: totalMayoresCombinado,
+    menores: totalMenoresCombinado,
   });
 
   return resultado;
@@ -242,7 +327,7 @@ function calcularDiferenciaDias(fechaInicio, fechaFin) {
   return Math.ceil((fechaFin - fechaInicio) / unDia) + 1;
 }
 
-function calcularDiferenciaDiasProducto(fechaInicio, producto) {
+function calcularDiferenciaDiasProducto(producto) {
   let diasASumar = 0;
 
   if (producto === "Miniweek") {
@@ -253,12 +338,7 @@ function calcularDiferenciaDiasProducto(fechaInicio, producto) {
     diasASumar = 7;
   }
 
-  // Crear una nueva fecha sumando los días
-  const fechaFin = new Date(fechaInicio);
-  fechaFin.setDate(fechaFin.getDate() + diasASumar);
-
-  const unDia = 1000 * 60 * 60 * 24;
-  return Math.ceil((fechaFin - fechaInicio) / unDia);
+  return diasASumar;
 }
 
 //BUSQUEDA EQUIPOS
@@ -283,7 +363,10 @@ export const handleEquipos = (cerro, rentals, setEquipos, startDate, endDate) =>
       } else {
         // Buscar combinaciones de fechas continuas
         let combinacionActual = [equipo];
-        let totalNoches = calcularDiferenciaDias(Math.max(equipoInicio, startDate), Math.min(equipoFin, endDate));
+        let totalNoches = calcularDiferenciaDias(
+          Math.max(equipoInicio, startDate),
+          Math.min(equipoFin, endDate)
+        );
 
         for (let i = index + 1; i < equiposFiltrados.length; i++) {
           const siguienteEquipo = equiposFiltrados[i];
@@ -292,8 +375,11 @@ export const handleEquipos = (cerro, rentals, setEquipos, startDate, endDate) =>
 
           if (siguienteInicio <= equipoFin) {
             combinacionActual.push(siguienteEquipo);
-            totalNoches += calcularDiferenciaDias(Math.max(siguienteInicio, startDate), Math.min(siguienteFin, endDate));
-            
+            totalNoches += calcularDiferenciaDias(
+              Math.max(siguienteInicio, startDate),
+              Math.min(siguienteFin, endDate)
+            );
+
             // Si la combinación cubre completamente las fechas seleccionadas
             if (combinacionActual[0].fechaInicio <= startDate && siguienteFin >= endDate) {
               equiposCombinados.push(combinacionActual);
