@@ -101,6 +101,7 @@ function calcularHoteles(
         let precioHabitacion;
 
         if (paquete.camaExtra === "Si") {
+          console.log(paquete);
           // Si hay cama extra
           if (menores > 0) {
             // Calcular el precio si hay al menos un menor en la habitación
@@ -110,6 +111,7 @@ function calcularHoteles(
                 ? paquete.precioMenor * (menores - 1)
                 : paquete.precio * (menores - 1)) +
               paquete.precio * mayores;
+            console.log(precioHabitacion);
           } else {
             // Si no hay menores, simplemente calcular el precio para los mayores
             precioHabitacion = paquete.extraMayor * 1 + paquete.precio * (mayores - 1);
@@ -130,6 +132,7 @@ function calcularHoteles(
           totalPersonas: total,
           mayores,
           menores,
+          noches,
           precioTotal: precioHabitacion * noches,
           paquetesUtilizados: paquete,
         });
@@ -139,8 +142,6 @@ function calcularHoteles(
     // Agrupar paquetes por hotel, habitación y personas
     totalPersonas.habitaciones.forEach((habitacion, index) => {
       const { mayores, menores, total } = habitacion;
-      console.log('entre')
-      console.log(total);
       const paquetesPorHabitacion = {};
       const paquetesHabitacion = paquetesFiltrados.filter((paquete) => paquete.personas === total);
       console.log(paquetesHabitacion);
@@ -329,12 +330,13 @@ function calcularDiferenciaDias(fechaInicio, fechaFin) {
 
 function calcularDiferenciaDiasProducto(producto) {
   let diasASumar = 0;
+  console.log(producto);  
 
   if (producto === "Miniweek") {
     diasASumar = 2;
-  } else if (producto === "Week") {
+  } else if (producto === "Maxiweek") {
     diasASumar = 5;
-  } else if (producto === "Fullweek") {
+  } else if (producto === "Skiweek") {
     diasASumar = 7;
   }
 
