@@ -26,6 +26,7 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
                     <TableHead>Habitacion</TableHead>
                     <TableHead>Noches</TableHead>
                     <TableHead>Personas</TableHead>
+                    <TableHead>Cama extra</TableHead>
                     <TableHead>Precio</TableHead>
                     <TableHead>Agregar</TableHead>
                   </TableRow>
@@ -46,6 +47,16 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
                         <TableCell>{r.paquetesUtilizados.habitacion}</TableCell>
                         <TableCell>{r.noches}</TableCell>
                         <TableCell>{r.totalPersonas}</TableCell>
+                        <TableCell>
+                          {r.paquetesUtilizados.camaExtra === "Si" ? (
+                            <span role="img" aria-label="green check">✅</span>
+                          ) : r.paquetesUtilizados.camaExtra === "No" || r.paquetesUtilizados.camaExtra === " " ? (
+                            <span role="img" aria-label="red cross">❌</span>
+                          ) : (
+                            <span>{r.paquetesUtilizados.camaExtra}</span>
+                          )}
+                        </TableCell>
+
                         <TableCell>{`$ ${r.precioTotal}`}</TableCell>
                         <TableCell>
                           <Button
@@ -76,6 +87,15 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
                         <TableCell>{r.paquetesUtilizados.paquetes[0].habitacion}</TableCell>
                         <TableCell>{r.noches}</TableCell>
                         <TableCell>{r.totalPersonas}</TableCell>
+                        <TableCell>
+                          {r.paquetesUtilizados.camaExtra === "Si" ? (
+                            <span role="img" aria-label="green check">✅</span>
+                          ) : r.paquetesUtilizados.camaExtra === "No" || r.paquetesUtilizados.camaExtra === " " ? (
+                            <span role="img" aria-label="red cross">❌</span>
+                          ) : (
+                            <span>{r.paquetesUtilizados.camaExtra}</span>
+                          )}
+                        </TableCell>
                         <TableCell>{`$ ${r.precioTotal}`}</TableCell>
                         <TableCell>
                           <Button
