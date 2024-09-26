@@ -32,7 +32,6 @@ export default function Cotizador() {
     setPaquetesSeleccionados((prev) => prev.filter((_, i) => i !== index));
     setTotalCompra((prev) => prev - paqueteEliminado.price);
   };
-  console.log(paquetes)
 
   if (!paquetes) return null;
   return (

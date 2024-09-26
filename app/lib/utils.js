@@ -74,6 +74,7 @@ function calcularHoteles(
   let resultados = {};
   const totales = [totalPersonas.total, ...totalPersonas.habitaciones.map((h) => h.total)];
   let paquetesFiltrados = paquetes;
+  console.log(totalPersonas);
 
   //let paquetesFiltrados = paquetes.filter((paquete) => totales.includes(paquete.personas));
 
@@ -101,7 +102,6 @@ function calcularHoteles(
         let precioHabitacion;
 
         if (paquete.camaExtra === "Si") {
-          console.log(paquete);
           // Si hay cama extra
           if (menores > 0) {
             // Calcular el precio si hay al menos un menor en la habitación
@@ -111,7 +111,6 @@ function calcularHoteles(
                 ? paquete.precioMenor * (menores - 1)
                 : paquete.precio * (menores - 1)) +
               paquete.precio * mayores;
-            console.log(precioHabitacion);
           } else {
             // Si no hay menores, simplemente calcular el precio para los mayores
             precioHabitacion = paquete.extraMayor * 1 + paquete.precio * (mayores - 1);
@@ -144,7 +143,6 @@ function calcularHoteles(
       const { mayores, menores, total } = habitacion;
       const paquetesPorHabitacion = {};
       const paquetesHabitacion = paquetesFiltrados.filter((paquete) => paquete.personas === total);
-      console.log(paquetesHabitacion);
 
       const habitacionKey = `habitacion${index + 1}`;
       if (!resultados[habitacionKey]) {
@@ -259,16 +257,6 @@ function calcularHoteles(
     throw new Error("No se encontraron paquetes continuos que cubran las fechas seleccionadas.");
   }
 
-  {
-    /*const paquetePorTotal = {};
-
-  totales.forEach((valor) => {
-    const paquetes = resultados.filter((paquete) => Number(paquete.personas) === valor);
-    paquetePorTotal[`total_${valor}`] = paquetes;
-  });
-
-  return paquetePorTotal; */
-  }
   return resultados;
 }
 
@@ -300,13 +288,15 @@ function calcularTotalPersonas(detalleHabitaciones) {
     });
   });
 
-  // Crear la habitación combinada
-  const totalPersonasCombinada = totalMayoresCombinado + totalMenoresCombinado;
-  resultado.habitaciones.push({
-    total: totalPersonasCombinada,
-    mayores: totalMayoresCombinado,
-    menores: totalMenoresCombinado,
-  });
+  // Solo crear la habitación combinada si hay más de una habitación
+  if (detalleHabitaciones.length > 1) {
+    const totalPersonasCombinada = totalMayoresCombinado + totalMenoresCombinado;
+    resultado.habitaciones.push({
+      total: totalPersonasCombinada,
+      mayores: totalMayoresCombinado,
+      menores: totalMenoresCombinado,
+    });
+  }
 
   return resultado;
 }
@@ -330,7 +320,6 @@ function calcularDiferenciaDias(fechaInicio, fechaFin) {
 
 function calcularDiferenciaDiasProducto(producto) {
   let diasASumar = 0;
-  console.log(producto);  
 
   if (producto === "Miniweek") {
     diasASumar = 2;
