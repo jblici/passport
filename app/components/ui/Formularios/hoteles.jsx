@@ -83,8 +83,8 @@ export default function Hoteles({ category, paquetes, setHoteles, cerro, setCerr
   };
 
   const handleCerro = (value) => {
-    if(value !== "Las Leñas") {
-      setProducto(null)
+    if (value !== "Las Leñas") {
+      setProducto(null);
     }
     setCerro(value);
   };
@@ -127,7 +127,11 @@ export default function Hoteles({ category, paquetes, setHoteles, cerro, setCerr
             {cerro && (
               <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
                 <Label htmlFor="centro">Hotel:</Label>
-                <Select id="hotel" onValueChange={(value) => handleHotel(value === "none" ? null : value)} value={hotelSeleccionado}>
+                <Select
+                  id="hotel"
+                  onValueChange={(value) => handleHotel(value === "none" ? null : value)}
+                  value={hotelSeleccionado}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar Hotel" />
                   </SelectTrigger>
@@ -146,14 +150,19 @@ export default function Hoteles({ category, paquetes, setHoteles, cerro, setCerr
             {cerro === "Las Leñas" ? (
               <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
                 <Label htmlFor="centro">Paquete:</Label>
-                <Select id="paquete" onValueChange={handleProducto} value={producto}>
+                <Select
+                  id="paquete"
+                  onValueChange={(value) => handleProducto(value === "none" ? null : value)}
+                  value={producto}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar Hotel" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={"Miniweek"}>Mini Week (2 noches)</SelectItem>
-                    <SelectItem value={"Extraweek"}>Extra Week (5 noches)</SelectItem>
-                    <SelectItem value={"Skiweek"}>Ski Week (7 noches)</SelectItem>
+                    <SelectItem value="none">Ninguno</SelectItem>
+                    <SelectItem value={"MiniWeek"}>MiniWeek (2 noches)</SelectItem>
+                    <SelectItem value={"ExtraWeek"}>ExtraWeek (5 noches)</SelectItem>
+                    <SelectItem value={"SkiWeek"}>SkiWeek (7 noches)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

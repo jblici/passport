@@ -321,11 +321,11 @@ function calcularDiferenciaDias(fechaInicio, fechaFin) {
 function calcularDiferenciaDiasProducto(producto) {
   let diasASumar = 0;
 
-  if (producto === "Miniweek") {
+  if (producto === "MiniWeek") {
     diasASumar = 2;
-  } else if (producto === "Maxiweek") {
+  } else if (producto === "MaxiWeek") {
     diasASumar = 5;
-  } else if (producto === "Skiweek") {
+  } else if (producto === "SkiWeek") {
     diasASumar = 7;
   }
 
