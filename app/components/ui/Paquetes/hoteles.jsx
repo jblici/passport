@@ -48,13 +48,13 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
                         <TableCell>{r.noches}</TableCell>
                         <TableCell>{r.totalPersonas}</TableCell>
                         <TableCell>
-                          {r.paquetesUtilizados.camaExtra === "Si" ? (
-                            <span role="img" aria-label="green check">✅</span>
-                          ) : r.paquetesUtilizados.camaExtra === "No" || r.paquetesUtilizados.camaExtra === " " ? (
-                            <span role="img" aria-label="red cross">❌</span>
-                          ) : (
-                            <span>{r.paquetesUtilizados.camaExtra}</span>
-                          )}
+                                  {
+                                    r.paquetesUtilizados.camaExtra === "Si" ? (
+                                      <span role="img" aria-label="green check">✅</span>
+                                    ) : (
+                                      <span role="img" aria-label="red cross">❌</span>
+                                    )
+                                  }
                         </TableCell>
 
                         <TableCell>{`$ ${r.precioTotal}`}</TableCell>
@@ -88,13 +88,13 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
                         <TableCell>{r.noches}</TableCell>
                         <TableCell>{r.totalPersonas}</TableCell>
                         <TableCell>
-                          {r.paquetesUtilizados.camaExtra === "Si" ? (
+                        {
+                          r.paquetesUtilizados.camaExtra === "Si" ? (
                             <span role="img" aria-label="green check">✅</span>
-                          ) : r.paquetesUtilizados.camaExtra === "No" || r.paquetesUtilizados.camaExtra === " " ? (
-                            <span role="img" aria-label="red cross">❌</span>
                           ) : (
-                            <span>{r.paquetesUtilizados.camaExtra}</span>
-                          )}
+                            <span role="img" aria-label="red cross">❌</span>
+                          )
+                        }
                         </TableCell>
                         <TableCell>{`$ ${r.precioTotal}`}</TableCell>
                         <TableCell>
