@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Label } from "../label";
@@ -11,16 +11,28 @@ import { handlePases } from "@/app/lib/utils";
 
 export default function Pases({ category, pases, setPases, cerro, setCerro }) {
   const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [dias, setDias] = useState(null);
+  const [pase, setPase] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handlePases(cerro, pases, setPases, startDate, endDate);
+    handlePases(cerro, pases, setPases, startDate, dias, pase);
   };
 
   const handleCerro = (value) => {
     setCerro(value);
   };
+
+  const handlePase = (value) => {
+    setPase(value);
+  };
+
+  useEffect(() => {
+    if (cerro && dias && startDate) {
+      setDisabled(false);
+    } 
+  }, [cerro, dias, startDate])
+  
 
   return (
     <div className="h-fit w-full">
@@ -30,7 +42,7 @@ export default function Pases({ category, pases, setPases, cerro, setCerro }) {
           <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
             <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
               <Label htmlFor="centro">Centro:</Label>
-              <Select id="centro" onValueChange={handleCerro} value={cerro} disabled="true">
+              <Select id="centro" onValueChange={handleCerro} value={cerro}>
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar Centro" />
                 </SelectTrigger>
@@ -42,6 +54,20 @@ export default function Pases({ category, pases, setPases, cerro, setCerro }) {
                 </SelectContent>
               </Select>
             </div>
+            {(cerro === "Catedral" || cerro === "Chapelco") && (
+              <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
+                <Label htmlFor="pase">Pase:</Label>
+                <Select id="pase" onValueChange={handlePase}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar Pase" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="NORMAL">Normal</SelectItem>
+                    <SelectItem value="FLEXIBLE">Flexible</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
           <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
             <div className="flex flex-col space-y-2 w-full sm:w-1/2">
@@ -58,19 +84,11 @@ export default function Pases({ category, pases, setPases, cerro, setCerro }) {
                 placeholderText="Seleccionar fecha"
               />
             </div>
-            <div className="flex flex-col space-y-2 w-full sm:w-1/2">
-              <Label htmlFor="end-date">
-                <span className="flex items-center gap-1">
-                  <CalendarDaysIcon /> Fecha de Finalización:
-                </span>
+            <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
+              <Label htmlFor="days">
+                <span className="flex items-center gap-1">Dias:</span>
               </Label>
-              <DatePicker
-                selected={endDate}
-                dateFormat="dd/MM/yyyy"
-                onChange={(date) => setEndDate(date)}
-                className="w-full p-2 border rounded"
-                placeholderText="Seleccionar fecha"
-              />
+              <Input id="days" placeholder="Dias" className="w-full p-2 border rounded" onChange={(e) => setDias(e.target.value)} />
             </div>
           </div>
           <div className="flex w-fit">

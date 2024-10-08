@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Button } from "../button";
 
 const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
+  console.log(resultados)
   if (!resultados) return null;
   return (
     <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">

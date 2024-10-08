@@ -15,10 +15,10 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
           <TableHeader>
             <TableRow>
               <TableHead>Cerro</TableHead>
-              <TableHead>Categoria</TableHead>
+              <TableHead>Temporada</TableHead>
+              <TableHead>Tipo</TableHead>
               <TableHead>Dias</TableHead>
-              <TableHead>Horas</TableHead>
-              <TableHead>Personas</TableHead>
+              <TableHead>Edades</TableHead>
               <TableHead>Precio</TableHead>
               <TableHead>Agregar</TableHead>
             </TableRow>
@@ -27,10 +27,10 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
             {resultados?.map((r) => (
               <TableRow key={Math.floor(Math.random() * 1000000000)}>
                 <TableCell>{r.cerro}</TableCell>
-                <TableCell>{r.categoria}</TableCell>
+                <TableCell>{r.temporada}</TableCell>
+                <TableCell>{r.tipo}</TableCell>
                 <TableCell>{r.dias}</TableCell>
-                <TableCell>{r.horas}</TableCell>
-                <TableCell>{r.personas}</TableCell>
+                <TableCell>{r.edad}</TableCell>
                 <TableCell>{`$ ${r.precio}`}</TableCell>
                 <TableCell>
                   <Button
@@ -38,7 +38,7 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
                     className="w-full bg-blue-500 text-white hover:bg-blue-600"
                     onClick={() =>
                       agregarPaquete({
-                        name: `Clase ${r.categoria} - ${r.personas}`,
+                        name: `Clase ${r.tipo} - ${r.dias}`,
                         price: r.precio,
                       })
                     }

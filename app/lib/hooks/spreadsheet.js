@@ -67,12 +67,22 @@ const useSpeadsheets = () => {
       .split("\n")
       .slice(1)
       .map((row) => {
-        const [provincia, cerro, temporada, gama, articulo, fechaInicio, fechaFinal, dias, precio] =
-          row.split(",");
+        const [
+          cerro,
+          local,
+          temporada,
+          edad,
+          gama,
+          articulo,
+          fechaInicio,
+          fechaFinal,
+          dias,
+          precio,
+        ] = row.split(",");
         return {
-          provincia,
           cerro,
           temporada,
+          edad,
           gama,
           articulo,
           fechaInicio,
@@ -90,14 +100,16 @@ const useSpeadsheets = () => {
       .split("\n")
       .slice(1)
       .map((row) => {
-        const [cerro, tipo, categoria, dias, personas, horas, precio] = row.split(",");
+        const [cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio] =
+          row.split(",");
         return {
           cerro,
+          temporada,
+          edad,
           tipo,
-          categoria,
+          fechaInicio,
+          fechaFinal,
           dias,
-          personas,
-          horas,
           precio: Number(Math.round(precio)),
         };
       });

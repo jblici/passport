@@ -334,114 +334,104 @@ function calcularDiferenciaDiasProducto(producto) {
 
 //BUSQUEDA EQUIPOS
 
-export const handleEquipos = (cerro, rentals, setEquipos, startDate, endDate) => {
-  function parseDate2(dateStr) {
-    return new Date(dateStr);
+export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama) => {
+  let rentalsFiltradas = rentals;
+  console.log(startDate)
+  
+  if (cerro) {
+    rentalsFiltradas = rentalsFiltradas.filter((rental) => rental.cerro.toUpperCase() === cerro.toUpperCase());
   }
-  try {
-    // Filtrar equipos por cerro
-    let equiposFiltrados = rentals.filter((equipo) => !cerro || equipo.cerro === cerro);
-
-    const equiposCombinados = [];
-
-    equiposFiltrados.forEach((equipo, index) => {
-      const equipoInicio = parseDate2(equipo.fechaInicio);
-      const equipoFin = parseDate2(equipo.fechaFinal);
-
-      // Verificar si el equipo cubre completamente las fechas seleccionadas
-      if (equipoInicio <= startDate && equipoFin >= endDate) {
-        equiposCombinados.push([equipo]);
-      } else {
-        // Buscar combinaciones de fechas continuas
-        let combinacionActual = [equipo];
-        let totalNoches = calcularDiferenciaDias(
-          Math.max(equipoInicio, startDate),
-          Math.min(equipoFin, endDate)
-        );
-
-        for (let i = index + 1; i < equiposFiltrados.length; i++) {
-          const siguienteEquipo = equiposFiltrados[i];
-          const siguienteInicio = parseDate2(siguienteEquipo.fechaInicio);
-          const siguienteFin = parseDate2(siguienteEquipo.fechaFinal);
-
-          if (siguienteInicio <= equipoFin) {
-            combinacionActual.push(siguienteEquipo);
-            totalNoches += calcularDiferenciaDias(
-              Math.max(siguienteInicio, startDate),
-              Math.min(siguienteFin, endDate)
-            );
-
-            // Si la combinación cubre completamente las fechas seleccionadas
-            if (combinacionActual[0].fechaInicio <= startDate && siguienteFin >= endDate) {
-              equiposCombinados.push(combinacionActual);
-              break;
-            }
-          }
-        }
-      }
+  
+  if (gama) {
+    rentalsFiltradas = rentalsFiltradas.filter((rental) => rental.gama.toUpperCase() === gama.toUpperCase());
+  }
+  
+  if (dias) {
+    rentalsFiltradas = rentalsFiltradas.filter((pase) => pase.dias === dias);
+  }
+  
+  // Filtrar por fechas (la fecha de inicio debe estar dentro del rango de fechas del pase)
+  if (startDate && dias) {
+    const fechaFin = startDate;
+    fechaFin.setDate(fechaFin.getDate() + dias - 1); // Ajustar la fecha final según los días
+    
+    rentalsFiltradas = rentalsFiltradas.filter((pase) => {
+      const paseInicio = parseDate(pase.fechaInicio);
+      const paseFinal = parseDate(pase.fechaFinal);
+      
+      // La fecha de inicio debe estar entre paseInicio y paseFinal
+      return paseInicio <= startDate && paseFinal >= fechaFin;
     });
-
-    // Si no se encontró ninguna combinación que cubra las fechas seleccionadas
-    if (equiposCombinados.length === 0) {
-      throw new Error("No se encontraron equipos que cubran las fechas seleccionadas.");
-    }
-
-    setEquipos(equiposCombinados.flat());
-  } catch (error) {
-    console.error(error.message);
   }
+  console.log(rentalsFiltradas);
+  
+  setEquipos(rentalsFiltradas);
 };
 
-export const handleClases = (cerro, clases, setClases, startDate, endDate) => {
+export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) => {
   let clasesFiltradas = clases;
+  
   if (cerro) {
-    clasesFiltradas.filter((clase) => clase.cerro === cerro);
+    clasesFiltradas = clasesFiltradas.filter((clase) => clase.cerro.toUpperCase() === cerro.toUpperCase());
   }
-  if (personas) {
-    clasesFiltradas.filter((clase) => clase.personas === personas);
+  
+  if (tipo) {
+    clasesFiltradas = clasesFiltradas.filter((clase) => clase.tipo === tipo);
   }
+  
+  if (dias) {
+    clasesFiltradas = clasesFiltradas.filter((pase) => pase.dias === dias);
+  }
+  
+  // Filtrar por fechas (la fecha de inicio debe estar dentro del rango de fechas del pase)
+  if (startDate && dias) {
+    const fechaFin = startDate;
+    fechaFin.setDate(fechaFin.getDate() + dias - 1); // Ajustar la fecha final según los días
+    
+    clasesFiltradas = clasesFiltradas.filter((pase) => {
+      const paseInicio = parseDate(pase.fechaInicio);
+      const paseFinal = parseDate(pase.fechaFinal);
+      
+      // La fecha de inicio debe estar entre paseInicio y paseFinal
+      return paseInicio <= startDate && paseFinal >= fechaFin;
+    });
+  }
+  
+  console.log(clasesFiltradas)
   setClases(clasesFiltradas);
 };
 
 //BUSQUEDA PASES
 
-export const handlePases = (cerro, pases, setPases, startDate, endDate) => {
+export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
   let pasesFiltrados = pases;
+
   if (cerro) {
-    pasesFiltrados.filter((pase) => pase.cerro === cerro);
+    pasesFiltrados = pasesFiltrados.filter((pase) => pase.cerro.toUpperCase() === cerro.toUpperCase());
   }
+
+  if (pase) {
+    pasesFiltrados = pasesFiltrados.filter((pase) => pase.tipo.toUpperCase() === pase.toUpperCase());
+  }
+  if (dias) {
+    pasesFiltrados = pasesFiltrados.filter((pase) => pase.dias === dias);
+  }
+
+  // Filtrar por fechas (la fecha de inicio debe estar dentro del rango de fechas del pase)
+  if (startDate && dias) {
+    const fechaFin = startDate;
+    fechaFin.setDate(fechaFin.getDate() + dias - 1); // Ajustar la fecha final según los días
+
+    pasesFiltrados = pasesFiltrados.filter((pase) => {
+      const paseInicio = parseDate(pase.fechaInicio);
+      const paseFinal = parseDate(pase.fechaFinal);
+
+      // La fecha de inicio debe estar entre paseInicio y paseFinal
+      return paseInicio <= startDate && paseFinal >= fechaFin;
+    });
+  }
+
   setPases(pasesFiltrados);
-  return;
-  const paquetesCombinados = [];
-
-  pasesFiltrados.forEach((pase) => {
-    const paseInicio = new Date(pase.fechaInicio);
-    const paseFinal = new Date(pase.fechaFinal);
-
-    if (fechaInicio >= paseInicio && fechaFinal <= paseFinal) {
-      paquetesCombinados.push(pase);
-    } else if (fechaInicio <= paseFinal && fechaFinal >= paseInicio) {
-      const paquete1 = pasesFiltrados.find((p) => p.fechaFinal >= fechaInicio);
-      const paquete2 = pasesFiltrados.find((p) => p.fechaInicio <= fechaFinal);
-
-      if (paquete1 && paquete2 && paquete1 !== paquete2) {
-        const totalPrecio =
-          paquete1.precio * (paquete1.fechaFinal - fechaInicio) +
-          paquete2.precio * (fechaFinal - paquete2.fechaInicio);
-        const totalDias = paquete1.fechaFinal - fechaInicio + (fechaFinal - paquete2.fechaInicio);
-        const precioPromedio = totalPrecio / totalDias;
-
-        paquetesCombinados.push({
-          ...paquete1,
-          precio: precioPromedio,
-          fechaInicio,
-          fechaFinal,
-        });
-      }
-    }
-  });
-
-  return paquetesCombinados;
 };
 
 export const handleTransporte = (cerro, traslado, setTraslado, startDate, endDate) => {
