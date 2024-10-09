@@ -3,7 +3,6 @@ import { Button } from "@/app/components/ui/button";
 import { XIcon } from "../svg/svg";
 import { generatePDF } from "@/app/lib/utils";
 import Passport from "/public/Passport.png";
-import Image from "next/image";
 
 const ResumenPresupuesto = ({ paquetesSeleccionados, totalCompra, eliminarPaquete, busqueda }) => {
   const generate = () => {

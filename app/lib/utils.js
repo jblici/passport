@@ -105,7 +105,6 @@ export const handleHoteles = (
 ) => {
   try {
     const totalPersonas = calcularTotalPersonas(detalleHabitaciones);
-    console.log(totalPersonas);
     const busquedaHoteles = calcularHoteles(
       startDate,
       endDate,
@@ -115,7 +114,6 @@ export const handleHoteles = (
       producto,
       totalPersonas
     );
-    console.log(busquedaHoteles);
     setHoteles(busquedaHoteles);
   } catch (error) {
     console.error(error);
@@ -136,9 +134,8 @@ function calcularHoteles(
   const inicio = startDate;
   const fin = endDate;
   let resultados = {};
-  const totales = [totalPersonas.total, ...totalPersonas.habitaciones.map((h) => h.total)];
+  //const totales = [totalPersonas.total, ...totalPersonas.habitaciones.map((h) => h.total)];
   let paquetesFiltrados = paquetes;
-  console.log(totalPersonas);
 
   //let paquetesFiltrados = paquetes.filter((paquete) => totales.includes(paquete.personas));
 
@@ -153,7 +150,17 @@ function calcularHoteles(
   // Filtrado adicional para "Las Leñas"
   if (cerro === "Las Leñas" && producto) {
     const noches = calcularDiferenciaDiasProducto(producto);
+    const fechaInicio = new Date(startDate);
+    const fechaFin = new Date(startDate);
+    fechaFin.setDate(fechaInicio.getDate() + noches); // Calculamos la fecha final
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.week.includes(producto));
+
+    // Filtrar paquetes que contengan la fecha de inicio
+    paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
+      const fechaInicio = parseDate(paquete.fechaInicio);
+      const fechaFinal = parseDate(paquete.fechaFinal);
+      return startDate >= fechaInicio && startDate <= fechaFinal;
+    });
 
     totalPersonas.habitaciones.forEach((habitacion, index) => {
       const { mayores, menores, total } = habitacion;

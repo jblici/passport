@@ -3,11 +3,22 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Button } from "../button";
 
 const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
+  console.log(resultados);
   if (!resultados) return null;
+  if (Object.keys(resultados).length === 0) {
+    return (
+      <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
+        <div className="p-4 sm:p-6 md:p-8 border-b">
+          <h2 className="text-xl font-bold mb-2">No hay Alojamientos disponibles...</h2>
+          <span></span>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
       <div className="p-4 sm:p-6 md:p-8 border-b">
-        <h2 className="text-xl font-bold mb-2">Paquetes</h2>
+        <h2 className="text-xl font-bold mb-2">Alojamientos</h2>
       </div>
       <div className="p-4 sm:p-6 md:p-8">
         {Object.keys(resultados).map((clave) => {
@@ -48,13 +59,15 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
                         <TableCell>{r.noches}</TableCell>
                         <TableCell>{r.totalPersonas}</TableCell>
                         <TableCell>
-                                  {
-                                    r.paquetesUtilizados.camaExtra === "Si" ? (
-                                      <span role="img" aria-label="green check">✅</span>
-                                    ) : (
-                                      <span role="img" aria-label="red cross">❌</span>
-                                    )
-                                  }
+                          {r.paquetesUtilizados.camaExtra === "Si" ? (
+                            <span role="img" aria-label="green check">
+                              ✅
+                            </span>
+                          ) : (
+                            <span role="img" aria-label="red cross">
+                              ❌
+                            </span>
+                          )}
                         </TableCell>
 
                         <TableCell>{`$ ${r.precioTotal}`}</TableCell>
@@ -88,13 +101,15 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
                         <TableCell>{r.noches}</TableCell>
                         <TableCell>{r.totalPersonas}</TableCell>
                         <TableCell>
-                        {
-                          r.paquetesUtilizados.camaExtra === "Si" ? (
-                            <span role="img" aria-label="green check">✅</span>
+                          {r.paquetesUtilizados.camaExtra === "Si" ? (
+                            <span role="img" aria-label="green check">
+                              ✅
+                            </span>
                           ) : (
-                            <span role="img" aria-label="red cross">❌</span>
-                          )
-                        }
+                            <span role="img" aria-label="red cross">
+                              ❌
+                            </span>
+                          )}
                         </TableCell>
                         <TableCell>{`$ ${r.precioTotal}`}</TableCell>
                         <TableCell>
