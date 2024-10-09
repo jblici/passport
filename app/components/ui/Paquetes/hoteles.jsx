@@ -10,7 +10,6 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
       <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
         <div className="p-4 sm:p-6 md:p-8 border-b">
           <h2 className="text-xl font-bold mb-2">No hay Alojamientos disponibles...</h2>
-          <span></span>
         </div>
       </div>
     );

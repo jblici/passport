@@ -13,32 +13,26 @@ export default function Clases({ category, clases, setClases, cerro, setCerro })
   const [startDate, setStartDate] = useState(null);
   const [disabled, setDisabled] = useState(true);
   const [dias, setDias] = useState(null);
-  const [clase, setClase] = useState(null);
+  const [tipo, setTipo] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleClases(cerro, clases, setClases, startDate, dias, clase);
+    handleClases(cerro, clases, setClases, startDate, dias, tipo);
   };
 
-  const handleClase = (value) => {
-    setClase(value);
+  const handleTipo = (value) => {
+    setTipo(value);
   };
 
   const handleCerro = (value) => {
     setCerro(value);
   };
 
-  useEffect(() => {
-    if (cerro && clase && dias && startDate) {
-      setDisabled(false);
-    } 
-  }, [cerro, clase, dias, startDate])
-
   return (
     <div className="h-fit w-full">
       <h1 className="flex justify-center p-2 text-2xl font-bold">{category}</h1>
       <div className="p-4 sm:p-6 md:p-8">
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
             <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
               <Label htmlFor="centro">Centro:</Label>
@@ -56,7 +50,7 @@ export default function Clases({ category, clases, setClases, cerro, setCerro })
             </div>
             <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
               <Label htmlFor="centro">Tipo:</Label>
-              <Select id="clase" onValueChange={handleClase} value={clase}>
+              <Select id="clase" onValueChange={handleTipo} value={tipo}>
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar Equipo" />
                 </SelectTrigger>
@@ -96,7 +90,11 @@ export default function Clases({ category, clases, setClases, cerro, setCerro })
             </div>
           </div>
           <div className="flex w-fit">
-            <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600" disabled={disabled}>
+            <Button
+              type="submit"
+              onClick={handleSubmit}
+              className="w-full bg-blue-500 text-white hover:bg-blue-600"
+            >
               Buscar
             </Button>
           </div>

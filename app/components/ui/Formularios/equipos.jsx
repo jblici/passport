@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Label } from "../label";
@@ -10,14 +10,14 @@ import { handleEquipos } from "@/app/lib/utils";
 import { Input } from "../input";
 
 export default function Equipos({ category, equipos, setEquipos, cerro, setCerro }) {
-  const [startDate, setStartDate] = useState(null);
+  const [fecha, setFecha] = useState();
   const [dias, setDias] = useState(null);
   const [gama, setGama] = useState(null);
   const [disabled, setDisabled] = useState(true);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleEquipos(cerro, equipos, setEquipos, startDate, dias, gama);
+    handleEquipos(cerro, equipos, setEquipos, fecha, dias, gama);
   };
 
   const handleGama = (value) => {
@@ -27,12 +27,6 @@ export default function Equipos({ category, equipos, setEquipos, cerro, setCerro
   const handleCerro = (value) => {
     setCerro(value);
   };
-
-  useEffect(() => {
-    if (cerro && dias && startDate) {
-      setDisabled(false);
-    }
-  }, [cerro, dias, startDate]);
 
   return (
     <div className="h-fit w-full">
@@ -63,7 +57,6 @@ export default function Equipos({ category, equipos, setEquipos, cerro, setCerro
                 <SelectContent>
                   <SelectItem value="SPORT">Sport</SelectItem>
                   <SelectItem value="ALTA GAMA">Alta Gama</SelectItem>
-                  {/*tipos de clase*/}
                 </SelectContent>
               </Select>
             </div>
@@ -76,12 +69,12 @@ export default function Equipos({ category, equipos, setEquipos, cerro, setCerro
                 </span>
               </Label>
               <DatePicker
-                selected={startDate}
-                dateFormat="dd/MM/yyyy"
-                onChange={(date) => setStartDate(date)}
-                className="w-full p-2 border rounded"
-                placeholderText="Seleccionar fecha"
-              />
+                  selected={fecha}
+                  dateFormat="dd/MM/yyyy"
+                  onChange={(date) => setFecha(date)}
+                  className="w-full p-2 border rounded"
+                  placeholderText="Seleccionar fecha"
+                />
             </div>
             <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
               <Label htmlFor="days">
@@ -96,7 +89,7 @@ export default function Equipos({ category, equipos, setEquipos, cerro, setCerro
             </div>
           </div>
           <div className="flex w-fit">
-            <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600" disabled={disabled}>
+            <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600" >
               Buscar
             </Button>
           </div>

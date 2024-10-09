@@ -407,7 +407,6 @@ function calcularDiferenciaDiasProducto(producto) {
 
 export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama) => {
   let rentalsFiltradas = rentals;
-  console.log(startDate);
 
   if (cerro) {
     rentalsFiltradas = rentalsFiltradas.filter(
@@ -425,26 +424,27 @@ export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama)
     rentalsFiltradas = rentalsFiltradas.filter((pase) => pase.dias === dias);
   }
 
-  // Filtrar por fechas (la fecha de inicio debe estar dentro del rango de fechas del pase)
+  // Filtrar por fechas
   if (startDate && dias) {
-    const fechaFin = startDate;
-    fechaFin.setDate(fechaFin.getDate() + dias - 1); // Ajustar la fecha final según los días
+    const fechaFin = new Date(startDate); // Clone startDate
+    fechaFin.setDate(fechaFin.getDate() + dias - 1); // Adjust the end date
 
     rentalsFiltradas = rentalsFiltradas.filter((pase) => {
       const paseInicio = parseDate(pase.fechaInicio);
       const paseFinal = parseDate(pase.fechaFinal);
 
-      // La fecha de inicio debe estar entre paseInicio y paseFinal
+      // Check if startDate is within paseInicio and paseFinal
       return paseInicio <= startDate && paseFinal >= fechaFin;
     });
   }
-  console.log(rentalsFiltradas);
 
   setEquipos(rentalsFiltradas);
-};
+}
 
 export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) => {
   let clasesFiltradas = clases;
+
+  console.log(startDate);
 
   if (cerro) {
     clasesFiltradas = clasesFiltradas.filter(
@@ -460,23 +460,22 @@ export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) =>
     clasesFiltradas = clasesFiltradas.filter((pase) => pase.dias === dias);
   }
 
-  // Filtrar por fechas (la fecha de inicio debe estar dentro del rango de fechas del pase)
+  // Filtrar por fechas
   if (startDate && dias) {
-    const fechaFin = startDate;
-    fechaFin.setDate(fechaFin.getDate() + dias - 1); // Ajustar la fecha final según los días
+    const fechaFin = new Date(startDate); // Clone startDate
+    fechaFin.setDate(fechaFin.getDate() + dias - 1); // Adjust the end date
 
     clasesFiltradas = clasesFiltradas.filter((clase) => {
       const paseInicio = parseDate(clase.fechaInicio);
       const paseFinal = parseDate(clase.fechaFinal);
 
-      // La fecha de inicio debe estar entre paseInicio y paseFinal
+      // Check if startDate is within paseInicio and paseFinal
       return paseInicio <= startDate && paseFinal >= fechaFin;
     });
   }
 
-  console.log(clasesFiltradas);
   setClases(clasesFiltradas);
-};
+}
 
 //BUSQUEDA PASES
 
@@ -500,7 +499,7 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
 
   // Filtrar por fechas (la fecha de inicio debe estar dentro del rango de fechas del pase)
   if (startDate && dias) {
-    const fechaFin = startDate;
+    const fechaFin = new Date(startDate);
     fechaFin.setDate(fechaFin.getDate() + dias - 1); // Ajustar la fecha final según los días
 
     pasesFiltrados = pasesFiltrados.filter((pase) => {

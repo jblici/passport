@@ -86,7 +86,6 @@ export default function Hoteles({ category, paquetes, setHoteles, cerro, setCerr
       endDate,
       producto,
     }
-    console.log(busqueda);
     setBusqueda(busqueda);
   };
 
