@@ -1,14 +1,14 @@
 import React from "react";
 import { Button } from "@/app/components/ui/button";
 import { XIcon } from "../svg/svg";
+import { generatePDF } from "@/app/lib/utils";
+import Passport from "/public/Passport.png";
+import Image from "next/image";
 
-const ResumenPresupuesto = ({
-  paquetesSeleccionados,
-  totalCompra,
-  generatePDF,
-  eliminarPaquete,
-}) => {
-  console.log(totalCompra)
+const ResumenPresupuesto = ({ paquetesSeleccionados, totalCompra, eliminarPaquete, busqueda }) => {
+  const generate = () => {
+    generatePDF(paquetesSeleccionados, totalCompra, busqueda, Passport);
+  };
   return (
     <div className="bg-card rounded-lg shadow-lg h-fit">
       <div className="p-4 sm:p-6 md:p-8 border-b">
@@ -35,10 +35,7 @@ const ResumenPresupuesto = ({
             <span className="text-2xl font-bold">${totalCompra}</span>
           </div>
           <div className="flex justify-end pt-4">
-            <Button
-              onClick={generatePDF}
-              className="w-auto bg-blue-500 text-white hover:bg-blue-600"
-            >
+            <Button onClick={generate} className="w-auto bg-blue-500 text-white hover:bg-blue-600">
               Guardar PDF
             </Button>
           </div>

@@ -10,21 +10,85 @@ import Pases from "../components/ui/Formularios/pases";
 import Transporte from "../components/ui/Formularios/transporte";
 import Hoteles from "../components/ui/Formularios/hoteles";
 
-export const generatePDF = (paquetesSeleccionados, totalCompra) => {
+export const generatePDF = (paquetesSeleccionados, totalCompra, busqueda, imageData) => {
+  const personas = calcularTotalPersonas(busqueda.detalleHabitaciones);
+  const dias = calcularDiferenciaDiasProducto(busqueda.producto);
+  const fechasFormateadas = formatDate(busqueda.startDate, dias);
   const doc = new jsPDF();
 
-  doc.setFontSize(18);
-  doc.text("Presupuesto valido hasta Fecha X", 14, 22);
+  let img = new Image();
+  img.height = 40;
+  img.width = 40;
+  img.src = imageData.src;
+  doc.addImage(img, "png", 10, 10);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(20);
+  doc.text("Presupuesto Passport Ski 2024", 14, 50);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(14);
+  doc.text(`${personas.total} Personas`, 14, 70);
+  doc.text(
+    `Fechas del viaje: ${fechasFormateadas.fechaInicial} - ${
+      busqueda.endDate ? formatDate(busqueda.endDate) : fechasFormateadas.fechaFinal
+    }`,
+    14,
+    60
+  );
 
   doc.setFontSize(12);
   paquetesSeleccionados.forEach((paquete, index) => {
-    doc.text(`${paquete.name}: $${paquete.price}`, 14, 30 + index * 10);
+    doc.text(`• ${paquete.name}: $${formatNumberWithDots(paquete.price)}`, 20, 80 + index * 11);
   });
 
   doc.setFontSize(16);
-  doc.text(`Total: $${totalCompra}`, 14, 30 + paquetesSeleccionados.length * 10 + 10);
+  doc.setFont("helvetica", "bold");
+  doc.text(
+    `Total: $${formatNumberWithDots(totalCompra)}`,
+    14,
+    80 + paquetesSeleccionados.length * 10 + 10
+  );
 
-  doc.save("cotizacion.pdf");
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "italic");
+  doc.text(
+    "El precio está sujeto a variación dependiendo de la fecha de pago.",
+    14,
+    90 + paquetesSeleccionados.length * 10 + 10
+  );
+
+  doc.getCurrentPageInfo("Passport-Presupuesto");
+
+  doc.save("Passport-Presupuesto.pdf");
+  doc.setProperties({ title: "Passport-Presupuesto" });
+  doc.output("dataurlnewwindow");
+};
+
+export function formatNumberWithDots(number) {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+const formatDate = (date, dias) => {
+  const fecha = new Date(date);
+
+  // Formatear fecha inicial
+  const dia = ("0" + fecha.getDate()).slice(-2); // Asegura que el día tenga 2 dígitos
+  const mes = ("0" + (fecha.getMonth() + 1)).slice(-2); // Meses son 0-indexados, por eso se suma 1
+  const anio = fecha.getFullYear();
+
+  const fechaInicial = `${dia}/${mes}/${anio}`;
+
+  // Sumar días a la fecha inicial
+  fecha.setDate(fecha.getDate() + dias);
+
+  // Formatear la fecha final después de sumar los días
+  const diaFinal = ("0" + fecha.getDate()).slice(-2); // Asegura que el día tenga 2 dígitos
+  const mesFinal = ("0" + (fecha.getMonth() + 1)).slice(-2); // Meses son 0-indexados, por eso se suma 1
+  const anioFinal = fecha.getFullYear();
+
+  const fechaFinal = `${diaFinal}/${mesFinal}/${anioFinal}`;
+
+  return { fechaInicial, fechaFinal };
 };
 
 //BUSQUEDA PAQUETES HOTELES
@@ -336,68 +400,74 @@ function calcularDiferenciaDiasProducto(producto) {
 
 export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama) => {
   let rentalsFiltradas = rentals;
-  console.log(startDate)
-  
+  console.log(startDate);
+
   if (cerro) {
-    rentalsFiltradas = rentalsFiltradas.filter((rental) => rental.cerro.toUpperCase() === cerro.toUpperCase());
+    rentalsFiltradas = rentalsFiltradas.filter(
+      (rental) => rental.cerro.toUpperCase() === cerro.toUpperCase()
+    );
   }
-  
+
   if (gama) {
-    rentalsFiltradas = rentalsFiltradas.filter((rental) => rental.gama.toUpperCase() === gama.toUpperCase());
+    rentalsFiltradas = rentalsFiltradas.filter(
+      (rental) => rental.gama.toUpperCase() === gama.toUpperCase()
+    );
   }
-  
+
   if (dias) {
     rentalsFiltradas = rentalsFiltradas.filter((pase) => pase.dias === dias);
   }
-  
+
   // Filtrar por fechas (la fecha de inicio debe estar dentro del rango de fechas del pase)
   if (startDate && dias) {
     const fechaFin = startDate;
     fechaFin.setDate(fechaFin.getDate() + dias - 1); // Ajustar la fecha final según los días
-    
+
     rentalsFiltradas = rentalsFiltradas.filter((pase) => {
       const paseInicio = parseDate(pase.fechaInicio);
       const paseFinal = parseDate(pase.fechaFinal);
-      
+
       // La fecha de inicio debe estar entre paseInicio y paseFinal
       return paseInicio <= startDate && paseFinal >= fechaFin;
     });
   }
   console.log(rentalsFiltradas);
-  
+
   setEquipos(rentalsFiltradas);
 };
 
 export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) => {
   let clasesFiltradas = clases;
-  
+
   if (cerro) {
-    clasesFiltradas = clasesFiltradas.filter((clase) => clase.cerro.toUpperCase() === cerro.toUpperCase());
+    clasesFiltradas = clasesFiltradas.filter(
+      (clase) => clase.cerro.toUpperCase() === cerro.toUpperCase()
+    );
   }
-  
+
   if (tipo) {
     clasesFiltradas = clasesFiltradas.filter((clase) => clase.tipo === tipo);
   }
-  
+
   if (dias) {
     clasesFiltradas = clasesFiltradas.filter((pase) => pase.dias === dias);
   }
-  
+
   // Filtrar por fechas (la fecha de inicio debe estar dentro del rango de fechas del pase)
   if (startDate && dias) {
     const fechaFin = startDate;
     fechaFin.setDate(fechaFin.getDate() + dias - 1); // Ajustar la fecha final según los días
-    
-    clasesFiltradas = clasesFiltradas.filter((pase) => {
-      const paseInicio = parseDate(pase.fechaInicio);
-      const paseFinal = parseDate(pase.fechaFinal);
-      
+
+    clasesFiltradas = clasesFiltradas.filter((clase) => {
+      const paseInicio = parseDate(clase.fechaInicio);
+      const paseFinal = parseDate(clase.fechaFinal);
+
       // La fecha de inicio debe estar entre paseInicio y paseFinal
       return paseInicio <= startDate && paseFinal >= fechaFin;
     });
   }
-  
-  console.log(clasesFiltradas)
+
+  console.log(clasesFiltradas);
   setClases(clasesFiltradas);
 };
 
@@ -407,11 +477,15 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
   let pasesFiltrados = pases;
 
   if (cerro) {
-    pasesFiltrados = pasesFiltrados.filter((pase) => pase.cerro.toUpperCase() === cerro.toUpperCase());
+    pasesFiltrados = pasesFiltrados.filter(
+      (pase) => pase.cerro.toUpperCase() === cerro.toUpperCase()
+    );
   }
 
   if (pase) {
-    pasesFiltrados = pasesFiltrados.filter((pase) => pase.tipo.toUpperCase() === pase.toUpperCase());
+    pasesFiltrados = pasesFiltrados.filter(
+      (pase) => pase.tipo.toUpperCase() === pase.toUpperCase()
+    );
   }
   if (dias) {
     pasesFiltrados = pasesFiltrados.filter((pase) => pase.dias === dias);
@@ -483,7 +557,8 @@ export const handleFormularios = (
   setClases,
   setTraslado,
   cerro,
-  setCerro
+  setCerro,
+  setBusqueda
 ) => {
   // Lógica para manejar la búsqueda basada en la categoría
   if (category === "Equipos") {
@@ -534,6 +609,7 @@ export const handleFormularios = (
         setHoteles={setHoteles}
         cerro={cerro}
         setCerro={setCerro}
+        setBusqueda={setBusqueda}
       />
     );
   }

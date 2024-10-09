@@ -8,7 +8,7 @@ import { CalendarDaysIcon } from "../../svg/svg";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select";
 import { handleHoteles } from "@/app/lib/utils";
 
-export default function Hoteles({ category, paquetes, setHoteles, cerro, setCerro }) {
+export default function Hoteles({ category, paquetes, setHoteles, cerro, setCerro, setBusqueda }) {
   const [cerrosHoteles, setCerrosHoteles] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -80,6 +80,14 @@ export default function Hoteles({ category, paquetes, setHoteles, cerro, setCerr
       setHoteles,
       detalleHabitaciones
     );
+    const busqueda = {
+      detalleHabitaciones,
+      startDate,
+      endDate,
+      producto,
+    }
+    console.log(busqueda);
+    setBusqueda(busqueda);
   };
 
   const handleCerro = (value) => {

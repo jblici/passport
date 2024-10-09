@@ -8,6 +8,7 @@ import { Button } from "../components/ui/button";
 
 export default function Cotizador() {
   const { paquetes, rentals, clases, pases, traslado } = useSpeadsheets(null);
+  const [busqueda, setBusqueda] = useState("");
   const [cerro, setCerro] = useState("");
   const [resHoteles, setHoteles] = useState(null);
   const [resPases, setPases] = useState(null);
@@ -72,7 +73,8 @@ export default function Cotizador() {
                   setClases,
                   setTraslado,
                   cerro,
-                  setCerro
+                  setCerro,
+                  setBusqueda
                 )}
             </div>
           </div>
@@ -92,8 +94,8 @@ export default function Cotizador() {
           {paquetesSeleccionados.length > 0 && (
             <Presupuesto
               paquetesSeleccionados={paquetesSeleccionados}
+              busqueda={busqueda}
               totalCompra={totalCompra}
-              generatePDF={() => generatePDF(paquetesSeleccionados, totalCompra)}
               eliminarPaquete={eliminarPaquete}
             />
           )}
