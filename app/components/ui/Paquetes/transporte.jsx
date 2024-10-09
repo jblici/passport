@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Button } from "../button";
 
 const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
-  console.log(resultados);
+  //console.log(resultados);
   if (!resultados) return null;
   return (
     <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">

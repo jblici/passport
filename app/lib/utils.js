@@ -11,7 +11,9 @@ import Transporte from "../components/ui/Formularios/transporte";
 import Hoteles from "../components/ui/Formularios/hoteles";
 
 export const generatePDF = (paquetesSeleccionados, totalCompra, busqueda, imageData) => {
-  const personas = calcularTotalPersonas(busqueda.detalleHabitaciones);
+  let personas;
+  if (busqueda.detalleHabitaciones) personas = calcularTotalPersonas(busqueda.detalleHabitaciones);
+
   const dias = calcularDiferenciaDiasProducto(busqueda.producto);
   const fechasFormateadas = formatDate(busqueda.startDate, dias);
   const doc = new jsPDF();
@@ -27,7 +29,7 @@ export const generatePDF = (paquetesSeleccionados, totalCompra, busqueda, imageD
   doc.text("Presupuesto Passport Ski 2024", 14, 50);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(14);
-  doc.text(`${personas.total} Personas`, 14, 70);
+  if (personas) doc.text(`${personas.total} Personas`, 14, 70);
   doc.text(
     `Fechas del viaje: ${fechasFormateadas.fechaInicial} - ${
       busqueda.endDate ? formatDate(busqueda.endDate) : fechasFormateadas.fechaFinal
@@ -114,6 +116,7 @@ export const handleHoteles = (
       producto,
       totalPersonas
     );
+    //console.log(busquedaHoteles)
     setHoteles(busquedaHoteles);
   } catch (error) {
     console.error(error);
@@ -171,7 +174,6 @@ function calcularHoteles(
 
       paquetesPorHabitacion.forEach((paquete) => {
         let precioHabitacion;
-
         if (paquete.camaExtra === "Si") {
           // Si hay cama extra
           if (menores > 0) {
@@ -192,7 +194,7 @@ function calcularHoteles(
             paquete.precio * mayores +
             (paquete.precioMenor ? paquete.precioMenor * menores : paquete.precio * menores);
         }
-        const habitacionKey = `habitacion${index + 1}`;
+        const habitacionKey = `Habitacion ${index + 1}`;
         if (!resultados[habitacionKey]) {
           resultados[habitacionKey] = [];
         }
@@ -215,7 +217,7 @@ function calcularHoteles(
       const paquetesPorHabitacion = {};
       const paquetesHabitacion = paquetesFiltrados.filter((paquete) => paquete.personas === total);
 
-      const habitacionKey = `habitacion${index + 1}`;
+      const habitacionKey = `Habitacion ${index + 1}`;
       if (!resultados[habitacionKey]) {
         resultados[habitacionKey] = [];
       }
@@ -426,25 +428,32 @@ export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama)
 
   // Filtrar por fechas
   if (startDate && dias) {
-    const fechaFin = new Date(startDate); // Clone startDate
-    fechaFin.setDate(fechaFin.getDate() + dias - 1); // Adjust the end date
+    const fechaFin = sumarDias(new Date(startDate), Number(dias)); // Clonar startDate
 
     rentalsFiltradas = rentalsFiltradas.filter((pase) => {
       const paseInicio = parseDate(pase.fechaInicio);
       const paseFinal = parseDate(pase.fechaFinal);
 
-      // Check if startDate is within paseInicio and paseFinal
+      // Verificar si startDate está entre paseInicio y paseFinal
       return paseInicio <= startDate && paseFinal >= fechaFin;
     });
   }
 
   setEquipos(rentalsFiltradas);
+};
+
+function sumarDias(fecha, dias) {
+  // Asegúrate de que fecha sea un objeto Date
+  const fechaObj = new Date(fecha);
+
+  // Sumar los días
+  fechaObj.setDate(fechaObj.getDate() + dias);
+
+  return fechaObj; // Devuelve la nueva fecha
 }
 
 export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) => {
   let clasesFiltradas = clases;
-
-  console.log(startDate);
 
   if (cerro) {
     clasesFiltradas = clasesFiltradas.filter(
@@ -462,8 +471,7 @@ export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) =>
 
   // Filtrar por fechas
   if (startDate && dias) {
-    const fechaFin = new Date(startDate); // Clone startDate
-    fechaFin.setDate(fechaFin.getDate() + dias - 1); // Adjust the end date
+    const fechaFin = sumarDias(new Date(startDate), Number(dias)); // Clonar startDate
 
     clasesFiltradas = clasesFiltradas.filter((clase) => {
       const paseInicio = parseDate(clase.fechaInicio);
@@ -475,7 +483,7 @@ export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) =>
   }
 
   setClases(clasesFiltradas);
-}
+};
 
 //BUSQUEDA PASES
 
@@ -499,8 +507,7 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
 
   // Filtrar por fechas (la fecha de inicio debe estar dentro del rango de fechas del pase)
   if (startDate && dias) {
-    const fechaFin = new Date(startDate);
-    fechaFin.setDate(fechaFin.getDate() + dias - 1); // Ajustar la fecha final según los días
+    const fechaFin = sumarDias(new Date(startDate), Number(dias)); // Clonar startDate
 
     pasesFiltrados = pasesFiltrados.filter((pase) => {
       const paseInicio = parseDate(pase.fechaInicio);
@@ -532,6 +539,7 @@ export const handleBusqueda = (
   agregarPaquete
 ) => {
   // Lógica para manejar la búsqueda basada en la categoría
+  console.log(category)
   if (category === "Equipos") {
     if (!resEquipos) return null;
     return <PaquetesEquipos resultados={resEquipos} agregarPaquete={agregarPaquete} />;
@@ -544,7 +552,7 @@ export const handleBusqueda = (
   } else if (category === "Transporte") {
     if (!resTraslado) return null;
     return <PaquetesTransporte resultados={resTraslado} agregarPaquete={agregarPaquete} />;
-  } else if (category === "Hoteles") {
+  } else if (category === "Alojamientos") {
     if (!resHoteles) return null;
     return <PaquetesHoteles resultados={resHoteles} agregarPaquete={agregarPaquete} />;
   }
@@ -607,7 +615,7 @@ export const handleFormularios = (
         setCerro={setCerro}
       />
     );
-  } else if (category === "Hoteles") {
+  } else if (category === "Alojamientos") {
     return (
       <Hoteles
         category={category}

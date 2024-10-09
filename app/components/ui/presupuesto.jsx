@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/app/components/ui/button";
 import { XIcon } from "../svg/svg";
-import { generatePDF } from "@/app/lib/utils";
+import { formatNumberWithDots, generatePDF } from "@/app/lib/utils";
 import Passport from "/public/Passport.png";
 
 const ResumenPresupuesto = ({ paquetesSeleccionados, totalCompra, eliminarPaquete, busqueda }) => {
@@ -19,7 +19,7 @@ const ResumenPresupuesto = ({ paquetesSeleccionados, totalCompra, eliminarPaquet
             <div key={index} className="flex items-center justify-between">
               <span>{paquete.name}</span>
               <div>
-                <span>${paquete.price}</span>
+                <span>${formatNumberWithDots(paquete.price)}</span>
                 <button
                   onClick={() => eliminarPaquete(index)}
                   className="ml-4 text-black hover:text-red-700 focus:outline-none"
@@ -30,12 +30,12 @@ const ResumenPresupuesto = ({ paquetesSeleccionados, totalCompra, eliminarPaquet
               </div>
             </div>
           ))}
-          <div className="flex items-center justify-end mt-4 border-t">
-            <span className="text-2xl font-bold">${totalCompra}</span>
+          <div className="flex items-center justify-end pt-2 mt-4 border-t">
+            <span className="text-2xl font-bold">${formatNumberWithDots(totalCompra)}</span>
           </div>
           <div className="flex justify-end pt-4">
             <Button onClick={generate} className="w-auto bg-blue-500 text-white hover:bg-blue-600">
-              Guardar PDF
+              Guardar Presupuesto
             </Button>
           </div>
         </div>

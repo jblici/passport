@@ -1,9 +1,10 @@
 import React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../table";
 import { Button } from "../button";
+import { formatNumberWithDots } from "@/app/lib/utils";
 
 const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
-  console.log(resultados);
+  //console.log(resultados);
   if (!resultados) return null;
   if (Object.keys(resultados).length === 0) {
     return (
@@ -24,7 +25,7 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
           const paquetes = resultados[clave];
           return (
             <div key={clave} className="mb-6">
-              <h3 className="text-lg font-bold mb-2">{`Paquetes para ${clave.replace(
+              <h3 className="text-lg font-bold mb-2">{`${clave.replace(
                 "total_",
                 ""
               )}`}</h3>
@@ -34,7 +35,6 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
                     <TableHead>Cerro</TableHead>
                     <TableHead>Hotel</TableHead>
                     <TableHead>Habitacion</TableHead>
-                    <TableHead>Noches</TableHead>
                     <TableHead>Personas</TableHead>
                     <TableHead>Cama extra</TableHead>
                     <TableHead>Precio</TableHead>
@@ -55,7 +55,6 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
                         <TableCell>{r.paquetesUtilizados.cerro}</TableCell>
                         <TableCell>{r.paquetesUtilizados.hotel}</TableCell>
                         <TableCell>{r.paquetesUtilizados.habitacion}</TableCell>
-                        <TableCell>{r.noches}</TableCell>
                         <TableCell>{r.totalPersonas}</TableCell>
                         <TableCell>
                           {r.paquetesUtilizados.camaExtra === "Si" ? (
@@ -69,7 +68,7 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
                           )}
                         </TableCell>
 
-                        <TableCell>{`$ ${r.precioTotal}`}</TableCell>
+                        <TableCell>{`$ ${formatNumberWithDots(r.precioTotal)}`}</TableCell>
                         <TableCell>
                           <Button
                             variant="outline"
