@@ -23,7 +23,6 @@ export default function Cotizador() {
 
   const handleCategorySelect = (cat) => {
     setCategory(cat);
-    console.log(cat)
   };
 
   const agregarPaquete = (paquete) => {

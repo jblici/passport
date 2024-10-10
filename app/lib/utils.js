@@ -539,7 +539,6 @@ export const handleBusqueda = (
   agregarPaquete
 ) => {
   // Lógica para manejar la búsqueda basada en la categoría
-  console.log(category)
   if (category === "Equipos") {
     if (!resEquipos) return null;
     return <PaquetesEquipos resultados={resEquipos} agregarPaquete={agregarPaquete} />;
