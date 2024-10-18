@@ -48,6 +48,7 @@ export default function Clases({ category, clases, setClases, cerro, setCerro })
                 </SelectContent>
               </Select>
             </div>
+            {/*
             <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
               <Label htmlFor="centro">Tipo:</Label>
               <Select id="clase" onValueChange={handleTipo} value={tipo}>
@@ -61,6 +62,7 @@ export default function Clases({ category, clases, setClases, cerro, setCerro })
                 </SelectContent>
               </Select>
             </div>
+            */}
           </div>
           <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
             <div className="flex flex-col space-y-2 w-full sm:w-1/2">

@@ -1,6 +1,7 @@
-import React from "react";
+import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../table";
 import { Button } from "../button";
+import { formatNumberWithDots } from "@/app/lib/utils";
 
 const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
@@ -50,7 +51,7 @@ const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
                 <TableCell>{r.gama}</TableCell>
                 <TableCell>{r.articulo}</TableCell>
                 <TableCell>{r.dias}</TableCell>
-                <TableCell>{`$ ${r.precio}`}</TableCell>
+                <TableCell>{`$ ${formatNumberWithDots(r.precio)}`}</TableCell>
                 <TableCell>
                   <div className="flex">
                     <select

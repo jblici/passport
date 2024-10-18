@@ -81,13 +81,14 @@ const useSpeadsheets = () => {
         ] = row.split(",");
         return {
           cerro,
+          local,
           temporada,
           edad,
           gama,
           articulo,
           fechaInicio,
           fechaFinal,
-          dias,
+          dias: Number(dias),
           precio: Number(Math.round(precio)),
         };
       });
@@ -100,7 +101,43 @@ const useSpeadsheets = () => {
       .split("\n")
       .slice(1)
       .map((row) => {
-        const [cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio] =
+        const [
+          cerro,
+          temporada,
+          tipo,
+          edad,
+          edad2,
+          descripcion,
+          fechaInicio,
+          fechaFinal,
+          pack,
+          dias,
+          precio,
+        ] = row.split(",");
+        return {
+          cerro,
+          temporada,
+          tipo,
+          edad,
+          edad2,
+          descripcion,
+          fechaInicio,
+          fechaFinal,
+          pack,
+          dias: Number(dias),
+          precio: Number(Math.round(precio)),
+        };
+      });
+    const csv4 = await fetch(
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=371646853&single=true&output=csv"
+    ).then((res) => res.text());
+
+    const pases = csv4
+      .split("\n")
+      .slice(1)
+      .map((row) => {
+        console.log(row[0]);
+        const [cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio, pack] =
           row.split(",");
         return {
           cerro,
@@ -111,27 +148,7 @@ const useSpeadsheets = () => {
           fechaFinal,
           dias,
           precio: Number(Math.round(precio)),
-        };
-      });
-    const csv4 = await fetch(
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1904249232&single=true&output=csv"
-    ).then((res) => res.text());
-
-    const pases = csv4
-      .split("\n")
-      .slice(1)
-      .map((row) => {
-        const [cerro, fechaInicio, fechaFinal, temporada, dias, categoria, tipo, precio] =
-          row.split(",");
-        return {
-          cerro,
-          fechaInicio,
-          fechaFinal,
-          temporada,
-          dias,
-          categoria,
-          tipo,
-          precio: Number(Math.round(precio)),
+          pack,
         };
       });
     const csv5 = await fetch(

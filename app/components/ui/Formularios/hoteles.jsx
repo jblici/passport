@@ -243,7 +243,6 @@ export default function Hoteles({ category, paquetes, setHoteles, cerro, setCerr
               ))}
             </div>
           </div>
-
           <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 pt-4">
             <div className="flex flex-col space-y-2 w-full sm:w-1/2">
               <Label htmlFor="start-date">

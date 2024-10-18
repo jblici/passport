@@ -1,6 +1,7 @@
-import React from "react";
+import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../table";
 import { Button } from "../button";
+import { formatNumberWithDots } from "@/app/lib/utils";
 
 const PaquetesPases = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
@@ -34,27 +35,25 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
           <TableHeader>
             <TableRow>
               <TableHead>Cerro</TableHead>
-              <TableHead>Fecha Inicio</TableHead>
-              <TableHead>Fecha Final</TableHead>
               <TableHead>Temporada</TableHead>
               <TableHead>Días</TableHead>
-              <TableHead>Categoria</TableHead>
+              <TableHead>Edad</TableHead>
               <TableHead>Tipo</TableHead>
+              <TableHead>Pack</TableHead>
               <TableHead>Precio</TableHead>
               <TableHead>Agregar</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {resultados?.map((r) => (
+            {resultados?.map((r, index) => (
               <TableRow key={Math.floor(Math.random() * 1000000)}>
                 <TableCell>{r.cerro}</TableCell>
-                <TableCell>{r.fechaInicio}</TableCell>
-                <TableCell>{r.fechaFinal}</TableCell>
                 <TableCell>{r.temporada}</TableCell>
                 <TableCell>{r.dias}</TableCell>
-                <TableCell>{r.categoria}</TableCell>
+                <TableCell>{r.edad}</TableCell>
                 <TableCell>{r.tipo}</TableCell>
-                <TableCell>{`$ ${r.precio}`}</TableCell>
+                <TableCell>{r.pack}</TableCell>
+                <TableCell>{`$ ${formatNumberWithDots(r.precio)}`}</TableCell>
                 <TableCell>
                   <div className="flex">
                     <select

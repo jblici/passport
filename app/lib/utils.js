@@ -409,22 +409,24 @@ function calcularDiferenciaDiasProducto(producto) {
 
 export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama) => {
   let rentalsFiltradas = rentals;
-
+  
+  
   if (cerro) {
     rentalsFiltradas = rentalsFiltradas.filter(
       (rental) => rental.cerro.toUpperCase() === cerro.toUpperCase()
     );
   }
-
+  
   if (gama) {
     rentalsFiltradas = rentalsFiltradas.filter(
       (rental) => rental.gama.toUpperCase() === gama.toUpperCase()
     );
   }
-
+  
   if (dias) {
-    rentalsFiltradas = rentalsFiltradas.filter((pase) => pase.dias === dias);
+    rentalsFiltradas = rentalsFiltradas.filter((pase) => pase.dias === Number(dias));
   }
+  console.log(rentalsFiltradas)
 
   // Filtrar por fechas
   if (startDate && dias) {
@@ -455,18 +457,20 @@ function sumarDias(fecha, dias) {
 export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) => {
   let clasesFiltradas = clases;
 
+  
   if (cerro) {
     clasesFiltradas = clasesFiltradas.filter(
       (clase) => clase.cerro.toUpperCase() === cerro.toUpperCase()
     );
   }
+  console.log(clasesFiltradas)
 
   if (tipo) {
     clasesFiltradas = clasesFiltradas.filter((clase) => clase.tipo === tipo);
   }
 
   if (dias) {
-    clasesFiltradas = clasesFiltradas.filter((pase) => pase.dias === dias);
+    clasesFiltradas = clasesFiltradas.filter((pase) => pase.dias === Number(dias));
   }
 
   // Filtrar por fechas
@@ -501,8 +505,11 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
       (pase) => pase.tipo.toUpperCase() === pase.toUpperCase()
     );
   }
+
   if (dias) {
-    pasesFiltrados = pasesFiltrados.filter((pase) => pase.dias === dias);
+    pasesFiltrados = pasesFiltrados.filter(
+      (pase) => (dias = 1 ? pase.dias <= dias : pase.dias === dias)
+    );
   }
 
   // Filtrar por fechas (la fecha de inicio debe estar dentro del rango de fechas del pase)
@@ -517,6 +524,7 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
       return paseInicio <= startDate && paseFinal >= fechaFin;
     });
   }
+  console.log(pasesFiltrados);
 
   setPases(pasesFiltrados);
 };

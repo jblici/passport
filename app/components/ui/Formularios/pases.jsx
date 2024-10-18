@@ -13,6 +13,7 @@ export default function Pases({ category, pases, setPases, cerro, setCerro }) {
   const [startDate, setStartDate] = useState(null);
   const [dias, setDias] = useState(null);
   const [pase, setPase] = useState(null);
+  const [disabled, setDisabled] = useState(true);
 
   const handleSubmit = (e) => {
     e.preventDefault();
