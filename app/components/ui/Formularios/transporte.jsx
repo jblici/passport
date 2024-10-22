@@ -9,13 +9,21 @@ import { CalendarDaysIcon, Pipol } from "../../svg/svg";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select";
 import { handleTransporte } from "@/app/lib/utils";
 
-export default function Transporte({ category, traslado, setTraslado, cerro, setCerro }) {
-  const [startDate, setStartDate] = useState(null);
+export default function Transporte({
+  category,
+  traslado,
+  setTraslado,
+  cerro,
+  setCerro,
+  startDate,
+  setStartDate,
+}) {
   const [endDate, setEndDate] = useState(null);
+  const [dias, setDias] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleTransporte(cerro, traslado, setTraslado, startDate, endDate);
+    handleTransporte(cerro, traslado, setTraslado, startDate, endDate, Number(dias));
   };
 
   const handleCerro = (value) => {
@@ -41,6 +49,17 @@ export default function Transporte({ category, traslado, setTraslado, cerro, set
                   <SelectItem value="Las Leñas">Las Leñas</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
+              <Label htmlFor="days">
+                <span className="flex items-center gap-1">Dias:</span>
+              </Label>
+              <Input
+                id="days"
+                placeholder="Dias"
+                className="w-full p-2 border rounded"
+                onChange={(e) => setDias(e.target.value)}
+              />
             </div>
           </div>
           <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">

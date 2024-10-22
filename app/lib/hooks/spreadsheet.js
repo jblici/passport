@@ -136,7 +136,6 @@ const useSpeadsheets = () => {
       .split("\n")
       .slice(1)
       .map((row) => {
-        console.log(row[0]);
         const [cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio, pack] =
           row.split(",");
         return {

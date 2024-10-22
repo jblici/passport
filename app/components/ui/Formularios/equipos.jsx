@@ -9,15 +9,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { handleEquipos } from "@/app/lib/utils";
 import { Input } from "../input";
 
-export default function Equipos({ category, equipos, setEquipos, cerro, setCerro }) {
-  const [fecha, setFecha] = useState();
+export default function Equipos({
+  category,
+  equipos,
+  setEquipos,
+  cerro,
+  setCerro,
+  startDate,
+  setStartDate,
+}) {
   const [dias, setDias] = useState(null);
   const [gama, setGama] = useState(null);
   const [disabled, setDisabled] = useState(true);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleEquipos(cerro, equipos, setEquipos, fecha, dias, gama);
+    handleEquipos(cerro, equipos, setEquipos, startDate, Number(dias), gama);
   };
 
   const handleGama = (value) => {
@@ -69,12 +76,12 @@ export default function Equipos({ category, equipos, setEquipos, cerro, setCerro
                 </span>
               </Label>
               <DatePicker
-                  selected={fecha}
-                  dateFormat="dd/MM/yyyy"
-                  onChange={(date) => setFecha(date)}
-                  className="w-full p-2 border rounded"
-                  placeholderText="Seleccionar fecha"
-                />
+                selected={startDate}
+                dateFormat="dd/MM/yyyy"
+                onChange={(date) => setStartDate(date)}
+                className="w-full p-2 border rounded"
+                placeholderText="Seleccionar fecha"
+              />
             </div>
             <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
               <Label htmlFor="days">
@@ -89,7 +96,7 @@ export default function Equipos({ category, equipos, setEquipos, cerro, setCerro
             </div>
           </div>
           <div className="flex w-fit">
-            <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600" >
+            <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600">
               Buscar
             </Button>
           </div>

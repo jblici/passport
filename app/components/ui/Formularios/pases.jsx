@@ -9,15 +9,22 @@ import { CalendarDaysIcon } from "../../svg/svg";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select";
 import { handlePases } from "@/app/lib/utils";
 
-export default function Pases({ category, pases, setPases, cerro, setCerro }) {
-  const [startDate, setStartDate] = useState(null);
+export default function Pases({
+  category,
+  pases,
+  setPases,
+  cerro,
+  setCerro,
+  startDate,
+  setStartDate,
+}) {
   const [dias, setDias] = useState(null);
   const [pase, setPase] = useState(null);
   const [disabled, setDisabled] = useState(true);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handlePases(cerro, pases, setPases, startDate, dias, pase);
+    handlePases(cerro, pases, setPases, startDate, Number(dias), pase);
   };
 
   const handleCerro = (value) => {
@@ -31,9 +38,8 @@ export default function Pases({ category, pases, setPases, cerro, setCerro }) {
   useEffect(() => {
     if (cerro && dias && startDate) {
       setDisabled(false);
-    } 
-  }, [cerro, dias, startDate])
-  
+    }
+  }, [cerro, dias, startDate]);
 
   return (
     <div className="h-fit w-full">
@@ -89,7 +95,12 @@ export default function Pases({ category, pases, setPases, cerro, setCerro }) {
               <Label htmlFor="days">
                 <span className="flex items-center gap-1">Dias:</span>
               </Label>
-              <Input id="days" placeholder="Dias" className="w-full p-2 border rounded" onChange={(e) => setDias(e.target.value)} />
+              <Input
+                id="days"
+                placeholder="Dias"
+                className="w-full p-2 border rounded"
+                onChange={(e) => setDias(e.target.value)}
+              />
             </div>
           </div>
           <div className="flex w-fit">

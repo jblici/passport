@@ -9,15 +9,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { handleClases } from "@/app/lib/utils";
 import { Input } from "../input";
 
-export default function Clases({ category, clases, setClases, cerro, setCerro }) {
-  const [startDate, setStartDate] = useState(null);
+export default function Clases({
+  category,
+  clases,
+  setClases,
+  cerro,
+  setCerro,
+  startDate,
+  setStartDate,
+}) {
   const [disabled, setDisabled] = useState(true);
   const [dias, setDias] = useState(null);
   const [tipo, setTipo] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleClases(cerro, clases, setClases, startDate, dias, tipo);
+    handleClases(cerro, clases, setClases, startDate, Number(dias), tipo);
   };
 
   const handleTipo = (value) => {

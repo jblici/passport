@@ -409,28 +409,26 @@ function calcularDiferenciaDiasProducto(producto) {
 
 export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama) => {
   let rentalsFiltradas = rentals;
-  
-  
+
   if (cerro) {
     rentalsFiltradas = rentalsFiltradas.filter(
       (rental) => rental.cerro.toUpperCase() === cerro.toUpperCase()
     );
   }
-  
+
   if (gama) {
     rentalsFiltradas = rentalsFiltradas.filter(
       (rental) => rental.gama.toUpperCase() === gama.toUpperCase()
     );
   }
-  
+
   if (dias) {
-    rentalsFiltradas = rentalsFiltradas.filter((pase) => pase.dias === Number(dias));
+    rentalsFiltradas = rentalsFiltradas.filter((pase) => pase.dias === dias);
   }
-  console.log(rentalsFiltradas)
 
   // Filtrar por fechas
   if (startDate && dias) {
-    const fechaFin = sumarDias(new Date(startDate), Number(dias)); // Clonar startDate
+    const fechaFin = sumarDias(new Date(startDate), dias); // Clonar startDate
 
     rentalsFiltradas = rentalsFiltradas.filter((pase) => {
       const paseInicio = parseDate(pase.fechaInicio);
@@ -457,25 +455,23 @@ function sumarDias(fecha, dias) {
 export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) => {
   let clasesFiltradas = clases;
 
-  
   if (cerro) {
     clasesFiltradas = clasesFiltradas.filter(
       (clase) => clase.cerro.toUpperCase() === cerro.toUpperCase()
     );
   }
-  console.log(clasesFiltradas)
 
   if (tipo) {
     clasesFiltradas = clasesFiltradas.filter((clase) => clase.tipo === tipo);
   }
 
   if (dias) {
-    clasesFiltradas = clasesFiltradas.filter((pase) => pase.dias === Number(dias));
+    clasesFiltradas = clasesFiltradas.filter((pase) => (pase.dias = dias));
   }
 
   // Filtrar por fechas
   if (startDate && dias) {
-    const fechaFin = sumarDias(new Date(startDate), Number(dias)); // Clonar startDate
+    const fechaFin = sumarDias(new Date(startDate), dias); // Clonar startDate
 
     clasesFiltradas = clasesFiltradas.filter((clase) => {
       const paseInicio = parseDate(clase.fechaInicio);
@@ -507,24 +503,23 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
   }
 
   if (dias) {
-    pasesFiltrados = pasesFiltrados.filter(
-      (pase) => (dias = 1 ? pase.dias <= dias : pase.dias === dias)
+    pasesFiltrados = pasesFiltrados.filter((pase) =>
+      dias === 1 ? pase.dias <= dias : (pase.dias = dias)
     );
   }
 
   // Filtrar por fechas (la fecha de inicio debe estar dentro del rango de fechas del pase)
   if (startDate && dias) {
-    const fechaFin = sumarDias(new Date(startDate), Number(dias)); // Clonar startDate
+    const fechaFin = sumarDias(new Date(startDate), dias); // Clonar startDate
 
     pasesFiltrados = pasesFiltrados.filter((pase) => {
-      const paseInicio = parseDate(pase.fechaInicio);
-      const paseFinal = parseDate(pase.fechaFinal);
+      const paseInicio = parseDate(pase.fechaInicio); // Asegurarse de que pase.fechaInicio es un objeto Date
+      const paseFinal = parseDate(pase.fechaFinal); // Asegurarse de que pase.fechaFinal es un objeto Date
 
       // La fecha de inicio debe estar entre paseInicio y paseFinal
       return paseInicio <= startDate && paseFinal >= fechaFin;
     });
   }
-  console.log(pasesFiltrados);
 
   setPases(pasesFiltrados);
 };
@@ -579,7 +574,9 @@ export const handleFormularios = (
   setTraslado,
   cerro,
   setCerro,
-  setBusqueda
+  setBusqueda,
+  startDate,
+  setStartDate
 ) => {
   // Lógica para manejar la búsqueda basada en la categoría
   if (category === "Equipos") {
@@ -590,6 +587,8 @@ export const handleFormularios = (
         setEquipos={setEquipos}
         cerro={cerro}
         setCerro={setCerro}
+        startDate={startDate}
+        setStartDate={setStartDate}
       />
     );
   } else if (category === "Clases") {
@@ -600,6 +599,8 @@ export const handleFormularios = (
         setClases={setClases}
         cerro={cerro}
         setCerro={setCerro}
+        startDate={startDate}
+        setStartDate={setStartDate}
       />
     );
   } else if (category === "Pases") {
@@ -610,6 +611,8 @@ export const handleFormularios = (
         setPases={setPases}
         cerro={cerro}
         setCerro={setCerro}
+        startDate={startDate}
+        setStartDate={setStartDate}
       />
     );
   } else if (category === "Transporte") {
@@ -620,6 +623,8 @@ export const handleFormularios = (
         setTraslado={setTraslado}
         cerro={cerro}
         setCerro={setCerro}
+        startDate={startDate}
+        setStartDate={setStartDate}
       />
     );
   } else if (category === "Alojamientos") {
@@ -631,6 +636,8 @@ export const handleFormularios = (
         cerro={cerro}
         setCerro={setCerro}
         setBusqueda={setBusqueda}
+        startDate={startDate}
+        setStartDate={setStartDate}
       />
     );
   }
