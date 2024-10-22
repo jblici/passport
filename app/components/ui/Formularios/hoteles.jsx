@@ -141,14 +141,14 @@ export default function Hoteles({
             </div>
             {cerro && (
               <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
-                <Label htmlFor="centro">Hotel:</Label>
+                <Label htmlFor="centro">Alojamiento:</Label>
                 <Select
                   id="hotel"
                   onValueChange={(value) => handleHotel(value === "none" ? null : value)}
                   value={hotelSeleccionado}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar Hotel" />
+                    <SelectValue placeholder="Seleccionar Alojamiento" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">Ninguno</SelectItem>
