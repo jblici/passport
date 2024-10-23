@@ -10,7 +10,10 @@ import Pases from "../components/ui/Formularios/pases";
 import Transporte from "../components/ui/Formularios/transporte";
 import Hoteles from "../components/ui/Formularios/hoteles";
 
-export const generatePDF = (paquetesSeleccionados, totalCompra, busqueda, imageData) => {
+export const generatePDF = (paquetesSeleccionados, totalCompra, busqueda, imageData, clientName) => {
+  const handleCreatePDFClick = () => {
+    setIsModalOpen(true);
+  };
   let personas;
   if (busqueda.detalleHabitaciones) personas = calcularTotalPersonas(busqueda.detalleHabitaciones);
 
@@ -22,6 +25,7 @@ export const generatePDF = (paquetesSeleccionados, totalCompra, busqueda, imageD
   img.height = 40;
   img.width = 40;
   img.src = imageData.src;
+  if (clientName) doc.text(`Cliente: ${clientName}`, 120, 20);
   doc.addImage(img, "png", 10, 10);
 
   doc.setFont("helvetica", "bold");
@@ -30,6 +34,7 @@ export const generatePDF = (paquetesSeleccionados, totalCompra, busqueda, imageD
   doc.setFont("helvetica", "normal");
   doc.setFontSize(14);
   if (personas) doc.text(`${personas.total} Personas`, 14, 70);
+ 
   doc.text(
     `Fechas del viaje: ${fechasFormateadas.fechaInicial} - ${
       busqueda.endDate ? formatDate(busqueda.endDate) : fechasFormateadas.fechaFinal
