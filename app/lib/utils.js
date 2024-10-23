@@ -137,17 +137,14 @@ function calcularHoteles(
   const inicio = startDate;
   const fin = endDate;
   let resultados = {};
-  //const totales = [totalPersonas.total, ...totalPersonas.habitaciones.map((h) => h.total)];
   let paquetesFiltrados = paquetes;
-
-  //let paquetesFiltrados = paquetes.filter((paquete) => totales.includes(paquete.personas));
 
   if (cerro) {
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.cerro === cerro);
   }
 
-  if (hotelSeleccionado) {
-    paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.hotel === hotelSeleccionado);
+  if (hotelSeleccionado.length > 0) {
+    paquetesFiltrados = paquetesFiltrados.filter((paquete) => hotelSeleccionado.includes(paquete.hotel));
   }
 
   // Filtrado adicional para "Las Leñas"

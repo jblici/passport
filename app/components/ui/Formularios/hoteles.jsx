@@ -5,8 +5,16 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Label } from "../label";
 import { Button } from "../button";
 import { CalendarDaysIcon } from "../../svg/svg";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select";
+import {
+  Select,
+  SelectGroup,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../select";
 import { handleHoteles } from "@/app/lib/utils";
+import MultiSelect from "react-select";
 
 export default function Hoteles({
   category,
@@ -20,7 +28,7 @@ export default function Hoteles({
 }) {
   const [cerrosHoteles, setCerrosHoteles] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [hotelSeleccionado, setHotelSeleccionado] = useState("");
+  const [selectedHoteles, setSelectedHoteles] = useState([]);
   const [producto, setProducto] = useState(null);
   const [habitaciones, setHabitaciones] = useState("1");
   const [detalleHabitaciones, setDetalleHabitaciones] = useState([{ mayores: "0", menores: "0" }]);
@@ -67,21 +75,20 @@ export default function Hoteles({
   }, [paquetes]);
 
   const isSaturday = (date) => {
-    // 6 representa sábado en JavaScript (0 = domingo, 1 = lunes, ..., 6 = sábado)
     return date.getDay() === 6;
   };
 
   const isMonday = (date) => {
-    // 6 representa sábado en JavaScript (0 = domingo, 1 = lunes, ..., 6 = sábado)
     return date.getDay() === 1;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const hoteles = selectedHoteles.map(hotel => hotel.value);
     handleHoteles(
       startDate,
       endDate,
-      hotelSeleccionado,
+      hoteles,
       producto,
       cerro,
       paquetes,
@@ -104,10 +111,6 @@ export default function Hoteles({
     setCerro(value);
   };
 
-  const handleHotel = (value) => {
-    setHotelSeleccionado(value);
-  };
-
   const handleProducto = (value) => {
     setProducto(value);
   };
@@ -123,14 +126,14 @@ export default function Hoteles({
               <Label htmlFor="centro">Centro:</Label>
               <Select
                 id="centro"
-                onValueChange={(value) => handleCerro(value === "none" ? null : value)}
+                onValueChange={(value) => handleCerro(value === "todos" ? null : value)}
                 value={cerro}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar Centro" />
+                  <SelectValue placeholder="Seleccionar centro" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">Ninguno</SelectItem>
+                  <SelectItem value="todos">Todos</SelectItem>
                   {Object.keys(cerrosHoteles).map((c) => (
                     <SelectItem key={c} value={c}>
                       {c}
@@ -141,14 +144,25 @@ export default function Hoteles({
             </div>
             {cerro && (
               <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
-                <Label htmlFor="centro">Hotel:</Label>
-                <Select
+                <Label htmlFor="centro">Alojamiento:</Label>
+                <MultiSelect
+                  defaultValue={null}
+                  onChange={setSelectedHoteles}
+                  options={cerrosHoteles[cerro].map((hotel) => ({
+                    value: hotel,
+                    label: hotel,
+                  }))}
+                  isMulti={true}
+                  placeholder="Seleccionar alojamientos"
+                />
+
+                {/*<SelectGroup
                   id="hotel"
                   onValueChange={(value) => handleHotel(value === "none" ? null : value)}
-                  value={hotelSeleccionado}
+                  value={selectedOptions}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar Hotel" />
+                    <SelectValue placeholder="Seleccionar Alojamiento" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">Ninguno</SelectItem>
@@ -159,7 +173,7 @@ export default function Hoteles({
                       </SelectItem>
                     ))}
                   </SelectContent>
-                </Select>
+                </SelectGroup> */}
               </div>
             )}
             {cerro === "Las Leñas" ? (
