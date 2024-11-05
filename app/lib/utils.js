@@ -10,7 +10,13 @@ import Pases from "../components/ui/Formularios/pases";
 import Transporte from "../components/ui/Formularios/transporte";
 import Hoteles from "../components/ui/Formularios/hoteles";
 
-export const generatePDF = (paquetesSeleccionados, totalCompra, busqueda, imageData, clientName) => {
+export const generatePDF = (
+  paquetesSeleccionados,
+  totalCompra,
+  busqueda,
+  imageData,
+  clientName
+) => {
   const handleCreatePDFClick = () => {
     setIsModalOpen(true);
   };
@@ -34,7 +40,7 @@ export const generatePDF = (paquetesSeleccionados, totalCompra, busqueda, imageD
   doc.setFont("helvetica", "normal");
   doc.setFontSize(14);
   if (personas) doc.text(`${personas.total} Personas`, 14, 70);
- 
+
   doc.text(
     `Fechas del viaje: ${fechasFormateadas.fechaInicial} - ${
       busqueda.endDate ? formatDate(busqueda.endDate) : fechasFormateadas.fechaFinal
@@ -149,7 +155,9 @@ function calcularHoteles(
   }
 
   if (hotelSeleccionado.length > 0) {
-    paquetesFiltrados = paquetesFiltrados.filter((paquete) => hotelSeleccionado.includes(paquete.hotel));
+    paquetesFiltrados = paquetesFiltrados.filter((paquete) =>
+      hotelSeleccionado.includes(paquete.hotel)
+    );
   }
 
   // Filtrado adicional para "Las Leñas"
@@ -171,15 +179,17 @@ function calcularHoteles(
       const { mayores, menores, total } = habitacion;
 
       const paquetesPorHabitacion = paquetesFiltrados.filter(
-        (paquete) => paquete.personas === total
+        (paquete) =>
+          paquete.personas === total ||
+          (paquete.personas === total - 1 && paquete.camaExtra === "Si")
       );
 
       paquetesPorHabitacion.forEach((paquete) => {
         let precioHabitacion;
-        if (paquete.camaExtra === "Si") {
-          // Si hay cama extra
+
+        if (paquete.personas === total - 1 && paquete.camaExtra === "Si") {
+          // Si necesita usar la cama extra
           if (menores > 0) {
-            // Calcular el precio si hay al menos un menor en la habitación
             precioHabitacion =
               paquete.extraMenor * 1 +
               (paquete.precioMenor
@@ -187,15 +197,15 @@ function calcularHoteles(
                 : paquete.precio * (menores - 1)) +
               paquete.precio * mayores;
           } else {
-            // Si no hay menores, simplemente calcular el precio para los mayores
             precioHabitacion = paquete.extraMayor * 1 + paquete.precio * (mayores - 1);
           }
         } else {
-          // Si no hay cama extra, simplemente calcular los precios normales
+          // Si no necesita usar la cama extra, aplicar precios normales
           precioHabitacion =
             paquete.precio * mayores +
             (paquete.precioMenor ? paquete.precioMenor * menores : paquete.precio * menores);
         }
+
         const habitacionKey = `Habitacion ${index + 1}`;
         if (!resultados[habitacionKey]) {
           resultados[habitacionKey] = [];
@@ -217,7 +227,11 @@ function calcularHoteles(
     totalPersonas.habitaciones.forEach((habitacion, index) => {
       const { mayores, menores, total } = habitacion;
       const paquetesPorHabitacion = {};
-      const paquetesHabitacion = paquetesFiltrados.filter((paquete) => paquete.personas === total);
+      const paquetesHabitacion = paquetesFiltrados.filter(
+        (paquete) =>
+          paquete.personas === total ||
+          (paquete.personas === total - 1 && paquete.camaExtra === "Si")
+      );
 
       const habitacionKey = `Habitacion ${index + 1}`;
       if (!resultados[habitacionKey]) {
@@ -260,35 +274,31 @@ function calcularHoteles(
               if (cerro === "Castor") {
                 let precioHabitacion;
 
-                if (paquete.camaExtra === "Si") {
-                  // Si hay cama extra
+                if (paquete.personas === total - 1 && paquete.camaExtra === "Si") {
+                  // Si necesita usar la cama extra
                   if (menores > 0) {
-                    // Si hay al menos un menor en la habitación
                     precioHabitacion =
-                      paquete.extraMenor * 1 + // Precio para la cama extra de un menor
+                      paquete.extraMenor * 1 +
                       (paquete.precioMenor
                         ? paquete.precioMenor * (menores - 1)
-                        : paquete.precio * (menores - 1)) + // Precio normal para los otros menores
-                      paquete.precio * mayores; // Precio normal para los mayores
+                        : paquete.precio * (menores - 1)) +
+                      paquete.precio * mayores;
                   } else {
-                    // Si no hay menores, calcular el precio para los mayores
-                    precioHabitacion =
-                      paquete.extraMayor * 1 + // Precio para la cama extra de un mayor
-                      paquete.precio * (mayores - 1); // Precio normal para los otros mayores
+                    precioHabitacion = paquete.extraMayor * 1 + paquete.precio * (mayores - 1);
                   }
                 } else {
-                  // Si no hay cama extra, calcular los precios normales
+                  // Si no necesita usar la cama extra, aplicar precios normales
                   precioHabitacion =
                     paquete.precio * mayores +
                     (paquete.precioMenor
                       ? paquete.precioMenor * menores
                       : paquete.precio * menores);
                 }
-
                 totalPrecio += noches * precioHabitacion;
+              } else {
+                totalPrecio += noches * (paquete.precio * total);
+                totalNoches += noches;
               }
-              totalPrecio += noches * (paquete.precio * total);
-              totalNoches += noches;
 
               combinacionActual.push({
                 ...paquete,
