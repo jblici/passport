@@ -217,7 +217,7 @@ function calcularHoteles(
           mayores,
           menores,
           noches,
-          precioTotal: precioHabitacion * noches,
+          precioTotal: precioHabitacion,
           paquetesUtilizados: paquete,
         });
       });
