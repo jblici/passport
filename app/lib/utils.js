@@ -9,6 +9,7 @@ import Clases from "../components/ui/Formularios/clases";
 import Pases from "../components/ui/Formularios/pases";
 import Transporte from "../components/ui/Formularios/transporte";
 import Hoteles from "../components/ui/Formularios/hoteles";
+import { isToday } from "date-fns";
 
 export const generatePDF = (
   paquetesSeleccionados,
@@ -20,6 +21,16 @@ export const generatePDF = (
   const handleCreatePDFClick = () => {
     setIsModalOpen(true);
   };
+
+  function obtenerFechaActual() {
+    const hoy = new Date(); // Obtiene la fecha actual
+    const dia = String(hoy.getDate()).padStart(2, "0"); // Asegura que el día tenga dos dígitos
+    const mes = String(hoy.getMonth() + 1).padStart(2, "0"); // Mes (0 = Enero, +1 para ajustar)
+    const anio = hoy.getFullYear(); // Obtiene el año completo
+
+    return `${dia}/${mes}/${anio}`; // Devuelve la fecha en formato dd/mm/aaaa
+  }
+
   let personas;
   if (busqueda.detalleHabitaciones) personas = calcularTotalPersonas(busqueda.detalleHabitaciones);
 
@@ -31,7 +42,7 @@ export const generatePDF = (
   img.height = 40;
   img.width = 40;
   img.src = imageData.src;
-  if (clientName) doc.text(`Cliente: ${clientName}`, 120, 20);
+  if (clientName) doc.text(`Cliente: ${clientName}`, 150, 20);
   doc.addImage(img, "png", 10, 10);
 
   doc.setFont("helvetica", "bold");
@@ -41,13 +52,7 @@ export const generatePDF = (
   doc.setFontSize(14);
   if (personas) doc.text(`${personas.total} Personas`, 14, 70);
 
-  doc.text(
-    `Fechas del viaje: ${fechasFormateadas.fechaInicial} - ${
-      busqueda.endDate ? formatDate(busqueda.endDate) : fechasFormateadas.fechaFinal
-    }`,
-    14,
-    60
-  );
+  doc.text(`Fechas del presupuesto: ${obtenerFechaActual()}`, 14, 60);
 
   doc.setFontSize(12);
   paquetesSeleccionados.forEach((paquete, index) => {
@@ -435,7 +440,7 @@ export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama)
   }
 
   if (dias) {
-    rentalsFiltradas = rentalsFiltradas.filter((pase) => pase.dias === dias);
+    rentalsFiltradas = rentalsFiltradas.filter((pase) => pase.dias <= dias);
   }
 
   // Filtrar por fechas
@@ -486,6 +491,7 @@ export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) =>
     const fechaFin = sumarDias(new Date(startDate), dias); // Clonar startDate
 
     clasesFiltradas = clasesFiltradas.filter((clase) => {
+      console.log(clase);
       const paseInicio = parseDate(clase.fechaInicio);
       const paseFinal = parseDate(clase.fechaFinal);
 

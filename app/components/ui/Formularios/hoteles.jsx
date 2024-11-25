@@ -155,25 +155,6 @@ export default function Hoteles({
                   isMulti={true}
                   placeholder="Seleccionar alojamientos"
                 />
-
-                {/*<SelectGroup
-                  id="hotel"
-                  onValueChange={(value) => handleHotel(value === "none" ? null : value)}
-                  value={selectedOptions}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar Alojamiento" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">Ninguno</SelectItem>
-
-                    {cerrosHoteles[cerro].map((hotel) => (
-                      <SelectItem key={hotel} value={hotel}>
-                        {hotel}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </SelectGroup> */}
               </div>
             )}
             {cerro === "Las Leñas" ? (

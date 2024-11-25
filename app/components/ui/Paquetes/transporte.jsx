@@ -3,8 +3,27 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Button } from "../button";
 
 const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
+  const [selectedCounts, setSelectedCounts] = useState({});
+ 
   //console.log(resultados);
   if (!resultados) return null;
+  if (Object.keys(resultados).length === 0) {
+    return (
+      <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
+        <div className="p-4 sm:p-6 md:p-8 border-b">
+          <h2 className="text-xl font-bold mb-2">No hay Clases disponibles...</h2>
+        </div>
+      </div>
+    );
+  }
+
+  const handleCountChange = (index, value) => {
+    setSelectedCounts((prev) => ({
+      ...prev,
+      [index]: value,
+    }));
+  };
+
   return (
     <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
       <div className="p-4 sm:p-6 md:p-8 border-b">
@@ -32,18 +51,32 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                 <TableCell>{r.personas}</TableCell>
                
                 <TableCell>
-                  <Button
-                    variant="outline"
-                    className="w-full bg-blue-500 text-white hover:bg-blue-600"
-                    onClick={() =>
-                      agregarPaquete({
-                        name: `Traslado Completo`,
-                        price: r.precio,
-                      })
-                    }
-                  >
-                    Agregar
-                  </Button>
+                <div className="flex">
+                    <select
+                      value={selectedCounts[index] || 1} // Valor por defecto
+                      onChange={(e) => handleCountChange(index, e.target.value)}
+                      className="mr-2"
+                    >
+                      {[...Array(5).keys()].map((num) => (
+                        <option key={num + 1} value={num + 1}>
+                          {num + 1}
+                        </option>
+                      ))}
+                    </select>
+                    <Button
+                      variant="outline"
+                      className="w-full bg-blue-500 text-white hover:bg-blue-600"
+                      onClick={() => {
+                        const count = selectedCounts[index] || 1; // Usar el valor seleccionado o 2 por defecto
+                        agregarPaquete({
+                          name: `Traslado ${r.recorrido} - ${r.servicio} - x ${count}`,
+                          price: r.precio * count,
+                        });
+                      }}
+                    >
+                      Agregar
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

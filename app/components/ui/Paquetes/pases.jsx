@@ -35,7 +35,6 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
           <TableHeader>
             <TableRow>
               <TableHead>Cerro</TableHead>
-              <TableHead>Temporada</TableHead>
               <TableHead>Días</TableHead>
               <TableHead>Edad</TableHead>
               <TableHead>Tipo</TableHead>
@@ -48,7 +47,6 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
             {resultados?.map((r, index) => (
               <TableRow key={Math.floor(Math.random() * 1000000)}>
                 <TableCell>{r.cerro}</TableCell>
-                <TableCell>{r.temporada}</TableCell>
                 <TableCell>{r.dias}</TableCell>
                 <TableCell>{r.edad}</TableCell>
                 <TableCell>{r.tipo}</TableCell>
@@ -75,7 +73,7 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
 
                         agregarPaquete({
                           name: `Pase ${r.cerro} - ${r.temporada} - x ${count}`,
-                          price: r.precio,
+                          price: r.precio * count,
                         });
                       }}
                     >

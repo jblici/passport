@@ -20,6 +20,7 @@ const useSpeadsheets = () => {
           provincia,
           cerro,
           hotel,
+          week,
           habitacion,
           fechaInicio,
           fechaFinal,
@@ -30,7 +31,6 @@ const useSpeadsheets = () => {
           camaExtra,
           extraMayor,
           extraMenor,
-          week,
           minNoches,
           desayuno,
           tarifa,
@@ -41,6 +41,7 @@ const useSpeadsheets = () => {
           provincia,
           cerro,
           hotel,
+          week,
           habitacion,
           fechaInicio,
           fechaFinal,
@@ -51,7 +52,6 @@ const useSpeadsheets = () => {
           camaExtra,
           extraMayor: Number(Math.round(extraMayor)),
           extraMenor: Number(Math.round(extraMenor)),
-          week,
           minNoches: Number(minNoches),
           desayuno,
           tarifa,
@@ -107,12 +107,12 @@ const useSpeadsheets = () => {
           tipo,
           edad,
           edad2,
-          descripcion,
           fechaInicio,
           fechaFinal,
           pack,
           dias,
           precio,
+          descripcion
         ] = row.split(",");
         return {
           cerro,
@@ -120,12 +120,12 @@ const useSpeadsheets = () => {
           tipo,
           edad,
           edad2,
-          descripcion,
           fechaInicio,
           fechaFinal,
           pack,
           dias: Number(dias),
           precio: Number(Math.round(precio)),
+          descripcion
         };
       });
     const csv4 = await fetch(

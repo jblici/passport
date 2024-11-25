@@ -35,7 +35,6 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
           <TableHeader>
             <TableRow>
               <TableHead>Cerro</TableHead>
-              <TableHead>Temporada</TableHead>
               <TableHead>Tipo</TableHead>
               <TableHead>Dias</TableHead>
               <TableHead>Edades</TableHead>
@@ -47,7 +46,6 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
             {resultados?.map((r, index) => (
               <TableRow key={index}>
                 <TableCell>{r.cerro}</TableCell>
-                <TableCell>{r.temporada}</TableCell>
                 <TableCell>{r.tipo}</TableCell>
                 <TableCell>{r.dias}</TableCell>
                 <TableCell>{r.edad}</TableCell>

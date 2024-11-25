@@ -6,7 +6,7 @@ import { formatNumberWithDots } from "@/app/lib/utils";
 const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
 
-  //console.log(resultados)
+  console.log(resultados)
   if (!resultados) return null;
   if (Object.keys(resultados).length === 0) {
     return (
@@ -35,9 +35,9 @@ const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
           <TableHeader>
             <TableRow>
               <TableHead>Cerro</TableHead>
-              <TableHead>Temporada</TableHead>
               <TableHead>Gama</TableHead>
               <TableHead>Articulo</TableHead>
+              <TableHead>Edad</TableHead>
               <TableHead>Dias</TableHead>
               <TableHead>Precio</TableHead>
               <TableHead>Agregar</TableHead>
@@ -47,9 +47,9 @@ const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
             {resultados?.map((r, index) => (
               <TableRow key={index}>
                 <TableCell>{r.cerro}</TableCell>
-                <TableCell>{r.temporada}</TableCell>
                 <TableCell>{r.gama}</TableCell>
                 <TableCell>{r.articulo}</TableCell>
+                <TableCell>{r.edad}</TableCell>
                 <TableCell>{r.dias}</TableCell>
                 <TableCell>{`$ ${formatNumberWithDots(r.precio)}`}</TableCell>
                 <TableCell>
@@ -73,7 +73,7 @@ const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
 
                         agregarPaquete({
                           name: `${r.articulo} - ${r.gama} - x ${count}`,
-                          price: r.precio * r.dias,
+                          price: r.precio * count,
                         });
                       }}
                     >

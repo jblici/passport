@@ -7,9 +7,7 @@ import Passport from "/public/Passport.png";
 const ResumenPresupuesto = ({ paquetesSeleccionados, totalCompra, eliminarPaquete, busqueda }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clientName, setClientName] = useState('');
-  const generate = () => {
-    generatePDF(paquetesSeleccionados, totalCompra, busqueda, Passport ,clientName);
-  };
+
   return (
     <div className="bg-card rounded-lg shadow-lg h-fit">
       <div className="p-4 sm:p-6 md:p-8 border-b">
