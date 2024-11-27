@@ -35,22 +35,25 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
           <TableHeader>
             <TableRow>
               <TableHead>Cerro</TableHead>
+              <TableHead>Servicio</TableHead>
               <TableHead>Origen</TableHead>
               <TableHead>Destino</TableHead>
-              <TableHead>Recorrido</TableHead>
-              <TableHead>Servicio</TableHead>
+          
+              <TableHead>Precio</TableHead>
               <TableHead>Tramo</TableHead>
               <TableHead>Precio</TableHead>
               <TableHead>Persona</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {resultados?.map((r) => (
+            {resultados?.map((r, index) => (
               <TableRow key={Math.floor(Math.random() * 1000000)}>
                 <TableCell>{r.cerro}</TableCell>
-                <TableCell>{r.recorrido}</TableCell>
                 <TableCell>{r.servicio}</TableCell>
+                <TableCell>{r.origen}</TableCell>
+                <TableCell>{r.destino}</TableCell>
                 <TableCell>{`$ ${r.precio}`}</TableCell>
+                <TableCell>{r.tramo}</TableCell>
                 <TableCell>{r.personas}</TableCell>
                
                 <TableCell>
