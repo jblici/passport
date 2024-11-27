@@ -11,7 +11,7 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
     return (
       <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
         <div className="p-4 sm:p-6 md:p-8 border-b">
-          <h2 className="text-xl font-bold mb-2">No hay Clases disponibles...</h2>
+          <h2 className="text-xl font-bold mb-2">No hay transporte disponible...</h2>
         </div>
       </div>
     );
@@ -34,11 +34,13 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
           <TableHeader>
             <TableRow>
               <TableHead>Cerro</TableHead>
+              <TableHead>Origen</TableHead>
+              <TableHead>Destino</TableHead>
               <TableHead>Recorrido</TableHead>
               <TableHead>Servicio</TableHead>
+              <TableHead>Tramo</TableHead>
               <TableHead>Precio</TableHead>
-              <TableHead>Pasajeros</TableHead>
-              <TableHead>Agregar</TableHead>
+              <TableHead>Persona</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
