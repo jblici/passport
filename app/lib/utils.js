@@ -483,7 +483,9 @@ export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) =>
   }
 
   if (dias) {
-    clasesFiltradas = clasesFiltradas.filter((pase) => (pase.dias = dias));
+    clasesFiltradas = clasesFiltradas.filter((clase) =>
+      dias === 1 ? Number(clase.dias) <= dias : Number(clase.dias) === dias
+    );
   }
 
   // Filtrar por fechas
@@ -525,7 +527,6 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
       dias === 1 ? Number(pase.dias) <= dias : Number(pase.dias) === dias
     );
   }
-  console.log(dias === 2);
 
   // Filtrar por fechas (la fecha de inicio debe estar dentro del rango de fechas del pase)
   if (startDate && dias) {
