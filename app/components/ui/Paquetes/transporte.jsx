@@ -1,6 +1,7 @@
-import React from "react";
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../table";
 import { Button } from "../button";
+import { useState } from "react";
 
 const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
