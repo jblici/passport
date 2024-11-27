@@ -548,6 +548,7 @@ export const handleTransporte = (cerro, traslado, setTraslado, startDate, endDat
     transporteFiltrado.filter((paquete) => paquete.cerro === cerro);
   }
   setTraslado(transporteFiltrado);
+  console.log(transporteFiltrado);
 };
 
 export const handleBusqueda = (

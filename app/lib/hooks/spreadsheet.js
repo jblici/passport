@@ -158,14 +158,20 @@ const useSpeadsheets = () => {
       .split("\n")
       .slice(1)
       .map((row) => {
-        const [cerro, recorrido, servicio, tramo, precio, personas] = row.split(",");
+        const [cerro,recorrido,origen,destino,servicio,descripcion,tramo,fechaInicio,fechaFinal,precio,personas] = row.split(",");
         return {
           cerro,
           recorrido,
+          origen,
+          destino,
           servicio,
+          descripcion,
           tramo,
+          fechaInicio,
+          fechaFinal,
           precio: Number(Math.round(precio)),
-          personas,
+          personas
+          
         };
       });
 
