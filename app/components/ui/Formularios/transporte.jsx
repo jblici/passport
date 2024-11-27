@@ -5,7 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Label } from "../label";
 import { Input } from "../input";
 import { Button } from "../button";
-import { CalendarDaysIcon, Pipol } from "../../svg/svg";
+import { CalendarDaysIcon } from "../../svg/svg";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select";
 import { handleTransporte } from "@/app/lib/utils";
 import ToggleYesNo from "../ToggleYesNo";
@@ -23,6 +23,8 @@ export default function Transporte({
   const [personas, setPersonas] = useState(null);
   const [tipoTransporte, setTipoTransporte] = useState("Pasaje");
   const [claseTransporte, setClaseTransporte] = useState("Privado");
+  const [origen, setOrigen] = useState("");
+  const [destino, setDestino] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -34,7 +36,9 @@ export default function Transporte({
       endDate,
       Number(personas),
       tipoTransporte,
-      claseTransporte
+      claseTransporte,
+      origen,
+      destino
     );
   };
 
@@ -59,7 +63,7 @@ export default function Transporte({
             <div className="flex justify-center w-1/4">
               <ToggleYesNo
                 onValueChange={handleTipoTransporte}
-                options={[{ label: "Pasaje" }, { label: "Trasnfer" }]}
+                options={[{ label: "Pasaje" }, { label: "Transfer" }]}
               />
             </div>
             {tipoTransporte === "Transfer" && (
@@ -74,7 +78,7 @@ export default function Transporte({
           <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
             <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
               <Label htmlFor="centro">Centro:</Label>
-              <Select id="centro" onValueChange={handleCerro} value={cerro} disabled="true">
+              <Select id="centro" onValueChange={handleCerro} value={cerro} >
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar Centro" />
                 </SelectTrigger>
@@ -115,20 +119,22 @@ export default function Transporte({
                 placeholderText="Seleccionar fecha"
               />
             </div>
-            <div className="flex flex-col space-y-2 w-full sm:w-1/2">
-              <Label htmlFor="end-date">
-                <span className="flex items-center gap-1">
-                  <CalendarDaysIcon /> Fecha de vuelta:
-                </span>
-              </Label>
-              <DatePicker
-                selected={endDate}
-                dateFormat="dd/MM/yyyy"
-                onChange={(date) => setEndDate(date)}
-                className="w-full p-2 border rounded"
-                placeholderText="Seleccionar fecha"
-              />
-            </div>
+            {tipoTransporte === "Trasnfer" && (
+              <div className="flex flex-col space-y-2 w-full sm:w-1/2">
+                <Label htmlFor="end-date">
+                  <span className="flex items-center gap-1">
+                    <CalendarDaysIcon /> Fecha de vuelta:
+                  </span>
+                </Label>
+                <DatePicker
+                  selected={endDate}
+                  dateFormat="dd/MM/yyyy"
+                  onChange={(date) => setEndDate(date)}
+                  className="w-full p-2 border rounded"
+                  placeholderText="Seleccionar fecha"
+                />
+              </div>
+            )}
           </div>
           <div className="flex w-fit">
             <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600">

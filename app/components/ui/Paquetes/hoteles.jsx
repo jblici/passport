@@ -4,7 +4,7 @@ import { Button } from "../button";
 import { formatNumberWithDots } from "@/app/lib/utils";
 
 const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
-  //console.log(resultados);
+  console.log(resultados);
   if (!resultados) return null;
   if (Object.keys(resultados).length === 0) {
     return (

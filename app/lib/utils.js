@@ -522,9 +522,10 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
 
   if (dias) {
     pasesFiltrados = pasesFiltrados.filter((pase) =>
-      dias === 1 ? pase.dias <= dias : (pase.dias = dias)
+      dias === 1 ? Number(pase.dias) <= dias : Number(pase.dias) === dias
     );
   }
+  console.log(dias === 2);
 
   // Filtrar por fechas (la fecha de inicio debe estar dentro del rango de fechas del pase)
   if (startDate && dias) {
@@ -542,7 +543,17 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
   setPases(pasesFiltrados);
 };
 
-export const handleTransporte = (cerro, traslado, setTraslado, startDate, endDate, tipoTransporte, claseTransporte, origen, destino) => {
+export const handleTransporte = (
+  cerro,
+  traslado,
+  setTraslado,
+  startDate,
+  endDate,
+  tipoTransporte,
+  claseTransporte,
+  origen,
+  destino
+) => {
   let transporteFiltrado = traslado;
   let ida = [];
   let vuelta = [];
@@ -552,21 +563,29 @@ export const handleTransporte = (cerro, traslado, setTraslado, startDate, endDat
     transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.cerro === cerro);
   }
 
-  if (origen) {
+  /*
+  if (origen !== "") {
     transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.origen === origen);
   }
+  console.log(transporteFiltrado)
 
   if (destino) {
     transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.destino === destino);
-  }
+  } 
+  */
+
+  console.log(transporteFiltrado);
 
   // 2. Separar por tipo de transporte
   if (tipoTransporte === "Pasaje") {
     // Solo incluir paquetes que sean de servicio "Pasaje"
-    transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.tipoTransporte === "Pasaje");
+    transporteFiltrado = transporteFiltrado.filter(
+      (paquete) => paquete.tipoTransporte === "Pasaje"
+    );
+
     setTraslado({ pasaje: transporteFiltrado });
     return;
-  } else if (tipoTransporte === "Transfer") {
+  } else {
     // Dividir en secciones de ida y vuelta
     ida = transporteFiltrado.filter(
       (paquete) => paquete.tipoTransporte === "Transfer" && paquete.sentido === "ida"
@@ -578,22 +597,15 @@ export const handleTransporte = (cerro, traslado, setTraslado, startDate, endDat
     // 3. Filtrar por clase de transporte (privado/público)
     if (claseTransporte) {
       if (claseTransporte.toLowerCase() === "privado") {
-        ida = ida.filter((paquete) =>
-          paquete.descripcion.toLowerCase().includes("privado")
-        );
-        vuelta = vuelta.filter((paquete) =>
-          paquete.descripcion.toLowerCase().includes("privado")
-        );
+        ida = ida.filter((paquete) => paquete.descripcion.toLowerCase().includes("privado"));
+        vuelta = vuelta.filter((paquete) => paquete.descripcion.toLowerCase().includes("privado"));
       } else if (claseTransporte.toLowerCase() === "publico") {
-        ida = ida.filter((paquete) =>
-          !paquete.descripcion.toLowerCase().includes("privado")
-        );
-        vuelta = vuelta.filter((paquete) =>
-          !paquete.descripcion.toLowerCase().includes("privado")
-        );
+        ida = ida.filter((paquete) => !paquete.descripcion.toLowerCase().includes("privado"));
+        vuelta = vuelta.filter((paquete) => !paquete.descripcion.toLowerCase().includes("privado"));
       }
     }
 
+    console.log(transporteFiltrado);
     setTraslado({ ida, vuelta });
     return;
   }
