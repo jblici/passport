@@ -542,13 +542,61 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
   setPases(pasesFiltrados);
 };
 
-export const handleTransporte = (cerro, traslado, setTraslado, startDate, endDate) => {
+export const handleTransporte = (cerro, traslado, setTraslado, startDate, endDate, tipoTransporte, claseTransporte, origen, destino) => {
   let transporteFiltrado = traslado;
+  let ida = [];
+  let vuelta = [];
+
+  // 1. Filtrar por cerro, origen y destino
   if (cerro) {
-    transporteFiltrado.filter((paquete) => paquete.cerro === cerro);
+    transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.cerro === cerro);
   }
-  setTraslado(transporteFiltrado);
-  console.log(transporteFiltrado);
+
+  if (origen) {
+    transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.origen === origen);
+  }
+
+  if (destino) {
+    transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.destino === destino);
+  }
+
+  // 2. Separar por tipo de transporte
+  if (tipoTransporte === "Pasaje") {
+    // Solo incluir paquetes que sean de servicio "Pasaje"
+    transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.tipoTransporte === "Pasaje");
+    setTraslado({ pasaje: transporteFiltrado });
+    return;
+  } else if (tipoTransporte === "Transfer") {
+    // Dividir en secciones de ida y vuelta
+    ida = transporteFiltrado.filter(
+      (paquete) => paquete.tipoTransporte === "Transfer" && paquete.sentido === "ida"
+    );
+    vuelta = transporteFiltrado.filter(
+      (paquete) => paquete.tipoTransporte === "Transfer" && paquete.sentido === "vuelta"
+    );
+
+    // 3. Filtrar por clase de transporte (privado/público)
+    if (claseTransporte) {
+      if (claseTransporte.toLowerCase() === "privado") {
+        ida = ida.filter((paquete) =>
+          paquete.descripcion.toLowerCase().includes("privado")
+        );
+        vuelta = vuelta.filter((paquete) =>
+          paquete.descripcion.toLowerCase().includes("privado")
+        );
+      } else if (claseTransporte.toLowerCase() === "publico") {
+        ida = ida.filter((paquete) =>
+          !paquete.descripcion.toLowerCase().includes("privado")
+        );
+        vuelta = vuelta.filter((paquete) =>
+          !paquete.descripcion.toLowerCase().includes("privado")
+        );
+      }
+    }
+
+    setTraslado({ ida, vuelta });
+    return;
+  }
 };
 
 export const handleBusqueda = (

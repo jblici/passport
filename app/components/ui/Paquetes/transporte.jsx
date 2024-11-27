@@ -1,11 +1,10 @@
-
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../table";
 import { Button } from "../button";
 import { useState } from "react";
 
 const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
- 
+
   //console.log(resultados);
   if (!resultados) return null;
   if (Object.keys(resultados).length === 0) {
@@ -38,11 +37,9 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
               <TableHead>Servicio</TableHead>
               <TableHead>Origen</TableHead>
               <TableHead>Destino</TableHead>
-          
-              <TableHead>Precio</TableHead>
               <TableHead>Tramo</TableHead>
+              <TableHead>Pax</TableHead>
               <TableHead>Precio</TableHead>
-              <TableHead>Persona</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -52,12 +49,11 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                 <TableCell>{r.servicio}</TableCell>
                 <TableCell>{r.origen}</TableCell>
                 <TableCell>{r.destino}</TableCell>
-                <TableCell>{`$ ${r.precio}`}</TableCell>
                 <TableCell>{r.tramo}</TableCell>
                 <TableCell>{r.personas}</TableCell>
-               
+                <TableCell>{`$ ${r.precio}`}</TableCell>
                 <TableCell>
-                <div className="flex">
+                  <div className="flex">
                     <select
                       value={selectedCounts[index] || 1} // Valor por defecto
                       onChange={(e) => handleCountChange(index, e.target.value)}
