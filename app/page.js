@@ -9,7 +9,7 @@ import Passport from "/public/Passport.png";
 import Image from "next/image";
 
 export default function Cotizador() {
-  const { paquetes, rentals, clases, pases, traslado } = useSpeadsheets(null);
+  const { paquetes, rentals, clases, pases, traslado, reglas } = useSpeadsheets(null);
   const [startDate, setStartDate] = useState(null);
   const [busqueda, setBusqueda] = useState("");
   const [cerro, setCerro] = useState("");

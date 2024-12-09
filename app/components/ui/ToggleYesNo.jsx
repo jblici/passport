@@ -10,7 +10,7 @@ const ToggleYesNo = ({ options, onValueChange }) => {
 
   return (
     <div className="w-full">
-      <button className="w-full flex justify-between items-center py-2 bg-white rounded-t-md focus:outline-none transition">
+      <button type="button" className="w-full flex justify-between items-center py-2 bg-white rounded-t-md focus:outline-none transition">
         <div className="relative w-full h-8 rounded-lg border p-1 bg-gray-200">
           <div className="relative w-full h-full flex items-center">
             {options.map((option) => (

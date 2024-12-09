@@ -22,7 +22,7 @@ export default function Transporte({
   const [endDate, setEndDate] = useState(null);
   const [personas, setPersonas] = useState(null);
   const [tipoTransporte, setTipoTransporte] = useState("Pasaje");
-  const [claseTransporte, setClaseTransporte] = useState("Privado");
+  const [claseTransporte, setClaseTransporte] = useState("Publico");
   const [origen, setOrigen] = useState("");
   const [destino, setDestino] = useState("");
 
@@ -34,11 +34,11 @@ export default function Transporte({
       setTraslado,
       startDate,
       endDate,
-      Number(personas),
       tipoTransporte,
       claseTransporte,
       origen,
-      destino
+      destino,
+      personas,
     );
   };
 
@@ -70,7 +70,7 @@ export default function Transporte({
               <div className="flex justify-center w-1/4">
                 <ToggleYesNo
                   onValueChange={handleClaseTransporte}
-                  options={[{ label: "Privado" }, { label: "Publico" }]}
+                  options={[{ label: "Publico" }, { label: "Privado" }]}
                 />
               </div>
             )}
@@ -90,7 +90,7 @@ export default function Transporte({
                 </SelectContent>
               </Select>
             </div>
-            {tipoTransporte === "Trasnfer" && (
+            {claseTransporte === "Privado" && tipoTransporte === "Transfer" && (
               <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
                 <Label htmlFor="days">
                   <span className="flex items-center gap-1">Personas:</span>
@@ -119,7 +119,6 @@ export default function Transporte({
                 placeholderText="Seleccionar fecha"
               />
             </div>
-            {tipoTransporte === "Trasnfer" && (
               <div className="flex flex-col space-y-2 w-full sm:w-1/2">
                 <Label htmlFor="end-date">
                   <span className="flex items-center gap-1">
@@ -134,7 +133,6 @@ export default function Transporte({
                   placeholderText="Seleccionar fecha"
                 />
               </div>
-            )}
           </div>
           <div className="flex w-fit">
             <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600">

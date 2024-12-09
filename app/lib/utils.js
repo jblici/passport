@@ -553,9 +553,11 @@ export const handleTransporte = (
   tipoTransporte,
   claseTransporte,
   origen,
-  destino
+  destino,
+  personas
 ) => {
   let transporteFiltrado = traslado;
+  console.log(tipoTransporte, claseTransporte);
   let ida = [];
   let vuelta = [];
 
@@ -564,51 +566,61 @@ export const handleTransporte = (
     transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.cerro === cerro);
   }
 
-  /*
-  if (origen !== "") {
-    transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.origen === origen);
+  if (claseTransporte) {
+    if (claseTransporte === "Privado") {
+      transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.personas > 1);
+    } else {
+      transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.personas === 1);
+    }
   }
-  console.log(transporteFiltrado)
-
-  if (destino) {
-    transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.destino === destino);
-  } 
-  */
-
-  console.log(transporteFiltrado);
 
   // 2. Separar por tipo de transporte
   if (tipoTransporte === "Pasaje") {
     // Solo incluir paquetes que sean de servicio "Pasaje"
-    transporteFiltrado = transporteFiltrado.filter(
-      (paquete) => paquete.tipoTransporte === "Pasaje"
-    );
+    transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.servicio === "Pasaje");
 
-    setTraslado({ pasaje: transporteFiltrado });
-    return;
-  } else {
+    setTraslado(transporteFiltrado);
+  } else if (tipoTransporte === "Transfer") {
     // Dividir en secciones de ida y vuelta
-    ida = transporteFiltrado.filter(
-      (paquete) => paquete.tipoTransporte === "Transfer" && paquete.sentido === "ida"
-    );
-    vuelta = transporteFiltrado.filter(
-      (paquete) => paquete.tipoTransporte === "Transfer" && paquete.sentido === "vuelta"
-    );
 
-    // 3. Filtrar por clase de transporte (privado/público)
-    if (claseTransporte) {
-      if (claseTransporte.toLowerCase() === "privado") {
-        ida = ida.filter((paquete) => paquete.descripcion.toLowerCase().includes("privado"));
-        vuelta = vuelta.filter((paquete) => paquete.descripcion.toLowerCase().includes("privado"));
-      } else if (claseTransporte.toLowerCase() === "publico") {
-        ida = ida.filter((paquete) => !paquete.descripcion.toLowerCase().includes("privado"));
-        vuelta = vuelta.filter((paquete) => !paquete.descripcion.toLowerCase().includes("privado"));
-      }
+    /*
+
+    transporteFiltrado = transporteFiltrado.filter((paquete) => {
+      const fechaInicio = parseDate(paquete.fechaInicio);
+      const fechaFinal = parseDate(paquete.fechaFinal);
+
+      // Verificar si la fecha de inicio está dentro del rango de fechas seleccionado
+      const fechaInicioDentroRango =
+        startDate && fechaInicio >= startDate && fechaInicio <= endDate;
+
+      // Verificar si la fecha final está dentro del rango de fechas seleccionado
+      const fechaFinalDentroRango =
+        endDate && fechaFinal >= startDate && fechaFinal <= endDate;
+
+      // Verificar si la fecha de inicio es anterior a la fecha de fin del rango seleccionado
+      const fechaInicioAntesDeFinRango = fechaInicio <= endDate;
+
+      // Verificar si la fecha final es posterior a la fecha de inicio del rango seleccionado
+      const fechaFinalDespuesDeInicioRango = fechaFinal >= startDate;
+
+      return (
+        (fechaInicioDentroRango || fechaFinalDentroRango) &&
+        fechaInicioAntesDeFinRango &&
+        fechaFinalDespuesDeInicioRango
+      );
+    })
+
+*/
+
+    if (personas) {
+      transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.personas >= personas);
     }
+
+    ida = transporteFiltrado.filter((paquete) => paquete.tramo === "Ida");
+    vuelta = transporteFiltrado.filter((paquete) => paquete.tramo === "Vuelta");
 
     console.log(transporteFiltrado);
     setTraslado({ ida, vuelta });
-    return;
   }
 };
 
