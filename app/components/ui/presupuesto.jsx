@@ -3,15 +3,22 @@ import { Button } from "@/app/components/ui/button";
 import { XIcon } from "../svg/svg";
 import { formatNumberWithDots, generatePDF } from "@/app/lib/utils";
 import Passport from "/public/Passport.png";
+import AnimatedDropdown from "./animated-dropdown";
 
 const ResumenPresupuesto = ({ paquetesSeleccionados, totalCompra, eliminarPaquete, busqueda }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [clientName, setClientName] = useState('');
 
   return (
     <div className="bg-card rounded-lg shadow-lg h-fit">
+      
       <div className="p-4 sm:p-6 md:p-8 border-b">
         <h2 className="text-xl font-bold mb-2">Presupuesto</h2>
+        
+      </div>
+      <div className=" flex items-start justify-start bg-gray-100 p-4 md:items-center">
+        <AnimatedDropdown />
       </div>
       <div id="pdf-content" className="p-4 sm:p-6 md:p-8 space-y-4 h-fit">
         <div className="pb-2">
