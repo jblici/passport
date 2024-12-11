@@ -578,6 +578,8 @@ export const handleTransporte = (
       if (claseTransporte === "Privado") {
         transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.personas > 1);
       } else {
+        console.log('entre')
+        console.log(transporteFiltrado)
         transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.personas === 1);
       }
     }

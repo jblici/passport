@@ -22,6 +22,11 @@ export default function AnimatedDropdown({ discount, handleDiscount }) {
   const toggleDropdown = () => setIsOpen(!isOpen);
   const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
 
+  const handleModal = () => {
+    setIsModalOpen(false)
+    setIsOpen(false)
+  }
+
   return (
     <div className="relative">
       {/* <InputModal
@@ -75,13 +80,13 @@ export default function AnimatedDropdown({ discount, handleDiscount }) {
                       />
                       <div className="flex justify-end">
                         <button
-                          onClick={() => setIsModalOpen(false)}
+                          onClick={() => handleModal()}
                           className="mr-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                         >
                           Aceptar
                         </button>
                         <button
-                          onClick={() => setIsModalOpen(false)}
+                          onClick={() => handleModal()}
                           className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
                         >
                           Cancelar

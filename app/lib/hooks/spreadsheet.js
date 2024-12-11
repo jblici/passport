@@ -170,7 +170,7 @@ const useSpeadsheets = () => {
           fechaInicio,
           fechaFinal,
           precio: Number(Math.round(precio)),
-          personas
+          personas: Number(personas)
           
         };
       });
