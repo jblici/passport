@@ -27,9 +27,10 @@ export default function Cotizador() {
   };
 
   const agregarPaquete = (paquete) => {
+    console.log(paquete)
     setPaquetesSeleccionados((prev) => [...prev, paquete]);
     setTotalCompra((prev) => prev + paquete.price);
-  };
+  };   
 
   const eliminarPaquete = (index) => {
     const paqueteEliminado = paquetesSeleccionados[index];
@@ -102,8 +103,10 @@ export default function Cotizador() {
           {paquetesSeleccionados.length > 0 && (
             <Presupuesto
               paquetesSeleccionados={paquetesSeleccionados}
+              setPaquetesSeleccionados={setPaquetesSeleccionados}
               busqueda={busqueda}
               totalCompra={totalCompra}
+              setTotalCompra={setTotalCompra}
               eliminarPaquete={eliminarPaquete}
             />
           )}

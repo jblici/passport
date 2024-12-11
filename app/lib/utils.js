@@ -566,21 +566,21 @@ export const handleTransporte = (
     transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.cerro === cerro);
   }
 
-  if (claseTransporte) {
-    if (claseTransporte === "Privado") {
-      transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.personas > 1);
-    } else {
-      transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.personas === 1);
-    }
-  }
-
+  
   // 2. Separar por tipo de transporte
   if (tipoTransporte === "Pasaje") {
     // Solo incluir paquetes que sean de servicio "Pasaje"
     transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.servicio === "Pasaje");
-
+    
     setTraslado(transporteFiltrado);
   } else if (tipoTransporte === "Transfer") {
+    if (claseTransporte) {
+      if (claseTransporte === "Privado") {
+        transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.personas > 1);
+      } else {
+        transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.personas === 1);
+      }
+    }
     // Dividir en secciones de ida y vuelta
 
     /*

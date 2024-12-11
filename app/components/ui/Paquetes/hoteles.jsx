@@ -4,7 +4,7 @@ import { Button } from "../button";
 import { formatNumberWithDots } from "@/app/lib/utils";
 
 const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
-  console.log(resultados);
+  //console.log(resultados);
   if (!resultados) return null;
   if (Object.keys(resultados).length === 0) {
     return (
@@ -75,7 +75,9 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
                             className="w-full bg-blue-500 text-white hover:bg-blue-600"
                             onClick={() =>
                               agregarPaquete({
+                                seccion: "alojamiento",
                                 name: `${r.paquetesUtilizados.hotel} - ${r.paquetesUtilizados.habitacion}`,
+                                discount: 0,
                                 price: r.precioTotal,
                               })
                             }
@@ -116,8 +118,10 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
                             className="w-full bg-blue-500 text-white hover:bg-blue-600"
                             onClick={() =>
                               agregarPaquete({
+                                seccion: "alojamiento",
                                 name: `${r.paquetesUtilizados.paquetes[0].hotel} - ${r.paquetesUtilizados.paquetes[0].habitacion}`,
-                                price: r.precioTotal,
+                                discount: 0,
+                                price: r.precioTotal - descuento,
                               })
                             }
                           >

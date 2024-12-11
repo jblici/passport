@@ -6,7 +6,7 @@ import { formatNumberWithDots } from "@/app/lib/utils";
 const PaquetesPases = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
 
-  console.log(resultados)
+  //console.log(resultados)
   if (!resultados) return null;
   if (Object.keys(resultados).length === 0) {
     return (
@@ -72,7 +72,9 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
                         const count = selectedCounts[index] || 1; // Usar el valor seleccionado o 2 por defecto
 
                         agregarPaquete({
-                          name: `Pase ${r.cerro} - ${r.temporada} - x ${count}`,
+                          seccion: "pases",
+                          count: Number(count),
+                          name: `${r.tipo} - ${r.edad}`,
                           price: r.precio * count,
                         });
                       }}
