@@ -31,6 +31,10 @@ export default function Equipos({
     setGama(value);
   };
 
+  const handleDias = (value) => {
+    setDias(value);
+  };
+
   const handleCerro = (value) => {
     setCerro(value);
   };
@@ -84,15 +88,22 @@ export default function Equipos({
               />
             </div>
             <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
-              <Label htmlFor="days">
-                <span className="flex items-center gap-1">Dias:</span>
-              </Label>
-              <Input
-                id="days"
-                placeholder="Dias"
-                className="w-full p-2 border rounded"
-                onChange={(e) => setDias(e.target.value)}
-              />
+              <Label htmlFor="centro">Dias:</Label>
+              <Select id="clase" onValueChange={handleDias}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccionar Equipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">1</SelectItem>
+                  <SelectItem value="2">2</SelectItem>
+                  <SelectItem value="3">3</SelectItem>
+                  <SelectItem value="4">4</SelectItem>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="6">6</SelectItem>
+                  <SelectItem value="7">7</SelectItem>
+                  <SelectItem value="8">8</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div className="flex w-fit">

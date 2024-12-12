@@ -440,12 +440,13 @@ export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama)
   }
 
   if (dias) {
-    rentalsFiltradas = rentalsFiltradas.filter((pase) => pase.dias <= dias);
+    rentalsFiltradas = rentalsFiltradas.filter((pase) => pase.dias === dias);
   }
 
   // Filtrar por fechas
   if (startDate && dias) {
-    const fechaFin = sumarDias(new Date(startDate), dias); // Clonar startDate
+    const fechaFin = sumarDias(new Date(startDate), dias - 1); // Clonar startDate
+    console.log(startDate, fechaFin);
 
     rentalsFiltradas = rentalsFiltradas.filter((pase) => {
       const paseInicio = parseDate(pase.fechaInicio);

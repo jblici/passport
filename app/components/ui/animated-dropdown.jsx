@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./button";
 import { ChevronRight, ChevronDown } from "lucide-react";
-import InputModal from "./inputModal";
 
 const dropdownVariants = {
   desktop: {
