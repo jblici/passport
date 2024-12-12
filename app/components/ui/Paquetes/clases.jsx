@@ -70,6 +70,7 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
                         const count = selectedCounts[index] || 1; // Usar el valor seleccionado o 2 por defecto
                         agregarPaquete({
                           seccion: "clases",
+                          days: r.dias,
                           count: Number(count),
                           name: `Clase ${r.tipo} - ${r.dias} - x ${count}`,
                           price: r.precio * count,

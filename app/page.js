@@ -19,6 +19,7 @@ export default function Cotizador() {
   const [resTraslado, setTraslado] = useState(null);
   const [resEquipos, setEquipos] = useState(null);
   const [paquetesSeleccionados, setPaquetesSeleccionados] = useState([]);
+  const [paquetesOriginales, setOriginales] = useState([]);
   const [totalCompra, setTotalCompra] = useState(0);
   const [category, setCategory] = useState("Alojamientos");
 
@@ -27,15 +28,18 @@ export default function Cotizador() {
   };
 
   const agregarPaquete = (paquete) => {
-    console.log(paquete)
     setPaquetesSeleccionados((prev) => [...prev, paquete]);
+    setOriginales((prev) => [...prev, paquete]);
     setTotalCompra((prev) => prev + paquete.price);
+    console.log('agregarPaquete')
   };   
 
   const eliminarPaquete = (index) => {
     const paqueteEliminado = paquetesSeleccionados[index];
     setPaquetesSeleccionados((prev) => prev.filter((_, i) => i !== index));
+    setOriginales((prev) => prev.filter((_, i) => i !== index));
     setTotalCompra((prev) => prev - paqueteEliminado.price);
+    console.log('eliminarPaquete')
   };
 
   if (!paquetes) return null;
@@ -108,6 +112,7 @@ export default function Cotizador() {
               totalCompra={totalCompra}
               setTotalCompra={setTotalCompra}
               eliminarPaquete={eliminarPaquete}
+              paquetesOriginales={paquetesOriginales}
             />
           )}
         </div>

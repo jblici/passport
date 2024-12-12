@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/app/components/ui/button";
 import { XIcon } from "../svg/svg";
-import { formatNumberWithDots, generatePDF } from "@/app/lib/utils";
+import { formatNumberWithDots, generatePDF, verificarFamilyPlan } from "@/app/lib/utils";
 import Passport from "/public/Passport.png";
 import AnimatedDropdown from "./animated-dropdown";
 
@@ -11,6 +11,7 @@ const ResumenPresupuesto = ({
   totalCompra,
   eliminarPaquete,
   busqueda,
+  paquetesOriginales
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [discount, setDiscount] = useState(0);
@@ -18,30 +19,27 @@ const ResumenPresupuesto = ({
   const [total, setTotal] = useState(0);
   const [familyPlan, setFamilyPlan] = useState(false);
   const [fpActivado, setFpActivado] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(null);
   const [flag, setFlag] = useState(true);
 
   const handleToggle = () => {
     setIsChecked((prevState) => !prevState);
+    if (isChecked === true) {
+      setFpActivado(true);
+    }
   };
 
   const handleDiscount = (e) => {
-    e.preventDefault();
-    const descuento = parseInt(e.target.value) || 0; // Asegúrate de que descuento sea un número válido
+    const descuento = parseInt(e.target.value) || 0;
 
     setDiscount(descuento);
-    setPaquetesSeleccionados((prevPaquetes) =>
-      prevPaquetes.map((paquete) =>
+    setPaquetesSeleccionados((prev) =>
+      prev.map((paquete) =>
         paquete.seccion === "alojamiento"
-          ? {
-              ...paquete,
-              discount: (paquete.price * descuento) / 100, // Calcula el descuento solo si es válido
-            }
+          ? { ...paquete, discount: (paquete.price * descuento) / 100 }
           : paquete
       )
     );
-
-    console.log(paquetesSeleccionados, descuento);
   };
 
   useEffect(() => {
@@ -52,85 +50,30 @@ const ResumenPresupuesto = ({
     );
     setTotal(total);
 
-    const verificarFamilyPlan = () => {
-      const secciones = ["pases", "equipos", "clases"];
-      let activarFamilyPlan = false;
-      const nuevosPaquetes = [...paquetesSeleccionados];
+    verificarFamilyPlan(
+      paquetesSeleccionados,
+      isChecked,
+      setFamilyPlan,
+      setPaquetesSeleccionados,
+      setFlag,
+      familyPlan,
+    );
 
-      secciones.forEach((seccion) => {
-        const paquetesPorSeccion = nuevosPaquetes.filter(
-          (paquete) => paquete.seccion === seccion && !paquete.promo // Excluye paquetes con promo
-        );
-
-        const totalCount = paquetesPorSeccion.reduce((sum, paquete) => sum + paquete.count, 0);
-
-        if (totalCount >= 4 && totalCount <= 6) {
-          setFamilyPlan(true);
-          activarFamilyPlan = true;
-
-          let restante = totalCount >= 4 && totalCount < 6 ? 1 : 2; // Determina cuántos paquetes necesitamos procesar
-
-          if (isChecked) {
-            while (restante > 0) {
-              console.log("arranque", restante);
-              // Buscar el paquete más barato que no tenga promo
-              const paqueteMasBarato = paquetesPorSeccion.reduce((min, paquete) =>
-                paquete.price < min.price ? paquete : min
-              );
-
-              if (paqueteMasBarato.count > 1) {
-                // Si el paquete tiene más de 1, reducimos su count y creamos uno con promo
-                paqueteMasBarato.count -= 1;
-                nuevosPaquetes.push({
-                  ...paqueteMasBarato,
-                  count: 1,
-                  price: 0, // Precio 0 para paquetes con promo
-                  promo: true,
-                });
-
-                restante--;
-                console.log("nuevos Paquetes", nuevosPaquetes);
-                console.log("resta restante", restante);
-              } else {
-                // Si el paquete tiene count === 1, lo marcamos como promo
-                const index = nuevosPaquetes.findIndex((paquete) => paquete === paqueteMasBarato);
-                nuevosPaquetes[index] = {
-                  ...paqueteMasBarato,
-                  price: 0, // Precio 0 para paquetes con promo
-                  promo: true,
-                };
-
-                // Remover de paquetesPorSeccion para no procesarlo nuevamente
-                const seccionIndex = paquetesPorSeccion.findIndex(
-                  (paquete) => paquete === paqueteMasBarato
-                );
-                paquetesPorSeccion.splice(seccionIndex, 1);
-                restante--;
-                console.log("nuevos Paquetes 2", nuevosPaquetes);
-                console.log("resta restante 2", restante);
-              }
-            }
-          }
-        }
-      });
-
-      // Actualiza el estado solo si es necesario
-      if (activarFamilyPlan) {
-        setFamilyPlan(true);
-        if (isChecked) {
-          setPaquetesSeleccionados(nuevosPaquetes);
-          setFlag(false);
-        }
-      } else if (familyPlan) {
-        setFamilyPlan(false); // Si no se cumple la condición, desactiva el Family Plan
-      }
-    };
-
-    if (flag) {
-      console.log("entre flag");
-      verificarFamilyPlan();
+    if (familyPlan && fpActivado) {
+      setPaquetesSeleccionados(paquetesOriginales); // Copia profunda
+      setFpActivado(false);
+      setFamilyPlan(false);
+      setFlag(true);
     }
-  }, [paquetesSeleccionados, familyPlan, setPaquetesSeleccionados, flag, isChecked]);
+  }, [
+    paquetesSeleccionados,
+    familyPlan,
+    setPaquetesSeleccionados,
+    flag,
+    isChecked,
+    paquetesOriginales,
+    fpActivado,
+  ]);
 
   return (
     <div className="bg-card rounded-lg shadow-lg h-fit">

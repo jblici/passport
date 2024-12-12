@@ -6,7 +6,7 @@ import { formatNumberWithDots } from "@/app/lib/utils";
 const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
 
-  console.log(resultados)
+  //console.log(resultados)
   if (!resultados) return null;
   if (Object.keys(resultados).length === 0) {
     return (
@@ -73,8 +73,9 @@ const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
 
                         agregarPaquete({
                           seccion: "equipos",
+                          days: r.dias,
                           count: Number(count),
-                          name: `${r.articulo} - ${r.gama} - x ${count}`,
+                          name: `${r.articulo} - ${r.gama}`,
                           price: r.precio * count,
                         });
                       }}

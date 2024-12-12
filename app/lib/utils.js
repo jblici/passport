@@ -491,10 +491,9 @@ export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) =>
 
   // Filtrar por fechas
   if (startDate && dias) {
-    const fechaFin = sumarDias(new Date(startDate), dias); // Clonar startDate
+    const fechaFin = sumarDias(new Date(startDate), dias - 1); // Clonar startDate
 
     clasesFiltradas = clasesFiltradas.filter((clase) => {
-      console.log(clase);
       const paseInicio = parseDate(clase.fechaInicio);
       const paseFinal = parseDate(clase.fechaFinal);
 
@@ -531,7 +530,7 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
 
   // Filtrar por fechas (la fecha de inicio debe estar dentro del rango de fechas del pase)
   if (startDate && dias) {
-    const fechaFin = sumarDias(new Date(startDate), dias); // Clonar startDate
+    const fechaFin = sumarDias(new Date(startDate), dias - 1); // Clonar startDate
 
     pasesFiltrados = pasesFiltrados.filter((pase) => {
       const paseInicio = parseDate(pase.fechaInicio); // Asegurarse de que pase.fechaInicio es un objeto Date
@@ -567,20 +566,19 @@ export const handleTransporte = (
     transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.cerro === cerro);
   }
 
-  
   // 2. Separar por tipo de transporte
   if (tipoTransporte === "Pasaje") {
     // Solo incluir paquetes que sean de servicio "Pasaje"
     transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.servicio === "Pasaje");
-    
+
     setTraslado(transporteFiltrado);
   } else if (tipoTransporte === "Transfer") {
     if (claseTransporte) {
       if (claseTransporte === "Privado") {
         transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.personas > 1);
       } else {
-        console.log('entre')
-        console.log(transporteFiltrado)
+        console.log("entre");
+        console.log(transporteFiltrado);
         transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.personas === 1);
       }
     }
@@ -735,5 +733,101 @@ export const handleFormularios = (
         setStartDate={setStartDate}
       />
     );
+  }
+};
+
+export const verificarFamilyPlan = (
+  paquetesSeleccionados,
+  isChecked,
+  setFamilyPlan,
+  setPaquetesSeleccionados,
+  setFlag,
+  familyPlan
+) => {
+  const secciones = ["pases", "equipos", "clases"];
+  let activarFamilyPlan = false;
+  const nuevosPaquetes = [...paquetesSeleccionados];
+
+  secciones.forEach((seccion) => {
+    //pases y equipos a partir de 6
+    //clases 7
+
+    const paquetesPorSeccion = nuevosPaquetes.filter((paquete) => {
+      const esSeccionClases = seccion === "clases";
+      const minDias = esSeccionClases ? 6 : 7;
+
+      return (
+        paquete.seccion === seccion && // Coincide con la sección
+        !paquete.promo && // No es promo
+        paquete.days >= minDias // Cumple con el mínimo de días según la sección
+      );
+    });
+
+    const totalCount = paquetesPorSeccion.reduce((sum, paquete) => sum + paquete.count, 0);
+
+    if (totalCount >= 4 && totalCount <= 6) {
+      setFamilyPlan(true);
+      activarFamilyPlan = true;
+
+      let restante = totalCount >= 4 && totalCount < 6 ? 1 : 2; // Determina cuántos paquetes necesitamos procesar
+
+      if (isChecked) {
+        while (restante > 0) {
+          console.log("arranque", restante);
+          // Buscar el paquete más barato que no tenga promo
+          const paqueteMasBarato = paquetesPorSeccion.reduce((min, paquete) =>
+            paquete.price < min.price ? paquete : min
+          );
+
+          if (paqueteMasBarato.count > 1) {
+            // Si el paquete tiene más de 1, reducimos su count y creamos uno con promo
+
+            paqueteMasBarato.count -= 1;
+            console.log(paqueteMasBarato.price, paqueteMasBarato.count, paqueteMasBarato.price / (paqueteMasBarato.count + 1))
+            paqueteMasBarato.price =
+              (paqueteMasBarato.price / (paqueteMasBarato.count + 1)) * (paqueteMasBarato.count);
+            nuevosPaquetes.push({
+              ...paqueteMasBarato,
+              count: 1,
+              oldPrice: paqueteMasBarato.price / 4,
+              price: 0, // Precio 0 para paquetes con promo
+              promo: true,
+            });
+
+            restante--;
+            console.log("nuevos Paquetes", nuevosPaquetes);
+            console.log("resta restante", restante);
+          } else {
+            // Si el paquete tiene count === 1, lo marcamos como promo
+            const index = nuevosPaquetes.findIndex((paquete) => paquete === paqueteMasBarato);
+            nuevosPaquetes[index] = {
+              ...paqueteMasBarato,
+              price: 0, // Precio 0 para paquetes con promo
+              promo: true,
+            };
+
+            // Remover de paquetesPorSeccion para no procesarlo nuevamente
+            const seccionIndex = paquetesPorSeccion.findIndex(
+              (paquete) => paquete === paqueteMasBarato
+            );
+            paquetesPorSeccion.splice(seccionIndex, 1);
+            restante--;
+            console.log("nuevos Paquetes 2", nuevosPaquetes);
+            console.log("resta restante 2", restante);
+          }
+        }
+      }
+    }
+  });
+
+  // Actualiza el estado solo si es necesario
+  if (activarFamilyPlan) {
+    setFamilyPlan(true);
+    if (isChecked) {
+      setPaquetesSeleccionados(nuevosPaquetes);
+      setFlag(false);
+    }
+  } else if (familyPlan) {
+    //setFamilyPlan(false); // Si no se cumple la condición, desactiva el Family Plan
   }
 };

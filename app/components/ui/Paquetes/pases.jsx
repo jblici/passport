@@ -73,6 +73,7 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
 
                         agregarPaquete({
                           seccion: "pases",
+                          days: r.dias,
                           count: Number(count),
                           name: `${r.tipo} - ${r.edad}`,
                           price: r.precio * count,
