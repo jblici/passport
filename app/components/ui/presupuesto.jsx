@@ -11,7 +11,7 @@ const ResumenPresupuesto = ({
   totalCompra,
   eliminarPaquete,
   busqueda,
-  paquetesOriginales
+  originales
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [discount, setDiscount] = useState(0);
@@ -50,8 +50,10 @@ const ResumenPresupuesto = ({
     );
     setTotal(total);
 
+    const paquetesTemp = [...paquetesSeleccionados];
+
     verificarFamilyPlan(
-      paquetesSeleccionados,
+      paquetesTemp,
       isChecked,
       setFamilyPlan,
       setPaquetesSeleccionados,
@@ -60,7 +62,8 @@ const ResumenPresupuesto = ({
     );
 
     if (familyPlan && fpActivado) {
-      setPaquetesSeleccionados(paquetesOriginales); // Copia profunda
+      const nuevosPaquetes = JSON.parse(JSON.stringify(originales));
+      setPaquetesSeleccionados(nuevosPaquetes);
       setFpActivado(false);
       setFamilyPlan(false);
       setFlag(true);
@@ -71,8 +74,8 @@ const ResumenPresupuesto = ({
     setPaquetesSeleccionados,
     flag,
     isChecked,
-    paquetesOriginales,
     fpActivado,
+    originales,
   ]);
 
   return (

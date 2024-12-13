@@ -19,7 +19,7 @@ export default function Cotizador() {
   const [resTraslado, setTraslado] = useState(null);
   const [resEquipos, setEquipos] = useState(null);
   const [paquetesSeleccionados, setPaquetesSeleccionados] = useState([]);
-  const [paquetesOriginales, setOriginales] = useState([]);
+  const [originales, setOriginales] = useState([]);
   const [totalCompra, setTotalCompra] = useState(0);
   const [category, setCategory] = useState("Alojamientos");
 
@@ -112,7 +112,7 @@ export default function Cotizador() {
               totalCompra={totalCompra}
               setTotalCompra={setTotalCompra}
               eliminarPaquete={eliminarPaquete}
-              paquetesOriginales={paquetesOriginales}
+              originales={originales}
             />
           )}
         </div>

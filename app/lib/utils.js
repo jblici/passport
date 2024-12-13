@@ -737,7 +737,7 @@ export const handleFormularios = (
 };
 
 export const verificarFamilyPlan = (
-  paquetesSeleccionados,
+  paquetesTemp,
   isChecked,
   setFamilyPlan,
   setPaquetesSeleccionados,
@@ -746,12 +746,10 @@ export const verificarFamilyPlan = (
 ) => {
   const secciones = ["pases", "equipos", "clases"];
   let activarFamilyPlan = false;
-  const nuevosPaquetes = [...paquetesSeleccionados];
+  const nuevosPaquetes = JSON.parse(JSON.stringify(paquetesTemp));
+
 
   secciones.forEach((seccion) => {
-    //pases y equipos a partir de 6
-    //clases 7
-
     const paquetesPorSeccion = nuevosPaquetes.filter((paquete) => {
       const esSeccionClases = seccion === "clases";
       const minDias = esSeccionClases ? 6 : 7;
@@ -773,7 +771,6 @@ export const verificarFamilyPlan = (
 
       if (isChecked) {
         while (restante > 0) {
-          console.log("arranque", restante);
           // Buscar el paquete más barato que no tenga promo
           const paqueteMasBarato = paquetesPorSeccion.reduce((min, paquete) =>
             paquete.price < min.price ? paquete : min
@@ -781,11 +778,9 @@ export const verificarFamilyPlan = (
 
           if (paqueteMasBarato.count > 1) {
             // Si el paquete tiene más de 1, reducimos su count y creamos uno con promo
-
             paqueteMasBarato.count -= 1;
-            console.log(paqueteMasBarato.price, paqueteMasBarato.count, paqueteMasBarato.price / (paqueteMasBarato.count + 1))
             paqueteMasBarato.price =
-              (paqueteMasBarato.price / (paqueteMasBarato.count + 1)) * (paqueteMasBarato.count);
+              (paqueteMasBarato.price / (paqueteMasBarato.count + 1)) * paqueteMasBarato.count;
             nuevosPaquetes.push({
               ...paqueteMasBarato,
               count: 1,
@@ -795,8 +790,6 @@ export const verificarFamilyPlan = (
             });
 
             restante--;
-            console.log("nuevos Paquetes", nuevosPaquetes);
-            console.log("resta restante", restante);
           } else {
             // Si el paquete tiene count === 1, lo marcamos como promo
             const index = nuevosPaquetes.findIndex((paquete) => paquete === paqueteMasBarato);
@@ -812,8 +805,6 @@ export const verificarFamilyPlan = (
             );
             paquetesPorSeccion.splice(seccionIndex, 1);
             restante--;
-            console.log("nuevos Paquetes 2", nuevosPaquetes);
-            console.log("resta restante 2", restante);
           }
         }
       }
