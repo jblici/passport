@@ -22,7 +22,7 @@ export default function Transporte({
   const [endDate, setEndDate] = useState(null);
   const [personas, setPersonas] = useState(null);
   const [tipoTransporte, setTipoTransporte] = useState("Pasaje");
-  const [claseTransporte, setClaseTransporte] = useState("Publico");
+  const [claseTransporte, setClaseTransporte] = useState("Regular");
   const [origen, setOrigen] = useState("");
   const [destino, setDestino] = useState("");
 
@@ -70,7 +70,7 @@ export default function Transporte({
               <div className="flex justify-center w-1/4">
                 <ToggleYesNo
                   onValueChange={handleClaseTransporte}
-                  options={[{ label: "Publico" }, { label: "Privado" }]}
+                  options={[{ label: "Regular" }, { label: "Privado" }]}
                 />
               </div>
             )}

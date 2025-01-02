@@ -167,17 +167,20 @@ function calcularHoteles(
 
   // Filtrado adicional para "Las Leñas"
   if (cerro === "Las Leñas" && producto) {
+    console.log(producto)
     const noches = calcularDiferenciaDiasProducto(producto);
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(startDate);
     fechaFin.setDate(fechaInicio.getDate() + noches); // Calculamos la fecha final
-    paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.week.includes(producto));
+    paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.week === producto);
+    console.log(paquetesFiltrados)
 
     // Filtrar paquetes que contengan la fecha de inicio
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
       const fechaInicio = parseDate(paquete.fechaInicio);
       const fechaFinal = parseDate(paquete.fechaFinal);
       return startDate >= fechaInicio && startDate <= fechaFinal;
+      //return startDate >= fechaInicio;
     });
 
     totalPersonas.habitaciones.forEach((habitacion, index) => {
@@ -452,8 +455,11 @@ export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama)
       const paseInicio = parseDate(pase.fechaInicio);
       const paseFinal = parseDate(pase.fechaFinal);
 
-      // Verificar si startDate está entre paseInicio y paseFinal
-      return paseInicio <= startDate && paseFinal >= fechaFin;
+      if (cerro === "Las Leñas") {
+        return paseInicio <= startDate;
+      } else {
+        return paseInicio <= startDate && paseFinal >= fechaFin;
+      }
     });
   }
 
@@ -497,8 +503,12 @@ export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) =>
       const paseInicio = parseDate(clase.fechaInicio);
       const paseFinal = parseDate(clase.fechaFinal);
 
-      // Check if startDate is within paseInicio and paseFinal
-      return paseInicio <= startDate && paseFinal >= fechaFin;
+      // Chequear si startDate esta dentro de las fechas del pase
+      if (cerro === "Las Leñas") {
+        return paseInicio <= startDate;
+      } else {
+        return paseInicio <= startDate && paseFinal >= fechaFin;
+      }
     });
   }
 
@@ -530,16 +540,24 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
 
   // Filtrar por fechas (la fecha de inicio debe estar dentro del rango de fechas del pase)
   if (startDate && dias) {
+    console.log(8);
     const fechaFin = sumarDias(new Date(startDate), dias - 1); // Clonar startDate
 
-    pasesFiltrados = pasesFiltrados.filter((pase) => {
-      const paseInicio = parseDate(pase.fechaInicio); // Asegurarse de que pase.fechaInicio es un objeto Date
-      const paseFinal = parseDate(pase.fechaFinal); // Asegurarse de que pase.fechaFinal es un objeto Date
+    pasesFiltrados = pasesFiltrados.filter((clase) => {
+      const paseInicio = parseDate(clase.fechaInicio);
+      const paseFinal = parseDate(clase.fechaFinal);
 
-      // La fecha de inicio debe estar entre paseInicio y paseFinal
-      return paseInicio <= startDate && paseFinal >= fechaFin;
+      console.log(startDate, paseInicio);
+      console.log(fechaFin, paseFinal);
+
+      if (cerro === "Las Leñas") {
+        return paseInicio <= startDate;
+      } else {
+        return paseInicio <= startDate && paseFinal >= fechaFin;
+      }
     });
   }
+  console.log("final fechas", pasesFiltrados);
 
   setPases(pasesFiltrados);
 };
@@ -747,7 +765,6 @@ export const verificarFamilyPlan = (
   const secciones = ["pases", "equipos", "clases"];
   let activarFamilyPlan = false;
   const nuevosPaquetes = JSON.parse(JSON.stringify(paquetesTemp));
-
 
   secciones.forEach((seccion) => {
     const paquetesPorSeccion = nuevosPaquetes.filter((paquete) => {

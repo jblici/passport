@@ -171,7 +171,7 @@ export default function Hoteles({
                   <SelectContent>
                     <SelectItem value="none">Ninguno</SelectItem>
                     <SelectItem value={"MiniWeek"}>MiniWeek (2 noches)</SelectItem>
-                    <SelectItem value={"ExtraWeek"}>ExtraWeek (5 noches)</SelectItem>
+                    <SelectItem value={"MaxiWeek"}>MaxiWeek (5 noches)</SelectItem>
                     <SelectItem value={"SkiWeek"}>SkiWeek (7 noches)</SelectItem>
                   </SelectContent>
                 </Select>
@@ -261,7 +261,7 @@ export default function Hoteles({
                   disabled={!producto}
                   className="w-full p-2 border rounded"
                   placeholderText="Seleccionar fecha"
-                  filterDate={producto === "Extraweek" ? isMonday : isSaturday}
+                  filterDate={producto === "MaxiWeek" ? isMonday : isSaturday}
                 />
               ) : (
                 <DatePicker
