@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Button } from "../button";
 import { formatNumberWithDots } from "@/app/lib/utils";
 
-const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
+const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
   //console.log(resultados);
   if (!resultados) return null;
   if (Object.keys(resultados).length === 0) {
@@ -15,6 +15,11 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
       </div>
     );
   }
+
+  console.log(reglas)
+  console.log(reglas.find((r) => r.hotel === "Acuario").descripcion);
+
+  console.log(resultados)
   return (
     <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
       <div className="p-4 sm:p-6 md:p-8 border-b">
@@ -23,12 +28,10 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
       <div className="p-4 sm:p-6 md:p-8">
         {Object.keys(resultados).map((clave) => {
           const paquetes = resultados[clave];
+          
           return (
             <div key={clave} className="mb-6">
-              <h3 className="text-lg font-bold mb-2">{`${clave.replace(
-                "total_",
-                ""
-              )}`}</h3>
+              <h3 className="text-lg font-bold mb-2">{`${clave.replace("total_", "")}`}</h3>
               <Table className="w-full">
                 <TableHeader>
                   <TableRow>
@@ -76,8 +79,10 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
                             onClick={() =>
                               agregarPaquete({
                                 seccion: "alojamiento",
+                                reglas: reglas.find((result) => result.hotel === r.paquetesUtilizados.hotel).descripcion,
                                 name: `${r.paquetesUtilizados.hotel} - ${r.paquetesUtilizados.habitacion}`,
                                 discount: 0,
+                                noches: r.noches.toString(),
                                 price: r.precioTotal,
                               })
                             }
@@ -119,8 +124,12 @@ const PaquetesHoteles = ({ resultados, agregarPaquete }) => {
                             onClick={() =>
                               agregarPaquete({
                                 seccion: "alojamiento",
+                                reglas: reglas.find(
+                                  (result) => result.hotel === r.paquetesUtilizados.paquetes[0].hotel
+                                ).descripcion,
                                 name: `${r.paquetesUtilizados.paquetes[0].hotel} - ${r.paquetesUtilizados.paquetes[0].habitacion}`,
                                 discount: 0,
+                                noches: r.noches.toString(),
                                 price: r.precioTotal - descuento,
                               })
                             }

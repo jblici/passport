@@ -9,7 +9,6 @@ import Clases from "../components/ui/Formularios/clases";
 import Pases from "../components/ui/Formularios/pases";
 import Transporte from "../components/ui/Formularios/transporte";
 import Hoteles from "../components/ui/Formularios/hoteles";
-import { isToday } from "date-fns";
 
 export const generatePDF = (
   paquetesSeleccionados,
@@ -56,8 +55,31 @@ export const generatePDF = (
 
   doc.setFontSize(12);
   paquetesSeleccionados.forEach((paquete, index) => {
+    let textoPaquete = `• ${paquete.name}: $${formatNumberWithDots(paquete.price)}`;
+
+    // Agregar detalles específicos si es un traslado
+    console.log(typeof(paquete));
+    if (paquete.seccion === "transporte") {
+      const fechas = `Inicio: ${paquete.fechaInicio}, Fin: ${paquete.fechaFin}`;
+      doc.setFontSize(12);
+      doc.text(textoPaquete, 17, 80 + index * 11);
+      doc.setFontSize(10);
+      doc.text(fechas, 20, 85 + index * 11);
+    } else if (paquete.seccion === "alojamiento") {
+      textoPaquete += ` - ${paquete.noches} noches`;
+      doc.setFontSize(12);
+      doc.text(textoPaquete, 17, 80 + index * 11);
+    } else {
+      // Agregar texto al documento PDF
+      doc.setFontSize(12);
+      doc.text(textoPaquete, 17, 80 + index * 11);
+    }
+  });
+  /*
+  paquetesSeleccionados.forEach((paquete, index) => {
     doc.text(`• ${paquete.name}: $${formatNumberWithDots(paquete.price)}`, 20, 80 + index * 11);
   });
+  */
 
   doc.setFontSize(16);
   doc.setFont("helvetica", "bold");
@@ -167,13 +189,13 @@ function calcularHoteles(
 
   // Filtrado adicional para "Las Leñas"
   if (cerro === "Las Leñas" && producto) {
-    console.log(producto)
+    console.log(producto);
     const noches = calcularDiferenciaDiasProducto(producto);
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(startDate);
     fechaFin.setDate(fechaInicio.getDate() + noches); // Calculamos la fecha final
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.week === producto);
-    console.log(paquetesFiltrados)
+    console.log(paquetesFiltrados);
 
     // Filtrar paquetes que contengan la fecha de inicio
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
@@ -575,9 +597,11 @@ export const handleTransporte = (
   personas
 ) => {
   let transporteFiltrado = traslado;
-  console.log(tipoTransporte, claseTransporte);
+  console.log(tipoTransporte, claseTransporte, startDate, endDate);
   let ida = [];
   let vuelta = [];
+  const inicio = new Date(startDate).toLocaleDateString("es-AR");
+  const fin = new Date(endDate).toLocaleDateString("es-AR");
 
   // 1. Filtrar por cerro, origen y destino
   if (cerro) {
@@ -588,6 +612,12 @@ export const handleTransporte = (
   if (tipoTransporte === "Pasaje") {
     // Solo incluir paquetes que sean de servicio "Pasaje"
     transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.servicio === "Pasaje");
+
+    transporteFiltrado = transporteFiltrado.map((paquete) => ({
+      ...paquete,
+      inicio,
+      fin,
+    }));
 
     setTraslado(transporteFiltrado);
   } else if (tipoTransporte === "Transfer") {
@@ -635,10 +665,15 @@ export const handleTransporte = (
       transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.personas >= personas);
     }
 
+    transporteFiltrado = transporteFiltrado.map((paquete) => ({
+      ...paquete,
+      inicio,
+      fin,
+    }));
+
     ida = transporteFiltrado.filter((paquete) => paquete.tramo === "Ida");
     vuelta = transporteFiltrado.filter((paquete) => paquete.tramo === "Vuelta");
 
-    console.log(transporteFiltrado);
     setTraslado({ ida, vuelta });
   }
 };
@@ -650,7 +685,8 @@ export const handleBusqueda = (
   resClases,
   resTraslado,
   resEquipos,
-  agregarPaquete
+  agregarPaquete,
+  reglas
 ) => {
   // Lógica para manejar la búsqueda basada en la categoría
   if (category === "Equipos") {
@@ -667,7 +703,9 @@ export const handleBusqueda = (
     return <PaquetesTransporte resultados={resTraslado} agregarPaquete={agregarPaquete} />;
   } else if (category === "Alojamientos") {
     if (!resHoteles) return null;
-    return <PaquetesHoteles resultados={resHoteles} agregarPaquete={agregarPaquete} />;
+    return (
+      <PaquetesHoteles resultados={resHoteles} agregarPaquete={agregarPaquete} reglas={reglas} />
+    );
   }
 };
 
@@ -687,7 +725,8 @@ export const handleFormularios = (
   setCerro,
   setBusqueda,
   startDate,
-  setStartDate
+  setStartDate,
+  reglas
 ) => {
   // Lógica para manejar la búsqueda basada en la categoría
   if (category === "Equipos") {

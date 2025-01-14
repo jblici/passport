@@ -7,6 +7,7 @@ const useSpeadsheets = () => {
   const [clases, setClases] = useState(null);
   const [pases, setPases] = useState(null);
   const [traslado, setTraslado] = useState(null);
+  const [reglas, setReglas] = useState(null);
 
   const obtenerDatos = async () => {
     const csv = await fetch(
@@ -112,7 +113,7 @@ const useSpeadsheets = () => {
           pack,
           dias,
           precio,
-          descripcion
+          descripcion,
         ] = row.split(",");
         return {
           cerro,
@@ -125,7 +126,7 @@ const useSpeadsheets = () => {
           pack,
           dias: Number(dias),
           precio: Number(Math.round(precio)),
-          descripcion
+          descripcion,
         };
       });
     const csv4 = await fetch(
@@ -158,7 +159,19 @@ const useSpeadsheets = () => {
       .split("\n")
       .slice(1)
       .map((row) => {
-        const [cerro,recorrido,origen,destino,servicio,descripcion,tramo,fechaInicio,fechaFinal,precio,personas] = row.split(",");
+        const [
+          cerro,
+          recorrido,
+          origen,
+          destino,
+          servicio,
+          descripcion,
+          tramo,
+          fechaInicio,
+          fechaFinal,
+          precio,
+          personas,
+        ] = row.split(",");
         return {
           cerro,
           recorrido,
@@ -170,8 +183,22 @@ const useSpeadsheets = () => {
           fechaInicio,
           fechaFinal,
           precio: Number(Math.round(precio)),
-          personas: Number(personas)
-          
+          personas: Number(personas),
+        };
+      });
+
+    const csv6 = await fetch(
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1338090560&single=true&output=csv"
+    ).then((res) => res.text());
+
+    const reglas = csv6
+      .split("\n")
+      .slice(1)
+      .map((row) => {
+        const [hotel, descripcion] = row.split(",");
+        return {
+          hotel,
+          descripcion,
         };
       });
 
@@ -180,6 +207,7 @@ const useSpeadsheets = () => {
     setClases(clases);
     setPases(pases);
     setTraslado(traslado);
+    setReglas(reglas);
   };
 
   useEffect(() => {
@@ -192,6 +220,7 @@ const useSpeadsheets = () => {
     clases,
     pases,
     traslado,
+    reglas,
   };
 };
 

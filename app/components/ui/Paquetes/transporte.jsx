@@ -73,6 +73,9 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                         onClick={() => {
                           const count = selectedCounts[index] || 1; // Usar el valor seleccionado o 2 por defecto
                           agregarPaquete({
+                            seccion: "transporte",
+                            fechaInicio: r.inicio,
+                            fechaFin: r.fin,
                             name: `Traslado ${r.recorrido} - ${r.servicio} - x ${count}`,
                             price: r.precio * count,
                           });
@@ -144,6 +147,8 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                                 const count = selectedCounts[index] || 1; // Usar el valor seleccionado o 2 por defecto
                                 agregarPaquete({
                                   seccion: "transporte",
+                                  fechaInicio: r.inicio,
+                                  fechaFin: r.fin,
                                   name: `Traslado ${r.recorrido} - ${r.servicio} - x ${count}`,
                                   price: r.precio * count,
                                 });

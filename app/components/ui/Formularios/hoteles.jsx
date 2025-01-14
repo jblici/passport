@@ -84,7 +84,7 @@ export default function Hoteles({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const hoteles = selectedHoteles.map(hotel => hotel.value);
+    const hoteles = selectedHoteles.map((hotel) => hotel.value);
     handleHoteles(
       startDate,
       endDate,

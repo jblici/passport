@@ -11,8 +11,9 @@ const ResumenPresupuesto = ({
   totalCompra,
   eliminarPaquete,
   busqueda,
-  originales
+  originales,
 }) => {
+  console.log(paquetesSeleccionados);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [discount, setDiscount] = useState(0);
   const [clientName, setClientName] = useState("");
@@ -58,7 +59,7 @@ const ResumenPresupuesto = ({
       setFamilyPlan,
       setPaquetesSeleccionados,
       setFlag,
-      familyPlan,
+      familyPlan
     );
 
     if (familyPlan && fpActivado) {
@@ -87,10 +88,10 @@ const ResumenPresupuesto = ({
         <AnimatedDropdown discount={discount} handleDiscount={handleDiscount} />
         {familyPlan && (
           <div className="flex items-center gap-2">
-            <span>Family Plan</span>
+            <span>Activar Family Plan</span>
             <label
               htmlFor="AcceptConditions"
-              className="relative inline-block h-8 w-14 cursor-pointer rounded-full bg-gray-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-blue-500"
+              className="relative inline-block h-8 w-14 cursor-pointer rounded-full bg-red-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-red-500"
             >
               <input
                 type="checkbox"
@@ -100,7 +101,7 @@ const ResumenPresupuesto = ({
                 onChange={handleToggle}
               />
 
-              <span className="absolute inset-y-0 start-0 m-1 size-6 rounded-full bg-gray-300 ring-[6px] ring-inset ring-white transition-all peer-checked:start-8 peer-checked:w-2 peer-checked:bg-white peer-checked:ring-transparent"></span>
+              <span className="absolute inset-y-0 start-0 m-1 size-6 rounded-full bg-red-300 ring-[6px] ring-inset ring-white transition-all peer-checked:start-8 peer-checked:w-2 peer-checked:bg-white peer-checked:ring-transparent"></span>
             </label>
           </div>
         )}
@@ -109,12 +110,19 @@ const ResumenPresupuesto = ({
         <div className="pb-2">
           {paquetesSeleccionados.map((paquete, index) => (
             <div key={index} className="flex items-center justify-between">
-              {paquete.seccion !== "alojamiento" || paquete.seccion !== "transporte" ? (
+              {paquete.count ? (
                 <span>
                   {paquete.name} - x {paquete.count}
                 </span>
               ) : (
-                <span className={`${paquete.promo ? "text-gray-500" : null}`}>{paquete.name}</span>
+                <div className="flex flex-col">
+                  <span className={`${paquete.promo ? "text-gray-500" : null}`}>
+                    {paquete.name}
+                  </span>
+                  {paquete.seccion === "alojamiento" && (
+                    <span className="text-gray-500">Descripcion: {paquete.reglas}</span>
+                  )}
+                </div>
               )}
               {paquete.seccion === "alojamiento" && paquete.discount !== 0 && (
                 <span className="ml-2 text-gray-500">Descuento: $ {paquete.discount}</span>

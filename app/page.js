@@ -87,7 +87,7 @@ export default function Cotizador() {
                   setCerro,
                   setBusqueda,
                   startDate,
-                  setStartDate
+                  setStartDate,
                 )}
             </div>
           </div>
@@ -100,7 +100,8 @@ export default function Cotizador() {
             resClases,
             resTraslado,
             resEquipos,
-            agregarPaquete
+            agregarPaquete,
+            reglas,
           )}
         </div>
         <div className="grid gap-8">
