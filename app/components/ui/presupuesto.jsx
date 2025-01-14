@@ -4,6 +4,7 @@ import { XIcon } from "../svg/svg";
 import { formatNumberWithDots, generatePDF, verificarFamilyPlan } from "@/app/lib/utils";
 import Passport from "/public/Passport.png";
 import AnimatedDropdown from "./animated-dropdown";
+import { CiDiscount1 } from "react-icons/ci";
 
 const ResumenPresupuesto = ({
   paquetesSeleccionados,
@@ -106,41 +107,63 @@ const ResumenPresupuesto = ({
           </div>
         )}
       </div>
-      <div id="pdf-content" className="p-4 sm:p-6 md:p-8 space-y-4 h-fit">
+      <div id="pdf-content" className="p-4 sm:p-6 md:p-8 space-y-4">
         <div className="pb-2">
           {paquetesSeleccionados.map((paquete, index) => (
-            <div key={index} className="flex items-center justify-between">
+            <div key={index} className="flex items-center justify-between py-1">
               {paquete.count ? (
                 <span>
                   {paquete.name} - x {paquete.count}
                 </span>
               ) : (
-                <div className="flex flex-col">
+                <div className="flex flex-col w-4/5">
                   <span className={`${paquete.promo ? "text-gray-500" : null}`}>
                     {paquete.name}
                   </span>
+                  {paquete.seccion === "transporte" && (
+                    <span className="text-gray-500 text-xs w-[80%] text-pretty pl-1">
+                      {paquete.clave
+                        ? paquete.clave === "ida"
+                          ? paquete.fechaInicio
+                          : paquete.fechaFin
+                        : paquete.fechaInicio + "-" + paquete.fechaFin}
+                    </span>
+                  )}
                   {paquete.seccion === "alojamiento" && (
-                    <span className="text-gray-500">Descripcion: {paquete.reglas}</span>
+                    <span
+                      className="text-gray-500 text-xs w-[80%] text-pretty pl-1"
+                      style={{ whiteSpace: "pre-wrap" }}
+                    >
+                      {paquete.reglas}
+                    </span>
                   )}
                 </div>
               )}
-              {paquete.seccion === "alojamiento" && paquete.discount !== 0 && (
-                <span className="ml-2 text-gray-500">Descuento: $ {paquete.discount}</span>
-              )}
-              <div>
-                <span>
-                  $
-                  {formatNumberWithDots(
-                    paquete.discount ? paquete.price - paquete.discount : paquete.price
-                  )}
-                </span>
-                <button
-                  onClick={() => eliminarPaquete(index)}
-                  className="ml-4 text-black hover:text-red-700 focus:outline-none"
-                  aria-label="Eliminar paquete"
-                >
-                  <XIcon className="h-5 w-5" />
-                </button>
+              <div className="flex flex-col items-center">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="flex gap-1">
+                    <span>$</span>
+                    {formatNumberWithDots(
+                      paquete.discount ? paquete.price - paquete.discount : paquete.price
+                    )}
+                  </span>
+                  <button
+                    onClick={() => eliminarPaquete(index)}
+                    className="text-black hover:text-red-700 focus:outline-none"
+                    aria-label="Eliminar paquete"
+                  >
+                    <XIcon className="h-5 w-5" />
+                  </button>
+                </div>
+                {paquete.seccion === "alojamiento" && paquete.discount !== 0 && (
+                  <div className="text-gray-500 flex items-center justify-between w-full">
+                    <span className="flex gap-1">
+                      <span>$</span>
+                      {formatNumberWithDots(paquete.discount)}
+                    </span>
+                    <CiDiscount1 />
+                  </div>
+                )}
               </div>
             </div>
           ))}

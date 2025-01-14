@@ -195,10 +195,12 @@ const useSpeadsheets = () => {
       .split("\n")
       .slice(1)
       .map((row) => {
-        const [hotel, descripcion] = row.split(",");
+        // Dividir solo por la primera coma
+        const [hotel, ...rest] = row.split(",");
+        const descripcion = rest.join(","); // Reunir todo lo que está después de la primera coma
         return {
-          hotel,
-          descripcion,
+          hotel: hotel.trim(), // Limpiar espacios extra
+          descripcion: descripcion.trim().replace(/\. /g, ".\n"), // Limpiar espacios extra
         };
       });
 

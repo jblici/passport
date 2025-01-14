@@ -76,7 +76,7 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                             seccion: "transporte",
                             fechaInicio: r.inicio,
                             fechaFin: r.fin,
-                            name: `Traslado ${r.recorrido} - ${r.servicio} - x ${count}`,
+                            name: `${r.descripcion} - ${r.origen} / ${r.destino} x ${count}`,
                             price: r.precio * count,
                           });
                         }}
@@ -103,7 +103,7 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
             const paquetes = resultados[clave];
             return (
               <div key={clave} className="p-4 sm:p-6 md:p-8">
-                <h3 className="text-lg font-bold mb-2">{clave}</h3>
+                <h3 className="text-lg font-bold mb-2 capitalize">{clave}</h3>
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow>
@@ -148,8 +148,9 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                                 agregarPaquete({
                                   seccion: "transporte",
                                   fechaInicio: r.inicio,
+                                  clave: clave,
                                   fechaFin: r.fin,
-                                  name: `Traslado ${r.recorrido} - ${r.servicio} - x ${count}`,
+                                  name: `${r.descripcion} - ${r.origen} / ${r.destino} x ${count}`,
                                   price: r.precio * count,
                                 });
                               }}

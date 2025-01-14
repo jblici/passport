@@ -51,28 +51,41 @@ export const generatePDF = (
   doc.setFontSize(14);
   if (personas) doc.text(`${personas.total} Personas`, 14, 70);
 
-  doc.text(`Fechas del presupuesto: ${obtenerFechaActual()}`, 14, 60);
+  doc.text(`Fecha del presupuesto: ${obtenerFechaActual()}`, 14, 60);
 
   doc.setFontSize(12);
   paquetesSeleccionados.forEach((paquete, index) => {
     let textoPaquete = `• ${paquete.name}: $${formatNumberWithDots(paquete.price)}`;
-
+    let espacioExtra = 0;
+    let espacioY = 80 + index * 11 + espacioExtra;
     // Agregar detalles específicos si es un traslado
-    console.log(typeof(paquete));
     if (paquete.seccion === "transporte") {
-      const fechas = `Inicio: ${paquete.fechaInicio}, Fin: ${paquete.fechaFin}`;
+      console.log(espacioExtra);
+      let fechas = paquete.clave
+        ? paquete.clave === "ida"
+          ? "Fecha: " + paquete.fechaInicio
+          : "Fecha: " + paquete.fechaFin
+        : "Fechas: " + paquete.fechaInicio + " - " + paquete.fechaFin;
       doc.setFontSize(12);
-      doc.text(textoPaquete, 17, 80 + index * 11);
+      doc.text(textoPaquete, 17, espacioY);
       doc.setFontSize(10);
-      doc.text(fechas, 20, 85 + index * 11);
+      doc.text(fechas, 20, espacioY + 5);
     } else if (paquete.seccion === "alojamiento") {
+      console.log(espacioExtra);
+      let descripcion = paquete.reglas;
       textoPaquete += ` - ${paquete.noches} noches`;
       doc.setFontSize(12);
-      doc.text(textoPaquete, 17, 80 + index * 11);
+      doc.text(textoPaquete, 17, espacioY);
+      doc.setFontSize(8);
+      doc.text(descripcion, 20, espacioY + 5);
+      doc.setFontSize(12);
+      espacioExtra += 10;
     } else {
+      console.log(espacioExtra);
+
       // Agregar texto al documento PDF
       doc.setFontSize(12);
-      doc.text(textoPaquete, 17, 80 + index * 11);
+      doc.text(textoPaquete, 17, 80 + index * 11 + espacioExtra);
     }
   });
   /*
