@@ -39,6 +39,7 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                 <TableHead>Origen</TableHead>
                 <TableHead>Destino</TableHead>
                 <TableHead>Tramo</TableHead>
+                <TableHead>Descripción</TableHead>
                 <TableHead>Pax</TableHead>
                 <TableHead>Precio</TableHead>
                 <TableHead>Cantidad</TableHead>
@@ -52,6 +53,7 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                   <TableCell>{r.origen}</TableCell>
                   <TableCell>{r.destino}</TableCell>
                   <TableCell>{r.tramo}</TableCell>
+                  <TableCell>{r.descripcion}</TableCell>
                   <TableCell>{r.personas}</TableCell>
                   <TableCell>{`$ ${r.precio}`}</TableCell>
                   <TableCell>
