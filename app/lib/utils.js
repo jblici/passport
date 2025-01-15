@@ -570,7 +570,6 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
 
   // Filtrar por fechas (la fecha de inicio debe estar dentro del rango de fechas del pase)
   if (startDate && dias) {
-    console.log(8);
     const fechaFin = sumarDias(new Date(startDate), dias - 1); // Clonar startDate
 
     pasesFiltrados = pasesFiltrados.filter((clase) => {
@@ -607,31 +606,14 @@ export const handleTransporte = (
     transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.cerro === cerro);
   }
 
-  console.log(transporteFiltrado);
+  if (startDate && endDate) {
+    transporteFiltrado = transporteFiltrado.filter((clase) => {
+      const paseInicio = parseDate(clase.fechaInicio);
+      const paseFinal = parseDate(clase.fechaFinal);
 
-  transporteFiltrado = transporteFiltrado.filter((paquete) => {
-    const fechaInicio = parseDate(paquete.fechaInicio);
-    const fechaFinal = parseDate(paquete.fechaFinal);
-
-    // Verificar si la fecha de inicio está dentro del rango de fechas seleccionado
-    const fechaInicioDentroRango = startDate && fechaInicio >= startDate && fechaInicio <= endDate;
-
-    // Verificar si la fecha final está dentro del rango de fechas seleccionado
-    const fechaFinalDentroRango = endDate && fechaFinal >= startDate && fechaFinal <= endDate;
-
-    // Verificar si la fecha de inicio es anterior a la fecha de fin del rango seleccionado
-    const fechaInicioAntesDeFinRango = fechaInicio <= endDate;
-
-    // Verificar si la fecha final es posterior a la fecha de inicio del rango seleccionado
-    const fechaFinalDespuesDeInicioRango = fechaFinal >= startDate;
-
-    return (
-      (fechaInicioDentroRango || fechaFinalDentroRango) &&
-      fechaInicioAntesDeFinRango &&
-      fechaFinalDespuesDeInicioRango
-    );
-  });
-  console.log(transporteFiltrado);
+      return paseInicio <= startDate && paseFinal >= endDate;
+    });
+  }
 
   // 2. Separar por tipo de transporte
   if (tipoTransporte === "Pasaje") {
