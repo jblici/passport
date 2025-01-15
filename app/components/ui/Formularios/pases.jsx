@@ -18,7 +18,7 @@ export default function Pases({
   startDate,
   setStartDate,
 }) {
-  const [dias, setDias] = useState(null);
+  const [dias, setDias] = useState("1");
   const [pase, setPase] = useState(null);
   const [disabled, setDisabled] = useState(true);
 

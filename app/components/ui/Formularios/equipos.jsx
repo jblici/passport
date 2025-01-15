@@ -18,7 +18,7 @@ export default function Equipos({
   startDate,
   setStartDate,
 }) {
-  const [dias, setDias] = useState(null);
+  const [dias, setDias] = useState("1");
   const [gama, setGama] = useState(null);
   const [disabled, setDisabled] = useState(true);
 

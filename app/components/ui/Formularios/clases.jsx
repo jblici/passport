@@ -19,7 +19,7 @@ export default function Clases({
   setStartDate,
 }) {
   const [disabled, setDisabled] = useState(true);
-  const [dias, setDias] = useState(null);
+  const [dias, setDias] = useState("1");
   const [tipo, setTipo] = useState(null);
 
   const handleSubmit = (e) => {
