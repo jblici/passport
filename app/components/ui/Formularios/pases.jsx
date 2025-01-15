@@ -31,6 +31,10 @@ export default function Pases({
     setCerro(value);
   };
 
+  const handleDias = (value) => {
+    setDias(value);
+  };
+
   const handlePase = (value) => {
     setPase(value);
   };
@@ -61,6 +65,40 @@ export default function Pases({
                 </SelectContent>
               </Select>
             </div>
+            <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
+              <Label htmlFor="centro">Dias:</Label>
+              <Select id="clase" onValueChange={handleDias}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccionar Dias" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">1</SelectItem>
+                  <SelectItem value="2">2</SelectItem>
+                  <SelectItem value="3">3</SelectItem>
+                  <SelectItem value="4">4</SelectItem>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="6">6</SelectItem>
+                  <SelectItem value="7">7</SelectItem>
+                  <SelectItem value="8">8</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
+            <div className={`flex flex-col space-y-2 w-full sm:w-1/2 ${cerro === "Catedral" || cerro === "Chapelco" ? "" : "pr-2"}`}>
+              <Label htmlFor="start-date">
+                <span className="flex items-center gap-1">
+                  <CalendarDaysIcon /> Fecha de Inicio:
+                </span>
+              </Label>
+              <DatePicker
+                selected={startDate}
+                dateFormat="dd/MM/yyyy"
+                onChange={(date) => setStartDate(date)}
+                className="w-full p-2 border rounded"
+                placeholderText="Seleccionar fecha"
+              />
+            </div>
             {(cerro === "Catedral" || cerro === "Chapelco") && (
               <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
                 <Label htmlFor="pase">Pase:</Label>
@@ -75,33 +113,6 @@ export default function Pases({
                 </Select>
               </div>
             )}
-          </div>
-          <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
-            <div className="flex flex-col space-y-2 w-full sm:w-1/2">
-              <Label htmlFor="start-date">
-                <span className="flex items-center gap-1">
-                  <CalendarDaysIcon /> Fecha de Inicio:
-                </span>
-              </Label>
-              <DatePicker
-                selected={startDate}
-                dateFormat="dd/MM/yyyy"
-                onChange={(date) => setStartDate(date)}
-                className="w-full p-2 border rounded"
-                placeholderText="Seleccionar fecha"
-              />
-            </div>
-            <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
-              <Label htmlFor="days">
-                <span className="flex items-center gap-1">Dias:</span>
-              </Label>
-              <Input
-                id="days"
-                placeholder="Dias"
-                className="w-full p-2 border rounded"
-                onChange={(e) => setDias(e.target.value)}
-              />
-            </div>
           </div>
           <div className="flex w-fit">
             <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600">

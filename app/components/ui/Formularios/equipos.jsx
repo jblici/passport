@@ -60,10 +60,10 @@ export default function Equipos({
               </Select>
             </div>
             <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
-              <Label htmlFor="centro">Gama:</Label>
-              <Select id="clase" onValueChange={handleGama}>
+              <Label htmlFor="gama">Gama:</Label>
+              <Select id="gama" onValueChange={handleGama}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar Equipo" />
+                  <SelectValue placeholder="Seleccionar Gama" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="SPORT">Sport</SelectItem>
@@ -73,7 +73,7 @@ export default function Equipos({
             </div>
           </div>
           <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
-            <div className="flex flex-col space-y-2 w-full sm:w-1/2">
+            <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
               <Label htmlFor="start-date">
                 <span className="flex items-center gap-1">
                   <CalendarDaysIcon /> Fecha de Inicio:
@@ -88,10 +88,10 @@ export default function Equipos({
               />
             </div>
             <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
-              <Label htmlFor="centro">Dias:</Label>
-              <Select id="clase" onValueChange={handleDias}>
+              <Label htmlFor="dias">Dias:</Label>
+              <Select id="dias" onValueChange={handleDias}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar Equipo" />
+                  <SelectValue placeholder="Seleccionar Dias" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="1">1</SelectItem>

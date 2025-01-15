@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Label } from "../label";
@@ -19,12 +19,18 @@ export default function Transporte({
   startDate,
   setStartDate,
 }) {
-  const [endDate, setEndDate] = useState(null);
+  const [endDate, setEndDate] = useState(startDate);
   const [personas, setPersonas] = useState(null);
   const [tipoTransporte, setTipoTransporte] = useState("Pasaje");
   const [claseTransporte, setClaseTransporte] = useState("Regular");
-  const [origen, setOrigen] = useState("");
-  const [destino, setDestino] = useState("");
+  const [disable, setDisable] = useState(true);
+
+  useEffect(() => {
+    if (cerro && startDate && endDate) {
+      setDisable(false);
+    }
+  },[cerro, endDate, startDate]);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,9 +42,7 @@ export default function Transporte({
       endDate,
       tipoTransporte,
       claseTransporte,
-      origen,
-      destino,
-      personas,
+      personas
     );
   };
 
@@ -76,9 +80,13 @@ export default function Transporte({
             )}
           </div>
           <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
-            <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
+            <div
+              className={`flex flex-col space-y-2 w-full sm:w-1/2 justify-between ${
+                claseTransporte === "Privado" && tipoTransporte === "Transfer" ? "" : "pr-2"
+              }`}
+            >
               <Label htmlFor="centro">Centro:</Label>
-              <Select id="centro" onValueChange={handleCerro} value={cerro} >
+              <Select id="centro" onValueChange={handleCerro} value={cerro}>
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar Centro" />
                 </SelectTrigger>
@@ -119,23 +127,23 @@ export default function Transporte({
                 placeholderText="Seleccionar fecha"
               />
             </div>
-              <div className="flex flex-col space-y-2 w-full sm:w-1/2">
-                <Label htmlFor="end-date">
-                  <span className="flex items-center gap-1">
-                    <CalendarDaysIcon /> Fecha de vuelta:
-                  </span>
-                </Label>
-                <DatePicker
-                  selected={endDate}
-                  dateFormat="dd/MM/yyyy"
-                  onChange={(date) => setEndDate(date)}
-                  className="w-full p-2 border rounded"
-                  placeholderText="Seleccionar fecha"
-                />
-              </div>
+            <div className="flex flex-col space-y-2 w-full sm:w-1/2">
+              <Label htmlFor="end-date">
+                <span className="flex items-center gap-1">
+                  <CalendarDaysIcon /> Fecha de vuelta:
+                </span>
+              </Label>
+              <DatePicker
+                selected={endDate}
+                dateFormat="dd/MM/yyyy"
+                onChange={(date) => setEndDate(date)}
+                className="w-full p-2 border rounded"
+                placeholderText="Seleccionar fecha"
+              />
+            </div>
           </div>
           <div className="flex w-fit">
-            <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600">
+            <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600" disabled={disable}>
               Buscar
             </Button>
           </div>

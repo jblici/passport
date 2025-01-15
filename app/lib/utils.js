@@ -484,17 +484,12 @@ export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama)
   // Filtrar por fechas
   if (startDate && dias) {
     const fechaFin = sumarDias(new Date(startDate), dias - 1); // Clonar startDate
-    console.log(startDate, fechaFin);
 
     rentalsFiltradas = rentalsFiltradas.filter((pase) => {
       const paseInicio = parseDate(pase.fechaInicio);
       const paseFinal = parseDate(pase.fechaFinal);
 
-      if (cerro === "Las Leñas") {
-        return paseInicio <= startDate;
-      } else {
-        return paseInicio <= startDate && paseFinal >= fechaFin;
-      }
+      return paseInicio <= startDate && paseFinal >= fechaFin;
     });
   }
 
@@ -582,14 +577,7 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
       const paseInicio = parseDate(clase.fechaInicio);
       const paseFinal = parseDate(clase.fechaFinal);
 
-      console.log(startDate, paseInicio);
-      console.log(fechaFin, paseFinal);
-
-      if (cerro === "Las Leñas") {
-        return paseInicio <= startDate;
-      } else {
-        return paseInicio <= startDate && paseFinal >= fechaFin;
-      }
+      return paseInicio <= startDate && paseFinal >= fechaFin;
     });
   }
   console.log("final fechas", pasesFiltrados);
@@ -605,8 +593,6 @@ export const handleTransporte = (
   endDate,
   tipoTransporte,
   claseTransporte,
-  origen,
-  destino,
   personas
 ) => {
   let transporteFiltrado = traslado;
@@ -620,6 +606,32 @@ export const handleTransporte = (
   if (cerro) {
     transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.cerro === cerro);
   }
+
+  console.log(transporteFiltrado);
+
+  transporteFiltrado = transporteFiltrado.filter((paquete) => {
+    const fechaInicio = parseDate(paquete.fechaInicio);
+    const fechaFinal = parseDate(paquete.fechaFinal);
+
+    // Verificar si la fecha de inicio está dentro del rango de fechas seleccionado
+    const fechaInicioDentroRango = startDate && fechaInicio >= startDate && fechaInicio <= endDate;
+
+    // Verificar si la fecha final está dentro del rango de fechas seleccionado
+    const fechaFinalDentroRango = endDate && fechaFinal >= startDate && fechaFinal <= endDate;
+
+    // Verificar si la fecha de inicio es anterior a la fecha de fin del rango seleccionado
+    const fechaInicioAntesDeFinRango = fechaInicio <= endDate;
+
+    // Verificar si la fecha final es posterior a la fecha de inicio del rango seleccionado
+    const fechaFinalDespuesDeInicioRango = fechaFinal >= startDate;
+
+    return (
+      (fechaInicioDentroRango || fechaFinalDentroRango) &&
+      fechaInicioAntesDeFinRango &&
+      fechaFinalDespuesDeInicioRango
+    );
+  });
+  console.log(transporteFiltrado);
 
   // 2. Separar por tipo de transporte
   if (tipoTransporte === "Pasaje") {
@@ -645,35 +657,6 @@ export const handleTransporte = (
     }
     // Dividir en secciones de ida y vuelta
 
-    /*
-
-    transporteFiltrado = transporteFiltrado.filter((paquete) => {
-      const fechaInicio = parseDate(paquete.fechaInicio);
-      const fechaFinal = parseDate(paquete.fechaFinal);
-
-      // Verificar si la fecha de inicio está dentro del rango de fechas seleccionado
-      const fechaInicioDentroRango =
-        startDate && fechaInicio >= startDate && fechaInicio <= endDate;
-
-      // Verificar si la fecha final está dentro del rango de fechas seleccionado
-      const fechaFinalDentroRango =
-        endDate && fechaFinal >= startDate && fechaFinal <= endDate;
-
-      // Verificar si la fecha de inicio es anterior a la fecha de fin del rango seleccionado
-      const fechaInicioAntesDeFinRango = fechaInicio <= endDate;
-
-      // Verificar si la fecha final es posterior a la fecha de inicio del rango seleccionado
-      const fechaFinalDespuesDeInicioRango = fechaFinal >= startDate;
-
-      return (
-        (fechaInicioDentroRango || fechaFinalDentroRango) &&
-        fechaInicioAntesDeFinRango &&
-        fechaFinalDespuesDeInicioRango
-      );
-    })
-
-*/
-
     if (personas) {
       transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.personas >= personas);
     }
@@ -687,7 +670,11 @@ export const handleTransporte = (
     ida = transporteFiltrado.filter((paquete) => paquete.tramo === "Ida");
     vuelta = transporteFiltrado.filter((paquete) => paquete.tramo === "Vuelta");
 
-    setTraslado({ ida, vuelta });
+    if (ida.length === 0 || vuelta.length === 0) {
+      setTraslado([]);
+    } else {
+      setTraslado({ ida, vuelta });
+    }
   }
 };
 
