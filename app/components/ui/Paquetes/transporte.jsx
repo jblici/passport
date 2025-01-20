@@ -152,7 +152,7 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                                   fechaInicio: r.inicio,
                                   clave: clave,
                                   fechaFin: r.fin,
-                                  name: `${r.descripcion} - ${r.origen} / ${r.destino} - ${r.personas} PAX x ${count}`,
+                                  name: `${r.descripcion} - ${r.origen} / ${r.destino}${r.personas > 1 && " - PAX x " + count}`,
                                   price: r.precio * count,
                                 });
                               }}
