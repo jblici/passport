@@ -9,6 +9,7 @@ import Clases from "../components/ui/Formularios/clases";
 import Pases from "../components/ui/Formularios/pases";
 import Transporte from "../components/ui/Formularios/transporte";
 import Hoteles from "../components/ui/Formularios/hoteles";
+import { eachWeekOfInterval } from "date-fns";
 
 export const generatePDF = (
   paquetesSeleccionados,
@@ -489,7 +490,11 @@ export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama)
       const paseInicio = parseDate(pase.fechaInicio);
       const paseFinal = parseDate(pase.fechaFinal);
 
-      return paseInicio <= startDate && paseFinal >= fechaFin;
+      if (cerro === "Las Leñas") {
+        return paseInicio <= startDate && startDate <= paseFinal;
+      } else {
+        return paseInicio <= startDate && paseFinal >= fechaFin;
+      }
     });
   }
 
@@ -535,7 +540,7 @@ export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) =>
 
       // Chequear si startDate esta dentro de las fechas del pase
       if (cerro === "Las Leñas") {
-        return paseInicio <= startDate;
+        return paseInicio <= startDate && startDate <= paseFinal;
       } else {
         return paseInicio <= startDate && paseFinal >= fechaFin;
       }
@@ -576,7 +581,11 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
       const paseInicio = parseDate(clase.fechaInicio);
       const paseFinal = parseDate(clase.fechaFinal);
 
-      return paseInicio <= startDate && paseFinal >= fechaFin;
+      if (cerro === "Las Leñas") {
+        return paseInicio <= startDate && startDate <= paseFinal;
+      } else {
+        return paseInicio <= startDate && paseFinal >= fechaFin;
+      }
     });
   }
   console.log("final fechas", pasesFiltrados);
@@ -611,7 +620,11 @@ export const handleTransporte = (
       const paseInicio = parseDate(clase.fechaInicio);
       const paseFinal = parseDate(clase.fechaFinal);
 
-      return paseInicio <= startDate && paseFinal >= endDate;
+      if (cerro === "Las Leñas") {
+        return paseInicio <= startDate && startDate <= paseFinal;
+      } else {
+        return paseInicio <= startDate && paseFinal >= fechaFin;
+      }
     });
   }
 
@@ -781,11 +794,13 @@ export const verificarFamilyPlan = (
   setFamilyPlan,
   setPaquetesSeleccionados,
   setFlag,
-  familyPlan
+  setIsChecked
 ) => {
   const secciones = ["pases", "equipos", "clases"];
   let activarFamilyPlan = false;
   const nuevosPaquetes = JSON.parse(JSON.stringify(paquetesTemp));
+
+  console.log("entre a verificar family plan");
 
   secciones.forEach((seccion) => {
     const paquetesPorSeccion = nuevosPaquetes.filter((paquete) => {
@@ -795,17 +810,19 @@ export const verificarFamilyPlan = (
       return (
         paquete.seccion === seccion && // Coincide con la sección
         !paquete.promo && // No es promo
-        paquete.days >= minDias // Cumple con el mínimo de días según la sección
+        Number(paquete.days) >= minDias // Cumple con el mínimo de días según la sección
       );
     });
 
     const totalCount = paquetesPorSeccion.reduce((sum, paquete) => sum + paquete.count, 0);
 
-    if (totalCount >= 4 && totalCount <= 6) {
+    if (totalCount >= 4) {
+      // Activar Family Plan si se cumplen las condiciones
       setFamilyPlan(true);
       activarFamilyPlan = true;
 
       let restante = totalCount >= 4 && totalCount < 6 ? 1 : 2; // Determina cuántos paquetes necesitamos procesar
+      console.log("Restante", restante);
 
       if (isChecked) {
         while (restante > 0) {
@@ -856,7 +873,12 @@ export const verificarFamilyPlan = (
       setPaquetesSeleccionados(nuevosPaquetes);
       setFlag(false);
     }
-  } else if (familyPlan) {
-    //setFamilyPlan(false); // Si no se cumple la condición, desactiva el Family Plan
+  } else {
+    setFamilyPlan(false);
+    setIsChecked(false);
   }
+};
+
+export const scrollToSection = () => {
+  document.getElementById("busqueda").scrollIntoView({ behavior: "smooth" });
 };

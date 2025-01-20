@@ -28,6 +28,8 @@ const ResumenPresupuesto = ({
     setIsChecked((prevState) => !prevState);
     if (isChecked === true) {
       setFpActivado(true);
+    } else {
+      setFlag(true);
     }
   };
 
@@ -53,22 +55,24 @@ const ResumenPresupuesto = ({
     setTotal(total);
 
     const paquetesTemp = [...paquetesSeleccionados];
+    console.log(paquetesTemp);
 
-    verificarFamilyPlan(
-      paquetesTemp,
-      isChecked,
-      setFamilyPlan,
-      setPaquetesSeleccionados,
-      setFlag,
-      familyPlan
-    );
+    if (flag) {
+      verificarFamilyPlan(
+        paquetesTemp,
+        isChecked,
+        setFamilyPlan,
+        setPaquetesSeleccionados,
+        setFlag,
+        setIsChecked
+      );
+    }
 
     if (familyPlan && fpActivado) {
       const nuevosPaquetes = JSON.parse(JSON.stringify(originales));
       setPaquetesSeleccionados(nuevosPaquetes);
       setFpActivado(false);
-      setFamilyPlan(false);
-      setFlag(true);
+      setFlag(false);
     }
   }, [
     paquetesSeleccionados,
@@ -113,7 +117,7 @@ const ResumenPresupuesto = ({
             <div key={index} className="flex items-center justify-between py-1">
               {paquete.count ? (
                 <span>
-                  {paquete.name} - x {paquete.count}
+                  {paquete.name} x {paquete.count}
                 </span>
               ) : (
                 <div className="flex flex-col w-4/5">

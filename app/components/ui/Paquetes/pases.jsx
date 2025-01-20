@@ -75,7 +75,7 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
                           seccion: "pases",
                           days: r.dias,
                           count: Number(count),
-                          name: `${r.tipo} - ${r.edad}`,
+                          name: `Medios de Elevación: ${r.tipo} - ${r.edad}`,
                           price: r.precio * count,
                         });
                       }}

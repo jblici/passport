@@ -6,7 +6,7 @@ import { Label } from "../label";
 import { Button } from "../button";
 import { CalendarDaysIcon } from "../../svg/svg";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select";
-import { handleEquipos } from "@/app/lib/utils";
+import { handleEquipos, scrollToSection } from "@/app/lib/utils";
 import { Input } from "../input";
 
 export default function Equipos({
@@ -21,6 +21,11 @@ export default function Equipos({
   const [dias, setDias] = useState("1");
   const [gama, setGama] = useState(null);
   const [disabled, setDisabled] = useState(true);
+  const currentYear = new Date().getFullYear();
+
+  // Define los límites de fecha
+  const minDate = new Date(currentYear, 5, 1); // Junio (mes 5 porque es basado en 0)
+  const maxDate = new Date(currentYear, 9, 31); // Octubre
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -81,6 +86,8 @@ export default function Equipos({
               </Label>
               <DatePicker
                 selected={startDate}
+                minDate={minDate}
+                maxDate={maxDate}
                 dateFormat="dd/MM/yyyy"
                 onChange={(date) => setStartDate(date)}
                 className="w-full p-2 border rounded"
@@ -107,7 +114,11 @@ export default function Equipos({
             </div>
           </div>
           <div className="flex w-fit">
-            <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600">
+            <Button
+              type="submit"
+              className="w-full bg-blue-500 text-white hover:bg-blue-600"
+              onClick={scrollToSection}
+            >
               Buscar
             </Button>
           </div>

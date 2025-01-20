@@ -7,7 +7,8 @@ import { Input } from "../input";
 import { Button } from "../button";
 import { CalendarDaysIcon } from "../../svg/svg";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select";
-import { handlePases } from "@/app/lib/utils";
+import { handlePases, scrollToSection } from "@/app/lib/utils";
+import { GoAlert } from "react-icons/go";
 
 export default function Pases({
   category,
@@ -21,6 +22,11 @@ export default function Pases({
   const [dias, setDias] = useState("1");
   const [pase, setPase] = useState(null);
   const [disabled, setDisabled] = useState(true);
+  const currentYear = new Date().getFullYear();
+
+  // Define los límites de fecha
+  const minDate = new Date(currentYear, 5, 1); // Junio (mes 5 porque es basado en 0)
+  const maxDate = new Date(currentYear, 9, 31); // Octubre
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -85,7 +91,11 @@ export default function Pases({
             </div>
           </div>
           <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
-            <div className={`flex flex-col space-y-2 w-full sm:w-1/2 ${cerro === "Catedral" || cerro === "Chapelco" ? "" : "pr-2"}`}>
+            <div
+              className={`flex flex-col space-y-2 w-full sm:w-1/2 ${
+                cerro === "Catedral" || cerro === "Chapelco" ? "" : "pr-2"
+              }`}
+            >
               <Label htmlFor="start-date">
                 <span className="flex items-center gap-1">
                   <CalendarDaysIcon /> Fecha de Inicio:
@@ -93,6 +103,8 @@ export default function Pases({
               </Label>
               <DatePicker
                 selected={startDate}
+                minDate={minDate}
+                maxDate={maxDate}
                 dateFormat="dd/MM/yyyy"
                 onChange={(date) => setStartDate(date)}
                 className="w-full p-2 border rounded"
@@ -114,10 +126,31 @@ export default function Pases({
               </div>
             )}
           </div>
-          <div className="flex w-fit">
-            <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600">
-              Buscar
-            </Button>
+          <div className="flex justify-between w-full">
+            <div className="flex w-fit relative">
+              <Button
+                type="submit"
+                className="w-full bg-blue-500 text-white hover:bg-blue-600"
+                onClick={scrollToSection}
+                disabled={disabled}
+              >
+                Buscar
+              </Button>
+            </div>
+            {cerro === "Las Leñas" && (
+              <div className="flex border rounded-lg items-center gap-2 p-2 border-blue-200">
+                <GoAlert className="animate-bounce text-blue-500" />
+                <div className="text-xs text-gray-500 flex flex-col space-y-2 w-fit">
+                  <span>Menores 03 a 05 años: NO abona medio de elevación</span>
+                  <span>Mayores de 70 años: NO abona medio de elevación</span>
+                  <span>Menores: 6 a 11 años</span>
+                  <span>Mayores: + 12 años</span>
+                  <span>
+                    Pase de Principiantes: solo válido para pistas Eros 1 y 2 y Venus 1 y 2
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         </form>
       </div>

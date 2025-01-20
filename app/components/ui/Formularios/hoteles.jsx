@@ -13,8 +13,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../select";
-import { handleHoteles } from "@/app/lib/utils";
+import { handleHoteles, scrollToSection } from "@/app/lib/utils";
 import MultiSelect from "react-select";
+import { GoAlert } from "react-icons/go";
 
 export default function Hoteles({
   category,
@@ -32,6 +33,11 @@ export default function Hoteles({
   const [producto, setProducto] = useState(null);
   const [habitaciones, setHabitaciones] = useState("1");
   const [detalleHabitaciones, setDetalleHabitaciones] = useState([{ mayores: "0", menores: "0" }]);
+  const currentYear = new Date().getFullYear();
+
+  // Define los límites de fecha
+  const minDate = new Date(currentYear, 5, 1); // Junio (mes 5 porque es basado en 0)
+  const maxDate = new Date(currentYear, 9, 31); // Octubre
 
   const handleHabitacionesChange = (value) => {
     setHabitaciones(value);
@@ -256,6 +262,8 @@ export default function Hoteles({
               {cerro === "Las Leñas" ? (
                 <DatePicker
                   selected={startDate}
+                  minDate={minDate}
+                  maxDate={maxDate}
                   dateFormat="dd/MM/yyyy"
                   onChange={(date) => setStartDate(date)}
                   disabled={!producto}
@@ -266,6 +274,8 @@ export default function Hoteles({
               ) : (
                 <DatePicker
                   selected={startDate}
+                  minDate={minDate}
+                  maxDate={maxDate}
                   dateFormat="dd/MM/yyyy"
                   onChange={(date) => setStartDate(date)}
                   className="w-full p-2 border rounded"
@@ -281,6 +291,8 @@ export default function Hoteles({
               </Label>
               <DatePicker
                 selected={endDate}
+                minDate={minDate}
+                maxDate={maxDate}
                 dateFormat="dd/MM/yyyy"
                 onChange={(date) => setEndDate(date)}
                 className="w-full p-2 border rounded"
@@ -289,10 +301,26 @@ export default function Hoteles({
               />
             </div>
           </div>
-          <div className="flex w-fit">
-            <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600">
-              Buscar
-            </Button>
+          <div className="flex justify-between w-full">
+            <div className="flex w-fit relative">
+              <Button
+                type="submit"
+                className="w-full bg-blue-500 text-white hover:bg-blue-600"
+                onClick={scrollToSection}
+              >
+                Buscar
+              </Button>
+            </div>
+            {cerro === "Las Leñas" && (
+              <div className="flex border rounded-lg items-center gap-2 p-2 border-blue-200">
+                <GoAlert className="animate-bounce text-blue-500" />
+                <div className="text-xs text-gray-500 flex flex-col space-y-2 w-fit">
+                  <span>Menores: 6 a 11 años</span>
+                  <span>Mayores: + 12 años</span>
+                  <span>Menores 0 a 2 años: GRATIS en cuna </span>
+                </div>
+              </div>
+            )}
           </div>
         </form>
       </div>

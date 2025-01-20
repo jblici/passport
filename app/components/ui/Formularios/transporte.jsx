@@ -7,7 +7,7 @@ import { Input } from "../input";
 import { Button } from "../button";
 import { CalendarDaysIcon } from "../../svg/svg";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select";
-import { handleTransporte } from "@/app/lib/utils";
+import { handleTransporte, scrollToSection } from "@/app/lib/utils";
 import ToggleYesNo from "../ToggleYesNo";
 
 export default function Transporte({
@@ -24,13 +24,17 @@ export default function Transporte({
   const [tipoTransporte, setTipoTransporte] = useState("Pasaje");
   const [claseTransporte, setClaseTransporte] = useState("Regular");
   const [disable, setDisable] = useState(true);
+  const currentYear = new Date().getFullYear();
+
+  // Define los límites de fecha
+  const minDate = new Date(currentYear, 5, 1); // Junio (mes 5 porque es basado en 0)
+  const maxDate = new Date(currentYear, 9, 31); // Octubre
 
   useEffect(() => {
     if (cerro && startDate && endDate) {
       setDisable(false);
     }
-  },[cerro, endDate, startDate]);
-
+  }, [cerro, endDate, startDate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -121,6 +125,8 @@ export default function Transporte({
               </Label>
               <DatePicker
                 selected={startDate}
+                minDate={minDate}
+                maxDate={maxDate}
                 dateFormat="dd/MM/yyyy"
                 onChange={(date) => setStartDate(date)}
                 className="w-full p-2 border rounded"
@@ -135,6 +141,8 @@ export default function Transporte({
               </Label>
               <DatePicker
                 selected={endDate}
+                minDate={minDate}
+                maxDate={maxDate}
                 dateFormat="dd/MM/yyyy"
                 onChange={(date) => setEndDate(date)}
                 className="w-full p-2 border rounded"
@@ -143,7 +151,12 @@ export default function Transporte({
             </div>
           </div>
           <div className="flex w-fit">
-            <Button type="submit" className="w-full bg-blue-500 text-white hover:bg-blue-600" disabled={disable}>
+            <Button
+              type="submit"
+              className="w-full bg-blue-500 text-white hover:bg-blue-600"
+              onClick={scrollToSection}
+              disabled={disable}
+            >
               Buscar
             </Button>
           </div>
