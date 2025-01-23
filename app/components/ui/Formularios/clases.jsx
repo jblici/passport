@@ -94,6 +94,7 @@ export default function Clases({
                 selected={startDate}
                 minDate={minDate}
                 maxDate={maxDate}
+                withPortal
                 dateFormat="dd/MM/yyyy"
                 onChange={(date) => setStartDate(date)}
                 className="w-full p-2 border rounded"

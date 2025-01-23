@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "@/app/components/ui/navbar";
 import Presupuesto from "./components/ui/presupuesto";
 import { handleBusqueda, handleFormularios } from "./lib/utils";
@@ -31,15 +31,15 @@ export default function Cotizador() {
     setPaquetesSeleccionados((prev) => [...prev, paquete]);
     setOriginales((prev) => [...prev, paquete]);
     setTotalCompra((prev) => prev + paquete.price);
-    console.log('agregarPaquete')
-  };   
+    console.log("agregarPaquete");
+  };
 
   const eliminarPaquete = (index) => {
     const paqueteEliminado = paquetesSeleccionados[index];
     setPaquetesSeleccionados((prev) => prev.filter((_, i) => i !== index));
     setOriginales((prev) => prev.filter((_, i) => i !== index));
     setTotalCompra((prev) => prev - paqueteEliminado.price);
-    console.log('eliminarPaquete')
+    console.log("eliminarPaquete");
   };
 
   if (!paquetes) return null;
@@ -87,7 +87,7 @@ export default function Cotizador() {
                   setCerro,
                   setBusqueda,
                   startDate,
-                  setStartDate,
+                  setStartDate
                 )}
             </div>
           </div>
@@ -101,7 +101,7 @@ export default function Cotizador() {
             resTraslado,
             resEquipos,
             agregarPaquete,
-            reglas,
+            reglas
           )}
         </div>
         <div className="grid gap-8">

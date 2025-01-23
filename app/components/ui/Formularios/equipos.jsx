@@ -91,6 +91,7 @@ export default function Equipos({
                 dateFormat="dd/MM/yyyy"
                 onChange={(date) => setStartDate(date)}
                 className="w-full p-2 border rounded"
+                withPortal
                 placeholderText="Seleccionar fecha"
               />
             </div>
