@@ -129,6 +129,7 @@ export default function Transporte({
                 maxDate={maxDate}
                 dateFormat="dd/MM/yyyy"
                 onChange={(date) => setStartDate(date)}
+                withPortal
                 className="w-full p-2 border rounded"
                 placeholderText="Seleccionar fecha"
               />
@@ -144,6 +145,7 @@ export default function Transporte({
                 minDate={minDate}
                 maxDate={maxDate}
                 dateFormat="dd/MM/yyyy"
+                withPortal
                 onChange={(date) => setEndDate(date)}
                 className="w-full p-2 border rounded"
                 placeholderText="Seleccionar fecha"

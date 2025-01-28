@@ -216,7 +216,6 @@ export const generatePDF = (
      
       alturaY = alturaY + 20
     }
- 
   });
   alturaY = alturaY + 30
   doc.setFontSize(16);
@@ -224,7 +223,6 @@ export const generatePDF = (
   doc.text(
     `Total: $${formatNumberWithDots(totalCompra)}`,
     14, alturaY);
-    
   doc.setFontSize(10);
 
   doc.setFont("helvetica", "italic");

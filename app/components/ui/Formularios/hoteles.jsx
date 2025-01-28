@@ -16,6 +16,7 @@ import {
 import { handleHoteles, scrollToSection } from "@/app/lib/utils";
 import MultiSelect from "react-select";
 import { GoAlert } from "react-icons/go";
+//import Datepicker from "react-tailwindcss-datepicker";
 
 export default function Hoteles({
   category,
@@ -266,19 +267,22 @@ export default function Hoteles({
                   maxDate={maxDate}
                   dateFormat="dd/MM/yyyy"
                   onChange={(date) => setStartDate(date)}
-                  disabled={!producto}
                   className="w-full p-2 border rounded"
+                  withPortal
+                  disabled={!producto}
                   placeholderText="Seleccionar fecha"
                   filterDate={producto === "MaxiWeek" ? isMonday : isSaturday}
                 />
               ) : (
                 <DatePicker
                   selected={startDate}
+                  value={startDate}
                   minDate={minDate}
                   maxDate={maxDate}
+                  className="w-full p-2 border rounded"
+                  withPortal
                   dateFormat="dd/MM/yyyy"
                   onChange={(date) => setStartDate(date)}
-                  className="w-full p-2 border rounded"
                   placeholderText="Seleccionar fecha"
                 />
               )}
@@ -293,9 +297,10 @@ export default function Hoteles({
                 selected={endDate}
                 minDate={minDate}
                 maxDate={maxDate}
+                className="w-full p-2 border rounded"
+                withPortal
                 dateFormat="dd/MM/yyyy"
                 onChange={(date) => setEndDate(date)}
-                className="w-full p-2 border rounded"
                 disabled={producto}
                 placeholderText="Seleccionar fecha"
               />
