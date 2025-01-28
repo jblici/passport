@@ -225,7 +225,7 @@ export const generatePDF = (
          
       doc.setFontSize(12);
       // doc.text(textoPaquete, 17, espacioY);
-      doc.text(textoPaquete, 17, alturaY);
+      doc.text(textoPaquete, 22, alturaY);
 
       doc.setFontSize(10);
       doc.text(fechas,20, alturaY + 10);
