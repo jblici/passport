@@ -11,6 +11,114 @@ import Transporte from "../components/ui/Formularios/transporte";
 import Hoteles from "../components/ui/Formularios/hoteles";
 import { eachWeekOfInterval } from "date-fns";
 
+// export const generatePDF = (
+//   paquetesSeleccionados,
+//   totalCompra,
+//   busqueda,
+//   imageData,
+//   clientName
+// ) => {
+//   const handleCreatePDFClick = () => {
+//     setIsModalOpen(true);
+//   };
+
+//   function obtenerFechaActual() {
+//     const hoy = new Date(); // Obtiene la fecha actual
+//     const dia = String(hoy.getDate()).padStart(2, "0"); // Asegura que el día tenga dos dígitos
+//     const mes = String(hoy.getMonth() + 1).padStart(2, "0"); // Mes (0 = Enero, +1 para ajustar)
+//     const anio = hoy.getFullYear(); // Obtiene el año completo
+
+//     return `${dia}/${mes}/${anio}`; // Devuelve la fecha en formato dd/mm/aaaa
+//   }
+
+//   let personas;
+//   if (busqueda.detalleHabitaciones) personas = calcularTotalPersonas(busqueda.detalleHabitaciones);
+
+//   const dias = calcularDiferenciaDiasProducto(busqueda.producto);
+//   const fechasFormateadas = formatDate(busqueda.startDate, dias);
+//   //ppi 72 pixels per inch 
+//   const doc = new jsPDF('portrait','','a4');
+//   // margin lines: a4 = inch 8.24 / 11.75
+  
+//   let img = new Image();
+//   img.height = 40;
+//   img.width = 40;
+//   img.src = imageData.src;
+//   if (clientName) doc.text(`Cliente: ${clientName}`, 150, 20);
+//   doc.addImage(img, "png", 10, 10);
+
+//   doc.setFont("helvetica", "bold");
+//   doc.setFontSize(20);
+//   doc.text("Presupuesto Passport Ski 2024", 14, 50);
+//   doc.setFont("helvetica", "normal");
+//   doc.setFontSize(14);
+//   if (personas) doc.text(`${personas.total} Personas`, 14, 70);
+
+//   doc.text(`Fecha del presupuesto: ${obtenerFechaActual()}`, 14, 60);
+
+//   doc.setFontSize(12);
+//   paquetesSeleccionados.forEach((paquete, index) => {
+//     let textoPaquete = `• ${paquete.name}: $${formatNumberWithDots(paquete.price)}`;
+//     let espacioExtra = 0;
+//     let espacioY = 80 + index * 11 + espacioExtra;
+//     // Agregar detalles específicos si es un traslado
+//     if (paquete.seccion === "transporte") {
+//       console.log(espacioExtra);
+//       let fechas = paquete.clave
+//         ? paquete.clave === "ida"
+//           ? "Fecha: " + paquete.fechaInicio
+//           : "Fecha: " + paquete.fechaFin
+//         : "Fechas: " + paquete.fechaInicio + " - " + paquete.fechaFin;
+//       doc.setFontSize(12);
+//       doc.text(textoPaquete, 17, espacioY);
+//       doc.setFontSize(10);
+//       doc.text(fechas, 20, espacioY + 5);
+//     } else if (paquete.seccion === "alojamiento") {
+//       console.log(espacioExtra);
+//       let descripcion = paquete.reglas;
+//       textoPaquete += ` - ${paquete.noches} noches`;
+//       doc.setFontSize(12);
+//       doc.text(textoPaquete, 17, espacioY);
+//       doc.setFontSize(8);
+//       doc.text(descripcion, 20, espacioY + 5);
+//       doc.setFontSize(12);
+//       espacioExtra += 10;
+//     } else {
+//       console.log(espacioExtra);
+
+//       // Agregar texto al documento PDF
+//       doc.setFontSize(12);
+//       doc.text(textoPaquete, 17, 80 + index * 11 + espacioExtra);
+//     }
+//   });
+//   /*
+//   paquetesSeleccionados.forEach((paquete, index) => {
+//     doc.text(`• ${paquete.name}: $${formatNumberWithDots(paquete.price)}`, 20, 80 + index * 11);
+//   });
+//   */
+
+//   doc.setFontSize(16);
+//   doc.setFont("helvetica", "bold");
+//   doc.text(
+//     `Total: $${formatNumberWithDots(totalCompra)}`,
+//     14,
+//     80 + paquetesSeleccionados.length * 10 + 10
+//   );
+
+//   doc.setFontSize(10);
+//   doc.setFont("helvetica", "italic");
+//   doc.text(
+//     "El precio está sujeto a variación dependiendo de la fecha de pago.",
+//     14,
+//     90 + paquetesSeleccionados.length * 10 + 10
+//   );
+
+//   doc.getCurrentPageInfo("Passport-Presupuesto");
+
+//   doc.save("Passport-Presupuesto.pdf");
+//   doc.setProperties({ title: "Passport-Presupuesto" });
+//   doc.output("dataurlnewwindow");
+// };
 export const generatePDF = (
   paquetesSeleccionados,
   totalCompra,
@@ -23,121 +131,217 @@ export const generatePDF = (
   };
 
   function obtenerFechaActual() {
-    const hoy = new Date(); // Obtiene la fecha actual
-    const dia = String(hoy.getDate()).padStart(2, "0"); // Asegura que el día tenga dos dígitos
-    const mes = String(hoy.getMonth() + 1).padStart(2, "0"); // Mes (0 = Enero, +1 para ajustar)
-    const anio = hoy.getFullYear(); // Obtiene el año completo
-
-    return `${dia}/${mes}/${anio}`; // Devuelve la fecha en formato dd/mm/aaaa
-  }
-
+        const hoy = new Date(); // Obtiene la fecha actual
+        const dia = String(hoy.getDate()).padStart(2, "0"); // Asegura que el día tenga dos dígitos
+        const mes = String(hoy.getMonth() + 1).padStart(2, "0"); // Mes (0 = Enero, +1 para ajustar)
+        const anio = hoy.getFullYear(); // Obtiene el año completo
+    
+        return `${dia}/${mes}/${anio}`; // Devuelve la fecha en formato dd/mm/aaaa
+      }
   let personas;
   if (busqueda.detalleHabitaciones) personas = calcularTotalPersonas(busqueda.detalleHabitaciones);
 
   const dias = calcularDiferenciaDiasProducto(busqueda.producto);
   const fechasFormateadas = formatDate(busqueda.startDate, dias);
-  const doc = new jsPDF();
+  const doc = new jsPDF('p','px' ,'a4');
+  // ppi pixel per inch 72
+  //break long texts
+  
 
   let img = new Image();
   img.height = 40;
   img.width = 40;
   img.src = imageData.src;
-  if (clientName) doc.text(`Cliente: ${clientName}`, 150, 20);
-  doc.addImage(img, "png", 10, 10);
+  if (clientName) doc.text(`Cliente: ${clientName}`, 250, 20);
 
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(20);
-  doc.text("Presupuesto Passport Ski 2024", 14, 50);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(14);
-  if (personas) doc.text(`${personas.total} Personas`, 14, 70);
 
-  doc.text(`Fecha del presupuesto: ${obtenerFechaActual()}`, 14, 60);
+    doc.addImage(img, "png", 10, 10);
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.text("Presupuesto Passport Ski 2024", 10, 90);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(14);
+    doc.text(`Fecha del presupuesto: ${obtenerFechaActual()}`, 14, 110);
+
+
+  
+  if (personas) doc.text(`${personas.total} Personas`, 14, 125);
+  
+  let alturaY = 125
+
 
   doc.setFontSize(12);
   paquetesSeleccionados.forEach((paquete, index) => {
-    let textoPaquete = `• ${paquete.name}: $${formatNumberWithDots(paquete.price)}`;
-    let espacioY = 80 + index * 5;
-    console.log(paquetesSeleccionados[index]);
+    let textoPaquete = `• ${paquete.name}: $${formatNumberWithDots(paquete.price)}`
+    // let espacioExtra = 10;
+    alturaY = alturaY +20;
+    // let espacioY = 80 + index * 11 + espacioExtra;
     // Agregar detalles específicos si es un traslado
-    if (paquete.seccion === "transporte") {
+    if (paquete.seccion === "alojamiento") {
+      //console.log(espacioExtra);
+      let descripcion = paquete.reglas;
+      textoPaquete += ` - ${paquete.noches} noches`;
+      doc.setFontSize(12);
+      doc.text(textoPaquete, 17, alturaY);
+      doc.setFontSize(8);
+    
+      doc.text(descripcion, 20, alturaY + 10);
+      doc.setFontSize(12);
+      alturaY = alturaY + 40
+
+      
+    } else if 
+    (paquete.seccion === "transporte") {
       let fechas = paquete.clave
         ? paquete.clave === "ida"
           ? "Fecha: " + paquete.fechaInicio
           : "Fecha: " + paquete.fechaFin
         : "Fechas: " + paquete.fechaInicio + " - " + paquete.fechaFin;
+
+         
       doc.setFontSize(12);
-      if (index > 0) {
-        doc.text(
-          textoPaquete,
-          17,
-          paquetesSeleccionados[index - 1].seccion === "alojamiento" ? espacioY + 30 : espacioY + 15
-        );
-      } else {
-        doc.text(textoPaquete, 17, espacioY + 15);
-      }
+      // doc.text(textoPaquete, 17, espacioY);
+      doc.text(textoPaquete, 17, alturaY);
+
       doc.setFontSize(10);
-      doc.text(fechas, 20, espacioY + 5);
-    } else if (paquete.seccion === "alojamiento") {
-
-      let descripcion = paquete.reglas;
-      textoPaquete += ` - ${paquete.noches} noches`;
-      doc.setFontSize(12);
-      if (index > 0) {
-        doc.text(
-          textoPaquete,
-          17,
-          paquetesSeleccionados[index - 1].seccion === "alojamiento" ? espacioY + 20 : espacioY + 50
-        );
-      } else {
-        doc.text(textoPaquete, 17, espacioY);
-      }
-      doc.setFontSize(8);
-      if (index > 0) {
-        doc.text(
-          descripcion,
-          20,
-          paquetesSeleccionados[index - 1].seccion === "alojamiento" ? espacioY + 25 : espacioY + 55
-        );
-      } else {
-        doc.text(descripcion, 20, espacioY + 5);
-      }
-      doc.setFontSize(12);
-
+      doc.text(fechas,20, alturaY + 10);
+      alturaY = alturaY + 20
     } else {
+      
       // Agregar texto al documento PDF
       doc.setFontSize(12);
-      console.log(paquetesSeleccionados[index - 1].seccion === "alojamiento");
-      console.log(index)
-      doc.text(
-        textoPaquete,
-        17,
-        paquetesSeleccionados[index - 1].seccion === "alojamiento" ? espacioY + 40 : espacioY + 45
-      );
+      doc.text(textoPaquete, 17, alturaY);
+
+     
+      alturaY = alturaY + 20
     }
   });
-
+  alturaY = alturaY + 30
   doc.setFontSize(16);
   doc.setFont("helvetica", "bold");
   doc.text(
     `Total: $${formatNumberWithDots(totalCompra)}`,
-    14,
-    80 + paquetesSeleccionados.length * 15 + 50
-  );
-
+    14, alturaY);
   doc.setFontSize(10);
+
   doc.setFont("helvetica", "italic");
   doc.text(
     "El precio está sujeto a variación dependiendo de la fecha de pago.",
-    14,
-    90 + paquetesSeleccionados.length * 10 + 50
+    14, alturaY + 10
   );
+  /*
+  paquetesSeleccionados.forEach((paquete, index) => {
+    doc.text(• ${paquete.name}: $${formatNumberWithDots(paquete.price)}, 20, 80 + index * 11);
+  });
+  */
+
+  
 
   doc.getCurrentPageInfo("Passport-Presupuesto");
 
   doc.save("Passport-Presupuesto.pdf");
   doc.setProperties({ title: "Passport-Presupuesto" });
   doc.output("dataurlnewwindow");
+};
+export const createPDF = (config) => {
+  const {
+    clientName,
+    imageData,
+    paquetesSeleccionados,
+    busqueda,
+    calcularTotalPersonas,
+    calcularDiferenciaDiasProducto,
+    formatDate,
+    formatNumberWithDots
+  } = config;
+
+  const doc = new jsPDF();
+  let currentY = 20; // Starting Y position
+  const margin = 14;
+  const lineHeight = 10;
+
+  // Helper function to add text and update Y position
+  const addText = (text, fontSize = 12, font = "helvetica", style = "normal", indent = 0) => {
+    doc.setFont(font, style);
+    doc.setFontSize(fontSize);
+    doc.text(text, margin + indent, currentY);
+    currentY += lineHeight;
+    return doc;
+  };
+
+  // Helper function to check if content will overflow page
+  const willOverflow = (yPosition, additionalSpace = 0) => {
+    return (yPosition + additionalSpace) > 280; // A4 height is ~297, leaving margin
+  };
+
+  // Add logo
+  if (imageData?.src) {
+    const img = new Image();
+    img.src = imageData.src;
+    doc.addImage(img, "png", margin, currentY - 10, 40, 40);
+  }
+
+  // Add client name (if exists) aligned to the right
+  if (clientName) {
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.text(`Cliente: ${clientName}`, 150, currentY);
+  }
+
+  currentY += 30; // Space after header
+
+  // Title
+  addText("Presupuesto Passport Ski 2024", 20, "helvetica", "bold");
+  currentY += 5;
+
+  // Date
+  const getCurrentDate = () => {
+    const today = new Date();
+    return `${String(today.getDate()).padStart(2, "0")}/${String(today.getMonth() + 1).padStart(2, "0")}/${today.getFullYear()}`;
+  };
+  addText(`Fecha del presupuesto: ${getCurrentDate()}`, 14);
+
+  // Total persons (if available)
+  if (busqueda?.detalleHabitaciones) {
+    const personas = calcularTotalPersonas(busqueda.detalleHabitaciones);
+    if (personas) {
+      addText(`${personas.total} Personas`, 14);
+    }
+  }
+
+  currentY += 10; // Extra space before packages
+
+  // Process packages
+  paquetesSeleccionados.forEach((paquete, index) => {
+    // Check if we need a new page
+    if (willOverflow(currentY, 40)) {
+      doc.addPage();
+      currentY = 20;
+    }
+
+    // Package name and price
+    const textoPaquete = `• ${paquete.name}: $${formatNumberWithDots(paquete.price)}`;
+    addText(textoPaquete, 12, "helvetica", "normal", 3);
+
+    // Handle specific package types
+    if (paquete.seccion === "transporte") {
+      const fechas = paquete.clave
+        ? `Fecha: ${paquete.clave === "ida" ? paquete.fechaInicio : paquete.fechaFin}`
+        : `Fechas: ${paquete.fechaInicio} - ${paquete.fechaFin}`;
+      addText(fechas, 10, "helvetica", "normal", 6);
+      currentY += 2;
+    } 
+    else if (paquete.seccion === "alojamiento") {
+      const descripcion = `${paquete.noches} noches - ${paquete.reglas}`;
+      addText(descripcion, 8, "helvetica", "normal", 6);
+      currentY += 5;
+    }
+
+    currentY += 3; // Space between packages
+  });
+
+  return doc;
 };
 
 export function formatNumberWithDots(number) {
