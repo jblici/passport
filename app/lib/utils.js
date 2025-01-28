@@ -126,6 +126,29 @@ export const generatePDF = (
   imageData,
   clientName
 ) => {
+  const paquetesPorSeccion = paquetesSeleccionados.reduce((grupos, paquete) => {
+    if (!grupos[paquete.seccion]) {
+      grupos[paquete.seccion] = []; // Inicializa la sección si no existe
+    }
+    grupos[paquete.seccion].push(paquete); // Agrega el paquete a la sección correspondiente
+    return grupos;
+  }, {});
+  
+  // Obtener las secciones ordenadas (alojamiento primero)
+  const seccionesOrdenadas = Object.entries(paquetesPorSeccion).sort(([seccionA], [seccionB]) => {
+    if (seccionA === "alojamiento") return -1; // "alojamiento" primero
+    if (seccionB === "alojamiento") return 1;  // "alojamiento" primero
+    return 0; // El resto queda igual
+  });
+  
+  // Iterar sobre las secciones ordenadas
+  seccionesOrdenadas.forEach(([seccion, paquetes]) => {
+    console.log(`Sección: ${seccion}`),
+    paquetes.forEach((paquete) => {
+      console.log(`- Paquete: ${paquete.name}, Precio: ${paquete.price}`);
+      // Aquí puedes agregar lógica específica para cada paquete
+    });
+  });
   const handleCreatePDFClick = () => {
     setIsModalOpen(true);
   };
