@@ -27,6 +27,7 @@ export default function Hoteles({
   setBusqueda,
   startDate,
   setStartDate,
+  estadiasCastor,
 }) {
   const [cerrosHoteles, setCerrosHoteles] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -58,7 +59,7 @@ export default function Hoteles({
   };
 
   useEffect(() => {
-    if (paquetes) {
+    if (paquetes) { 
       const hotelesPorCerro = {};
 
       paquetes.forEach((paquete) => {
@@ -100,7 +101,8 @@ export default function Hoteles({
       cerro,
       paquetes,
       setHoteles,
-      detalleHabitaciones
+      detalleHabitaciones,
+      estadiasCastor,
     );
     const busqueda = {
       detalleHabitaciones,
@@ -141,15 +143,12 @@ export default function Hoteles({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="todos">Todos</SelectItem>
-                  {Object.keys(cerrosHoteles).map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="Las Leñas">Las Leñas</SelectItem>
+                  <SelectItem value="Castor">Castor</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            {cerro && (
+            {cerro === "Las Leñas" && (
               <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
                 <Label htmlFor="centro">Alojamiento:</Label>
                 <MultiSelect

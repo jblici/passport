@@ -7,9 +7,10 @@ import useSpeadsheets from "./lib/hooks/spreadsheet";
 import { Button } from "./components/ui/button";
 import Passport from "/public/Passport.png";
 import Image from "next/image";
+import Spinner from "./components/ui/Spinner";
 
 export default function Cotizador() {
-  const { paquetes, rentals, clases, pases, traslado, reglas } = useSpeadsheets(null);
+  const { paquetes, rentals, clases, pases, traslado, reglas, estadiasCastor } = useSpeadsheets(null);
   const [startDate, setStartDate] = useState(null);
   const [busqueda, setBusqueda] = useState("");
   const [cerro, setCerro] = useState("");
@@ -22,6 +23,7 @@ export default function Cotizador() {
   const [originales, setOriginales] = useState([]);
   const [totalCompra, setTotalCompra] = useState(0);
   const [category, setCategory] = useState("Alojamientos");
+  const [loading, setLoading] = useState(true);
 
   const handleCategorySelect = (cat) => {
     setCategory(cat);
@@ -31,7 +33,7 @@ export default function Cotizador() {
     setPaquetesSeleccionados((prev) => [...prev, paquete]);
     setOriginales((prev) => [...prev, paquete]);
     setTotalCompra((prev) => prev + paquete.price);
-    console.log("agregarPaquete");
+    //console.log("agregarPaquete");
   };
 
   const eliminarPaquete = (index) => {
@@ -39,10 +41,16 @@ export default function Cotizador() {
     setPaquetesSeleccionados((prev) => prev.filter((_, i) => i !== index));
     setOriginales((prev) => prev.filter((_, i) => i !== index));
     setTotalCompra((prev) => prev - paqueteEliminado.price);
-    console.log("eliminarPaquete");
+    //console.log("eliminarPaquete");
   };
 
-  if (!paquetes) return null;
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 8000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) return <Spinner />;
+
   return (
     <div className="flex flex-col">
       <Navbar />
@@ -74,6 +82,7 @@ export default function Cotizador() {
                 handleFormularios(
                   category,
                   paquetes,
+                  estadiasCastor,
                   rentals,
                   clases,
                   pases,

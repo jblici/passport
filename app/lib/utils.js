@@ -9,7 +9,6 @@ import Clases from "../components/ui/Formularios/clases";
 import Pases from "../components/ui/Formularios/pases";
 import Transporte from "../components/ui/Formularios/transporte";
 import Hoteles from "../components/ui/Formularios/hoteles";
-import { eachWeekOfInterval } from "date-fns";
 
 export const generatePDF = (
   paquetesSeleccionados,
@@ -79,7 +78,6 @@ export const generatePDF = (
       doc.setFontSize(10);
       doc.text(fechas, 20, espacioY + 5);
     } else if (paquete.seccion === "alojamiento") {
-
       let descripcion = paquete.reglas;
       textoPaquete += ` - ${paquete.noches} noches`;
       doc.setFontSize(12);
@@ -103,12 +101,11 @@ export const generatePDF = (
         doc.text(descripcion, 20, espacioY + 5);
       }
       doc.setFontSize(12);
-
     } else {
       // Agregar texto al documento PDF
       doc.setFontSize(12);
       console.log(paquetesSeleccionados[index - 1].seccion === "alojamiento");
-      console.log(index)
+      console.log(index);
       doc.text(
         textoPaquete,
         17,
@@ -177,7 +174,8 @@ export const handleHoteles = (
   cerro,
   paquetes,
   setHoteles,
-  detalleHabitaciones
+  detalleHabitaciones,
+  estadiasCastor
 ) => {
   try {
     const totalPersonas = calcularTotalPersonas(detalleHabitaciones);
@@ -188,7 +186,8 @@ export const handleHoteles = (
       paquetes,
       hotelSeleccionado,
       producto,
-      totalPersonas
+      totalPersonas,
+      estadiasCastor
     );
     //console.log(busquedaHoteles)
     setHoteles(busquedaHoteles);
@@ -206,15 +205,20 @@ function calcularHoteles(
   paquetes,
   hotelSeleccionado,
   producto,
-  totalPersonas
+  totalPersonas,
+  estadiasCastor
 ) {
   const inicio = startDate;
   const fin = endDate;
   let resultados = {};
-  let paquetesFiltrados = paquetes;
+  let paquetesFiltrados = cerro === "Las Leñas" ? paquetes : estadiasCastor;
 
-  if (cerro) {
-    paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.cerro === cerro);
+  {
+    /*
+    if (cerro) {
+      paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.cerro === cerro);
+      }
+      */
   }
 
   if (hotelSeleccionado.length > 0) {
@@ -223,16 +227,24 @@ function calcularHoteles(
     );
   }
 
+  console.log(cerro);
+
   // Filtrado adicional para "Las Leñas"
   if (cerro === "Las Leñas" && producto) {
-    console.log(producto);
     const noches = calcularDiferenciaDiasProducto(producto);
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(startDate);
     fechaFin.setDate(fechaInicio.getDate() + noches); // Calculamos la fecha final
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.week === producto);
+
     console.log(paquetesFiltrados);
 
+    paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
+      console.log(paquete.minNoches >= noches);
+      return paquete.minNoches <= noches;
+    });
+
+    console.log(paquetesFiltrados);
     // Filtrar paquetes que contengan la fecha de inicio
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
       const fechaInicio = parseDate(paquete.fechaInicio);
@@ -293,6 +305,13 @@ function calcularHoteles(
     totalPersonas.habitaciones.forEach((habitacion, index) => {
       const { mayores, menores, total } = habitacion;
       const paquetesPorHabitacion = {};
+
+      const cantidadNoches = calcularDiferenciaDias(inicio, fin);
+      console.log(cantidadNoches);
+      paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
+        return paquete.minNoches <= cantidadNoches;
+      });
+
       const paquetesHabitacion = paquetesFiltrados.filter(
         (paquete) =>
           paquete.personas === total ||
@@ -729,6 +748,7 @@ export const handleBusqueda = (
 export const handleFormularios = (
   category,
   paquetes,
+  estadiasCastor,
   rentals,
   clases,
   pases,
@@ -742,8 +762,7 @@ export const handleFormularios = (
   setCerro,
   setBusqueda,
   startDate,
-  setStartDate,
-  reglas
+  setStartDate
 ) => {
   // Lógica para manejar la búsqueda basada en la categoría
   if (category === "Equipos") {
@@ -805,6 +824,7 @@ export const handleFormularios = (
         setBusqueda={setBusqueda}
         startDate={startDate}
         setStartDate={setStartDate}
+        estadiasCastor={estadiasCastor}
       />
     );
   }

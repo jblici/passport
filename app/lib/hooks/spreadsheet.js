@@ -8,6 +8,7 @@ const useSpeadsheets = () => {
   const [pases, setPases] = useState(null);
   const [traslado, setTraslado] = useState(null);
   const [reglas, setReglas] = useState(null);
+  const [estadiasCastor, setEstadiasCastor] = useState(null);
 
   const obtenerDatos = async () => {
     const csv = await fetch(
@@ -204,6 +205,55 @@ const useSpeadsheets = () => {
         };
       });
 
+    const csv7 = await fetch(
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=0&single=true&output=csv"
+    ).then((res) => res.text());
+
+    const castorEstadias = csv7
+      .split("\n")
+      .slice(1)
+      .map((row) => {
+        const [
+          cerro,
+          hotel,
+          week,
+          habitacion,
+          fechaInicio,
+          fechaFinal,
+          personas,
+          precio,
+          precioMenor,
+          moneda,
+          camaExtra,
+          extraMayor,
+          extraMenor,
+          minNoches,
+          desayuno,
+          tarifa,
+          fechaVigencia,
+        ] = row.split(",");
+        return {
+          cerro,
+          hotel,
+          week,
+          habitacion,
+          fechaInicio,
+          fechaFinal,
+          personas: Number(personas),
+          precio: Number(Math.round(precio)),
+          precioMenor: Number(Math.round(precioMenor)),
+          moneda,
+          camaExtra,
+          extraMayor: Number(Math.round(extraMayor)),
+          extraMenor: Number(Math.round(extraMenor)),
+          minNoches: Number(minNoches),
+          desayuno,
+          tarifa,
+          fechaVigencia,
+        };
+      });
+
+    setEstadiasCastor(castorEstadias)
     setPaquetes(paquetes);
     setRentals(rentals);
     setClases(clases);
@@ -223,6 +273,7 @@ const useSpeadsheets = () => {
     pases,
     traslado,
     reglas,
+    estadiasCastor,
   };
 };
 
