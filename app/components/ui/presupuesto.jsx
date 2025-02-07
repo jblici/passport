@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/app/components/ui/button";
 import { XIcon } from "../svg/svg";
-import { formatNumberWithDots, verificarFamilyPlan } from "@/app/lib/utils";
+import { formatNumberWithDots, createPDF, verificarFamilyPlan,generatePDF } from "@/app/lib/utils";
 import Passport from "/public/Passport.png";
 import AnimatedDropdown from "./animated-dropdown";
 import { CiDiscount1 } from "react-icons/ci";
@@ -26,6 +26,25 @@ const ResumenPresupuesto = ({
   const [isChecked, setIsChecked] = useState(null);
   const [flag, setFlag] = useState(true);
   const pdfRef = useRef();
+
+  const handleCreatePDF = () => {
+    if (!clientName) {
+      // Ensure client name is provided
+      setIsModalOpen(true);
+      return;
+    }
+  
+    const pdfConfig = {
+      paquetesSeleccionados,
+      totalCompra: total,
+      busqueda,
+      imageData: Passport,
+      clientName
+    };
+  
+    createPDF(pdfConfig);
+    setIsModalOpen(false);
+  };
 
   const handleToggle = () => {
     setIsChecked((prevState) => !prevState);
@@ -209,19 +228,13 @@ const ResumenPresupuesto = ({
                   />
                   <div className="flex justify-end">
                     <button
-                      onClick={() => {
-                        setIsModalOpen(false);
-                        generatePdf();
-                        {
-                          /*generatePDF(
+                      onClick={() =>generatePDF(
                           paquetesSeleccionados,
                           totalCompra,
                           busqueda,
                           Passport,
                           clientName
-                        );*/
-                        }
-                      }}
+                      )}
                       className="mr-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                     >
                       Aceptar
