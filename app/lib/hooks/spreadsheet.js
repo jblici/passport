@@ -8,8 +8,10 @@ const useSpeadsheets = () => {
   const [pases, setPases] = useState(null);
   const [traslado, setTraslado] = useState(null);
   const [reglas, setReglas] = useState(null);
-  const [estadiasCastor, setEstadiasCastor] = useState(null);
 
+  const [estadiasCastor, setEstadiasCastor] = useState(null);
+  const [reglasCastor, setReglasCastor] = useState(null);
+ 
   const obtenerDatos = async () => {
     const csv = await fetch(
       "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?output=csv"
@@ -207,6 +209,7 @@ const useSpeadsheets = () => {
 
     const csv7 = await fetch(
       "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=0&single=true&output=csv"
+      
     ).then((res) => res.text());
 
     const castorEstadias = csv7
@@ -252,6 +255,22 @@ const useSpeadsheets = () => {
           fechaVigencia,
         };
       });
+      const csv8 = await fetch(
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=395989538&single=true&output=csv"
+      ).then((res) => res.text());
+  
+      const reglasCastor = csv8
+        .split("\n")
+        .slice(1)
+        .map((row) => {
+          // Dividir solo por la primera coma
+          const [hotel, ...rest] = row.split(",");
+          const descripcion = rest.join(","); // Reunir todo lo que está después de la primera coma
+          return {
+            hotel: hotel.trim(), // Limpiar espacios extra
+            descripcion: descripcion.trim().replace(/\. /g, ".\n"), // Limpiar espacios extra
+          };
+        });
 
     setEstadiasCastor(castorEstadias)
     setPaquetes(paquetes);
@@ -260,6 +279,7 @@ const useSpeadsheets = () => {
     setPases(pases);
     setTraslado(traslado);
     setReglas(reglas);
+    setReglasCastor(reglasCastor); 
   };
 
   useEffect(() => {
@@ -274,6 +294,7 @@ const useSpeadsheets = () => {
     traslado,
     reglas,
     estadiasCastor,
+    reglasCastor
   };
 };
 
