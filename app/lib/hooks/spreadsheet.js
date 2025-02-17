@@ -1,285 +1,73 @@
 "use client";
 import { useState, useEffect } from "react";
 
-const useSpeadsheets = () => {
-  const [paquetes, setPaquetes] = useState(null);
-  const [rentals, setRentals] = useState(null);
-  const [clases, setClases] = useState(null);
+const useGroupedSpreadsheets = () => {
   const [pases, setPases] = useState(null);
-  const [traslado, setTraslado] = useState(null);
-  const [reglas, setReglas] = useState(null);
+  const [clases, setClases] = useState(null);
+  const [equipos, setEquipos] = useState(null);
+  const [traslados, setTraslados] = useState(null);
 
-  const [estadiasCastor, setEstadiasCastor] = useState(null);
-  const [reglasCastor, setReglasCastor] = useState(null);
- 
+  const fetchCSV = async (url) => {
+    const response = await fetch(url);
+    return response.text();
+  };
+
+  const parseCSV = (csv, mapper) => {
+    return csv.split("\n").slice(1).map(mapper);
+  };
+
   const obtenerDatos = async () => {
-    const csv = await fetch(
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?output=csv"
-    ).then((res) => res.text());
-    const paquetes = csv
-      .split("\n")
-      .slice(1)
-      .map((row, index) => {
-        const [
-          provincia,
-          cerro,
-          hotel,
-          week,
-          habitacion,
-          fechaInicio,
-          fechaFinal,
-          personas,
-          precio,
-          precioMenor,
-          moneda,
-          camaExtra,
-          extraMayor,
-          extraMenor,
-          minNoches,
-          desayuno,
-          tarifa,
-          fechaVigencia,
-        ] = row.split(",");
-        return {
-          id: index + 1,
-          provincia,
-          cerro,
-          hotel,
-          week,
-          habitacion,
-          fechaInicio,
-          fechaFinal,
-          personas: Number(personas),
-          precio: Number(Math.round(precio)),
-          precioMenor: Number(Math.round(precioMenor)),
-          moneda,
-          camaExtra,
-          extraMayor: Number(Math.round(extraMayor)),
-          extraMenor: Number(Math.round(extraMenor)),
-          minNoches: Number(minNoches),
-          desayuno,
-          tarifa,
-          fechaVigencia,
-        };
-      });
+    // URLs de los distintos archivos
+    const urls = {
+      pases: [
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=371646853&single=true&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1775784558&single=true&output=csv",
+      ],
+      clases: [
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1901056977&single=true&output=csv",
+        //"https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1969468282&single=true&output=csv",
+      ],
+      equipos: [
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1647426432&single=true&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1939040620&single=true&output=csv",
+      ],
+      traslados: [
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1978072612&single=true&output=csv",
+        //"https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1194478962&single=true&output=csv",
+      ]
+    };
 
-    const csv2 = await fetch(
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1647426432&single=true&output=csv"
-    ).then((res) => res.text());
+    // Mapeo de cada tipo de datos
+    const mappers = {
+      pases: (row) => {
+        const [cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio, pack] = row.split(",");
+        return { cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio: Number(precio), pack };
+      },
+      clases: (row) => {
+        const [cerro, temporada, tipo, edad, fechaInicio, fechaFinal, pack, dias, precio, descripcion] = row.split(",");
+        return { cerro, temporada, tipo, edad, fechaInicio, fechaFinal, pack, dias: Number(dias), precio: Number(precio), descripcion };
+      },
+      equipos: (row) => {
+        const [cerro, local, temporada, edad, gama, articulo, fechaInicio, fechaFinal, dias, precio] = row.split(",");
+        return { cerro, local, temporada, edad, gama, articulo, fechaInicio, fechaFinal, dias: Number(dias), precio: Number(precio) };
+      },
+      traslados: (row) => {
+        const [cerro, recorrido, origen, destino, servicio, descripcion, tramo, fechaInicio, fechaFinal, precio, personas] = row.split(",");
+        return { cerro, recorrido, origen, destino, servicio, descripcion, tramo, fechaInicio, fechaFinal, precio: Number(precio), personas: Number(personas) };
+      }
+    };
 
-    const rentals = csv2
-      .split("\n")
-      .slice(1)
-      .map((row) => {
-        const [
-          cerro,
-          local,
-          temporada,
-          edad,
-          gama,
-          articulo,
-          fechaInicio,
-          fechaFinal,
-          dias,
-          precio,
-        ] = row.split(",");
-        return {
-          cerro,
-          local,
-          temporada,
-          edad,
-          gama,
-          articulo,
-          fechaInicio,
-          fechaFinal,
-          dias: Number(dias),
-          precio: Number(Math.round(precio)),
-        };
-      });
+    // Cargar datos de cada sección
+    const data = {};
+    for (const section in urls) {
+      const csvData = await Promise.all(urls[section].map(fetchCSV));
+      data[section] = csvData.flatMap(csv => parseCSV(csv, mappers[section]));
+    }
 
-    const csv3 = await fetch(
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1901056977&single=true&output=csv"
-    ).then((res) => res.text());
-
-    const clases = csv3
-      .split("\n")
-      .slice(1)
-      .map((row) => {
-        const [
-          cerro,
-          temporada,
-          tipo,
-          edad,
-          edad2,
-          fechaInicio,
-          fechaFinal,
-          pack,
-          dias,
-          precio,
-          descripcion,
-        ] = row.split(",");
-        return {
-          cerro,
-          temporada,
-          tipo,
-          edad,
-          edad2,
-          fechaInicio,
-          fechaFinal,
-          pack,
-          dias: Number(dias),
-          precio: Number(Math.round(precio)),
-          descripcion,
-        };
-      });
-    const csv4 = await fetch(
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=371646853&single=true&output=csv"
-    ).then((res) => res.text());
-
-    const pases = csv4
-      .split("\n")
-      .slice(1)
-      .map((row) => {
-        const [cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio, pack] =
-          row.split(",");
-        return {
-          cerro,
-          temporada,
-          edad,
-          tipo,
-          fechaInicio,
-          fechaFinal,
-          dias,
-          precio: Number(Math.round(precio)),
-          pack,
-        };
-      });
-    const csv5 = await fetch(
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1978072612&single=true&output=csv"
-    ).then((res) => res.text());
-
-    const traslado = csv5
-      .split("\n")
-      .slice(1)
-      .map((row) => {
-        const [
-          cerro,
-          recorrido,
-          origen,
-          destino,
-          servicio,
-          descripcion,
-          tramo,
-          fechaInicio,
-          fechaFinal,
-          precio,
-          personas,
-        ] = row.split(",");
-        return {
-          cerro,
-          recorrido,
-          origen,
-          destino,
-          servicio,
-          descripcion,
-          tramo,
-          fechaInicio,
-          fechaFinal,
-          precio: Number(Math.round(precio)),
-          personas: Number(personas),
-        };
-      });
-
-    const csv6 = await fetch(
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1338090560&single=true&output=csv"
-    ).then((res) => res.text());
-
-    const reglas = csv6
-      .split("\n")
-      .slice(1)
-      .map((row) => {
-        // Dividir solo por la primera coma
-        const [hotel, ...rest] = row.split(",");
-        const descripcion = rest.join(","); // Reunir todo lo que está después de la primera coma
-        return {
-          hotel: hotel.trim(), // Limpiar espacios extra
-          descripcion: descripcion.trim().replace(/\. /g, ".\n"), // Limpiar espacios extra
-        };
-      });
-
-    const csv7 = await fetch(
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=0&single=true&output=csv"
-      
-    ).then((res) => res.text());
-
-    const castorEstadias = csv7
-      .split("\n")
-      .slice(1)
-      .map((row) => {
-        const [
-          cerro,
-          hotel,
-          week,
-          habitacion,
-          fechaInicio,
-          fechaFinal,
-          personas,
-          precio,
-          precioMenor,
-          moneda,
-          camaExtra,
-          extraMayor,
-          extraMenor,
-          minNoches,
-          desayuno,
-          tarifa,
-          fechaVigencia,
-        ] = row.split(",");
-        return {
-          cerro,
-          hotel,
-          week,
-          habitacion,
-          fechaInicio,
-          fechaFinal,
-          personas: Number(personas),
-          precio: Number(Math.round(precio)),
-          precioMenor: Number(Math.round(precioMenor)),
-          moneda,
-          camaExtra,
-          extraMayor: Number(Math.round(extraMayor)),
-          extraMenor: Number(Math.round(extraMenor)),
-          minNoches: Number(minNoches),
-          desayuno,
-          tarifa,
-          fechaVigencia,
-        };
-      });
-      const csv8 = await fetch(
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=395989538&single=true&output=csv"
-      ).then((res) => res.text());
-  
-      const reglasCastor = csv8
-        .split("\n")
-        .slice(1)
-        .map((row) => {
-          // Dividir solo por la primera coma
-          const [hotel, ...rest] = row.split(",");
-          const descripcion = rest.join(","); // Reunir todo lo que está después de la primera coma
-          return {
-            hotel: hotel.trim(), // Limpiar espacios extra
-            descripcion: descripcion.trim().replace(/\. /g, ".\n"), // Limpiar espacios extra
-          };
-        });
-
-    setEstadiasCastor(castorEstadias)
-    setPaquetes(paquetes);
-    setRentals(rentals);
-    setClases(clases);
-    setPases(pases);
-    setTraslado(traslado);
-    setReglas(reglas);
-    setReglasCastor(reglasCastor); 
+    setPases(data.pases);
+    setClases(data.clases);
+    setEquipos(data.equipos);
+    setTraslados(data.traslados);
   };
 
   useEffect(() => {
@@ -287,15 +75,11 @@ const useSpeadsheets = () => {
   }, []);
 
   return {
-    paquetes,
-    rentals,
-    clases,
     pases,
-    traslado,
-    reglas,
-    estadiasCastor,
-    reglasCastor
+    clases,
+    equipos,
+    traslados,
   };
 };
 
-export default useSpeadsheets;
+export default useGroupedSpreadsheets;

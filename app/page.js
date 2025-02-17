@@ -3,21 +3,23 @@ import { useEffect, useState } from "react";
 import Navbar from "@/app/components/ui/navbar";
 import Presupuesto from "./components/ui/presupuesto";
 import { handleBusqueda, handleFormularios } from "./lib/utils";
-import useSpeadsheets from "./lib/hooks/spreadsheet";
 import { Button } from "./components/ui/button";
 import Passport from "/public/Passport.png";
 import Image from "next/image";
 import Spinner from "./components/ui/Spinner";
+import useAlojamientos from "./lib/hooks/paquetes";
+import useGroupedSpreadsheets from "./lib/hooks/spreadsheet";
 
 export default function Cotizador() {
-  const { paquetes, rentals, clases, pases, traslado, reglas, estadiasCastor } = useSpeadsheets(null);
+  const { paquetes, reglas } = useAlojamientos(null);
+  const { rentals, pases, clases, traslados } = useGroupedSpreadsheets(paquetes ? null : "delay");  
   const [startDate, setStartDate] = useState(null);
   const [busqueda, setBusqueda] = useState("");
   const [cerro, setCerro] = useState("");
   const [resHoteles, setHoteles] = useState(null);
   const [resPases, setPases] = useState(null);
   const [resClases, setClases] = useState(null);
-  const [resTraslado, setTraslado] = useState(null);
+  const [resTraslados, setTraslados] = useState(null);
   const [resEquipos, setEquipos] = useState(null);
   const [paquetesSeleccionados, setPaquetesSeleccionados] = useState([]);
   const [originales, setOriginales] = useState([]);
@@ -82,16 +84,15 @@ export default function Cotizador() {
                 handleFormularios(
                   category,
                   paquetes,
-                  estadiasCastor,
                   rentals,
                   clases,
                   pases,
-                  traslado,
+                  traslados,
                   setHoteles,
                   setEquipos,
                   setPases,
                   setClases,
-                  setTraslado,
+                  setTraslados,
                   cerro,
                   setCerro,
                   setBusqueda,
@@ -107,7 +108,7 @@ export default function Cotizador() {
             resHoteles,
             resPases,
             resClases,
-            resTraslado,
+            resTraslados,
             resEquipos,
             agregarPaquete,
             reglas

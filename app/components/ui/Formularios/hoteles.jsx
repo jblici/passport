@@ -27,9 +27,8 @@ export default function Hoteles({
   setBusqueda,
   startDate,
   setStartDate,
-  estadiasCastor,
 }) {
-  const [cerrosHoteles, setCerrosHoteles] = useState(null);
+  const [cerrosHoteles, setCerrosHoteles] = useState({});
   const [endDate, setEndDate] = useState(null);
   const [selectedHoteles, setSelectedHoteles] = useState([]);
   const [producto, setProducto] = useState(null);
@@ -59,7 +58,7 @@ export default function Hoteles({
   };
 
   useEffect(() => {
-    if (paquetes) { 
+    if (paquetes) {
       const hotelesPorCerro = {};
 
       paquetes.forEach((paquete) => {
@@ -73,7 +72,6 @@ export default function Hoteles({
       });
 
       const resultado = {};
-
       Object.keys(hotelesPorCerro).forEach((cerro) => {
         resultado[cerro] = Array.from(hotelesPorCerro[cerro]);
       });
@@ -101,8 +99,7 @@ export default function Hoteles({
       cerro,
       paquetes,
       setHoteles,
-      detalleHabitaciones,
-      estadiasCastor,
+      detalleHabitaciones
     );
     const busqueda = {
       detalleHabitaciones,
@@ -114,10 +111,11 @@ export default function Hoteles({
   };
 
   const handleCerro = (value) => {
+    setCerro(value);
+    setSelectedHoteles([]); // Limpiar hoteles al cambiar de cerro
     if (value !== "Las Leñas") {
       setProducto(null);
     }
-    setCerro(value);
   };
 
   const handleProducto = (value) => {
@@ -148,7 +146,7 @@ export default function Hoteles({
                 </SelectContent>
               </Select>
             </div>
-            {cerro === "Las Leñas" && (
+            {cerro && cerrosHoteles[cerro] && cerrosHoteles[cerro].length > 0 && (
               <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
                 <Label htmlFor="centro">Alojamiento:</Label>
                 <MultiSelect

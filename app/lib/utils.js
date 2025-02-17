@@ -387,8 +387,7 @@ export const handleHoteles = (
   cerro,
   paquetes,
   setHoteles,
-  detalleHabitaciones,
-  estadiasCastor
+  detalleHabitaciones
 ) => {
   try {
     const totalPersonas = calcularTotalPersonas(detalleHabitaciones);
@@ -399,8 +398,7 @@ export const handleHoteles = (
       paquetes,
       hotelSeleccionado,
       producto,
-      totalPersonas,
-      estadiasCastor
+      totalPersonas
     );
     //console.log(busquedaHoteles)
     setHoteles(busquedaHoteles);
@@ -418,20 +416,15 @@ function calcularHoteles(
   paquetes,
   hotelSeleccionado,
   producto,
-  totalPersonas,
-  estadiasCastor
+  totalPersonas
 ) {
   const inicio = startDate;
   const fin = endDate;
   let resultados = {};
-  let paquetesFiltrados = cerro === "Las Leñas" ? paquetes : estadiasCastor;
+  let paquetesFiltrados = paquetes;
 
-  {
-    /*
-    if (cerro) {
-      paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.cerro === cerro);
-      }
-      */
+  if (cerro) {
+    paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.cerro === cerro);
   }
 
   if (hotelSeleccionado.length > 0) {
@@ -961,7 +954,6 @@ export const handleBusqueda = (
 export const handleFormularios = (
   category,
   paquetes,
-  estadiasCastor,
   rentals,
   clases,
   pases,
@@ -1037,7 +1029,6 @@ export const handleFormularios = (
         setBusqueda={setBusqueda}
         startDate={startDate}
         setStartDate={setStartDate}
-        estadiasCastor={estadiasCastor}
       />
     );
   }
