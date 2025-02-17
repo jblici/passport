@@ -46,12 +46,7 @@ export default function Cotizador() {
     //console.log("eliminarPaquete");
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 8000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (loading) return <Spinner />;
+  if (!paquetes) return <Spinner />;
 
   return (
     <div className="flex flex-col">

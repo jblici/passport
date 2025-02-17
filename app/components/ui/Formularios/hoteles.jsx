@@ -16,7 +16,7 @@ import {
 import { handleHoteles, scrollToSection } from "@/app/lib/utils";
 import MultiSelect from "react-select";
 import { GoAlert } from "react-icons/go";
-//import Datepicker from "react-tailwindcss-datepicker";
+import Spinner from "../Spinner";
 
 export default function Hoteles({
   category,
@@ -122,7 +122,7 @@ export default function Hoteles({
     setProducto(value);
   };
 
-  if (!cerrosHoteles) return null;
+  if (!cerrosHoteles) return <Spinner />;
   return (
     <div className="h-fit w-full">
       <h1 className="flex justify-center p-2 text-2xl font-bold">{category}</h1>
