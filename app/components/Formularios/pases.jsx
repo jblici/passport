@@ -2,11 +2,10 @@
 import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Label } from "../label";
-import { Input } from "../input";
-import { Button } from "../button";
-import { CalendarDaysIcon } from "../../svg/svg";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select";
+import { Label } from "../ui/label";
+import { Button } from "../ui/button";
+import { CalendarDaysIcon } from "../svg/svg";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { handlePases, scrollToSection } from "@/app/lib/utils";
 import { GoAlert } from "react-icons/go";
 
@@ -32,6 +31,8 @@ export default function Pases({
     e.preventDefault();
     handlePases(cerro, pases, setPases, startDate, Number(dias), pase);
   };
+
+  useEffect(() => {}, [pases]);
 
   const handleCerro = (value) => {
     setCerro(value);

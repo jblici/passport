@@ -2,13 +2,13 @@
 import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Label } from "../label";
-import { Input } from "../input";
-import { Button } from "../button";
-import { CalendarDaysIcon } from "../../svg/svg";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { CalendarDaysIcon } from "../svg/svg";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { handleTransporte, scrollToSection } from "@/app/lib/utils";
-import ToggleYesNo from "../ToggleYesNo";
+import ToggleYesNo from "../ui/ToggleYesNo";
 
 export default function Transporte({
   category,
@@ -34,7 +34,7 @@ export default function Transporte({
     if (cerro && startDate && endDate) {
       setDisable(false);
     }
-  }, [cerro, endDate, startDate]);
+  }, [cerro, endDate, startDate, traslado]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

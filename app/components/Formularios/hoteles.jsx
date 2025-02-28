@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Label } from "../label";
-import { Button } from "../button";
-import { CalendarDaysIcon } from "../../svg/svg";
+import { Label } from "../ui/label";
+import { Button } from "../ui/button";
+import { CalendarDaysIcon } from "../svg/svg";
 import {
   Select,
   SelectGroup,
@@ -12,11 +12,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../select";
+} from "../ui/select";
 import { handleHoteles, scrollToSection } from "@/app/lib/utils";
 import MultiSelect from "react-select";
 import { GoAlert } from "react-icons/go";
-import Spinner from "../Spinner";
+import Spinner from "../ui/Spinner";
 
 export default function Hoteles({
   category,

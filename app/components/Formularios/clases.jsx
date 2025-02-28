@@ -1,13 +1,12 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Label } from "../label";
-import { Button } from "../button";
-import { CalendarDaysIcon } from "../../svg/svg";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select";
+import { Label } from "../ui/label";
+import { Button } from "../ui/button";
+import { CalendarDaysIcon } from "../svg/svg";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { handleClases, scrollToSection } from "@/app/lib/utils";
-import { Input } from "../input";
 
 export default function Clases({
   category,
@@ -26,6 +25,8 @@ export default function Clases({
   // Define los límites de fecha
   const minDate = new Date(currentYear, 5, 1); // Junio (mes 5 porque es basado en 0)
   const maxDate = new Date(currentYear, 9, 31); // Octubre
+
+  useEffect(() => {}, [clases]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

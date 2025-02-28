@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../table";
-import { Button } from "../button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { Button } from "../ui/button";
 import { formatNumberWithDots } from "@/app/lib/utils";
 
-const PaquetesClases = ({ resultados, agregarPaquete }) => {
+const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
 
   //console.log(resultados)
@@ -12,7 +12,7 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
     return (
       <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
         <div className="p-4 sm:p-6 md:p-8 border-b">
-          <h2 className="text-xl font-bold mb-2">No hay Clases disponibles...</h2>
+          <h2 className="text-xl font-bold mb-2">No hay Equipos disponibles...</h2>
         </div>
       </div>
     );
@@ -28,16 +28,17 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
   return (
     <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
       <div className="p-4 sm:p-6 md:p-8 border-b">
-        <h2 className="text-xl font-bold mb-2">Clases</h2>
+        <h2 className="text-xl font-bold mb-2">Rentals</h2>
       </div>
       <div className="p-4 sm:p-6 md:p-8">
         <Table className="w-full">
           <TableHeader>
             <TableRow>
               <TableHead>Cerro</TableHead>
-              <TableHead>Tipo</TableHead>
+              <TableHead>Gama</TableHead>
+              <TableHead>Articulo</TableHead>
+              <TableHead>Edad</TableHead>
               <TableHead>Dias</TableHead>
-              <TableHead>Edades</TableHead>
               <TableHead>Precio</TableHead>
               <TableHead>Agregar</TableHead>
             </TableRow>
@@ -46,9 +47,10 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
             {resultados?.map((r, index) => (
               <TableRow key={index}>
                 <TableCell>{r.cerro}</TableCell>
-                <TableCell>{r.tipo}</TableCell>
-                <TableCell>{r.dias}</TableCell>
+                <TableCell>{r.gama}</TableCell>
+                <TableCell>{r.articulo}</TableCell>
                 <TableCell>{r.edad}</TableCell>
+                <TableCell>{r.dias}</TableCell>
                 <TableCell>{`$ ${formatNumberWithDots(r.precio)}`}</TableCell>
                 <TableCell>
                   <div className="flex">
@@ -68,11 +70,12 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
                       className="w-full bg-blue-500 text-white hover:bg-blue-600"
                       onClick={() => {
                         const count = selectedCounts[index] || 1; // Usar el valor seleccionado o 2 por defecto
+
                         agregarPaquete({
-                          seccion: "clases",
+                          seccion: "equipos",
                           days: r.dias,
                           count: Number(count),
-                          name: `Clase ${r.tipo} - ${r.dias} - x ${count}`,
+                          name: `${r.articulo} - ${r.edad} - ${r.gama}`,
                           price: r.precio * count,
                         });
                       }}
@@ -90,4 +93,4 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
   );
 };
 
-export default PaquetesClases;
+export default PaquetesEquipos;

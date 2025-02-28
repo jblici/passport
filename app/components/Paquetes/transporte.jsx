@@ -1,5 +1,5 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../table";
-import { Button } from "../button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { Button } from "../ui/button";
 import { useState } from "react";
 
 const PaquetesTransporte = ({ resultados, agregarPaquete }) => {

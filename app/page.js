@@ -27,6 +27,10 @@ export default function Cotizador() {
   const [category, setCategory] = useState("Alojamientos");
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+
+  }, [rentals])
+
   const handleCategorySelect = (cat) => {
     setCategory(cat);
   };

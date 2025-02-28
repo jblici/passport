@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 const useGroupedSpreadsheets = () => {
   const [pases, setPases] = useState(null);
   const [clases, setClases] = useState(null);
-  const [equipos, setEquipos] = useState(null);
+  const [rentals, setRentals] = useState(null);
   const [traslados, setTraslados] = useState(null);
 
   const fetchCSV = async (url) => {
@@ -27,7 +27,7 @@ const useGroupedSpreadsheets = () => {
         "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1901056977&single=true&output=csv",
         //"https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1969468282&single=true&output=csv",
       ],
-      equipos: [
+      rentals: [
         "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1647426432&single=true&output=csv",
         "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1939040620&single=true&output=csv",
       ],
@@ -47,7 +47,7 @@ const useGroupedSpreadsheets = () => {
         const [cerro, temporada, tipo, edad, fechaInicio, fechaFinal, pack, dias, precio, descripcion] = row.split(",");
         return { cerro, temporada, tipo, edad, fechaInicio, fechaFinal, pack, dias: Number(dias), precio: Number(precio), descripcion };
       },
-      equipos: (row) => {
+      rentals: (row) => {
         const [cerro, local, temporada, edad, gama, articulo, fechaInicio, fechaFinal, dias, precio] = row.split(",");
         return { cerro, local, temporada, edad, gama, articulo, fechaInicio, fechaFinal, dias: Number(dias), precio: Number(precio) };
       },
@@ -64,9 +64,11 @@ const useGroupedSpreadsheets = () => {
       data[section] = csvData.flatMap(csv => parseCSV(csv, mappers[section]));
     }
 
+    console.log(data.rentals)
+
     setPases(data.pases);
     setClases(data.clases);
-    setEquipos(data.equipos);
+    setRentals(data.rentals);
     setTraslados(data.traslados);
   };
 
@@ -75,9 +77,9 @@ const useGroupedSpreadsheets = () => {
   }, []);
 
   return {
+    rentals,
     pases,
     clases,
-    equipos,
     traslados,
   };
 };
