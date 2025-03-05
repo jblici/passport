@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { formatNumberWithDots } from "@/app/lib/utils";
 
 const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
-  //console.log(resultados);
+  console.log(resultados);
   if (!resultados) return null;
   if (Object.keys(resultados).length === 0) {
     return (
@@ -16,7 +16,6 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
     );
   }
 
-  console.log(resultados);
   return (
     <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
       <div className="p-4 sm:p-6 md:p-8 border-b">
@@ -106,7 +105,6 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                         <TableCell>{r.paquetesUtilizados.paquetes[0].cerro}</TableCell>
                         <TableCell>{r.paquetesUtilizados.paquetes[0].hotel}</TableCell>
                         <TableCell>{r.paquetesUtilizados.paquetes[0].habitacion}</TableCell>
-                        <TableCell>{r.noches}</TableCell>
                         <TableCell>{r.totalPersonas}</TableCell>
                         <TableCell>
                           {r.paquetesUtilizados.camaExtra === "Si" ? (
@@ -119,7 +117,7 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                             </span>
                           )}
                         </TableCell>
-                        <TableCell>{`$ ${r.precioTotal}`}</TableCell>
+                        <TableCell>{`${r.paquetesUtilizados.paquetes[0].moneda === "USD" ? "USD" : "$"} ${formatNumberWithDots(r.precioTotal)}`}</TableCell>
                         <TableCell>
                           <Button
                             variant="outline"

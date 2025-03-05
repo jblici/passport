@@ -7,6 +7,36 @@ import { Button } from "../ui/button";
 import { CalendarDaysIcon } from "../svg/svg";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { handleEquipos, scrollToSection } from "@/app/lib/utils";
+import { GoAlert } from "react-icons/go";
+
+const cerrosInfo = {
+  Castor: {
+    mensaje: (
+      <>
+        <span>Junior: 0 a 11 años.</span>
+        <span>Adulto: 12 a 69 años.</span>
+      </>
+    ),
+    gama: (
+      <SelectContent>
+        <SelectItem value="JUNIOR">Junior</SelectItem>
+        <SelectItem value="ADULTO STANDARD">Adulto Standard</SelectItem>
+        <SelectItem value="ADULTO GAMA ALTA">Adulto Gama Alta</SelectItem>
+        <SelectItem value="ADULTO PREMIUM">Adulto Premium</SelectItem>
+        <SelectItem value="ADULTO SKI GAMA ALTA">Adulto Ski Gama Alta</SelectItem>
+        <SelectItem value="ADULTO SKI PREMIUM">Adulto Ski Premium</SelectItem>
+      </SelectContent>
+    ),
+  },
+  "Las Leñas": {
+    gama: (
+      <SelectContent>
+        <SelectItem value="SPORT">Sport</SelectItem>
+        <SelectItem value="ALTA GAMA">Alta Gama</SelectItem>
+      </SelectContent>
+    ),
+  },
+};
 
 export default function Equipos({
   category,
@@ -71,10 +101,7 @@ export default function Equipos({
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar Gama" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="SPORT">Sport</SelectItem>
-                  <SelectItem value="ALTA GAMA">Alta Gama</SelectItem>
-                </SelectContent>
+                {cerrosInfo[cerro]?.gama && cerrosInfo[cerro]?.gama}
               </Select>
             </div>
           </div>
@@ -115,14 +142,24 @@ export default function Equipos({
               </Select>
             </div>
           </div>
-          <div className="flex w-fit">
-            <Button
-              type="submit"
-              className="w-full bg-blue-500 text-white hover:bg-blue-600"
-              onClick={scrollToSection}
-            >
-              Buscar
-            </Button>
+          <div className="flex justify-between w-full">
+            <div className="flex w-fit">
+              <Button
+                type="submit"
+                className="w-full bg-blue-500 text-white hover:bg-blue-600"
+                onClick={scrollToSection}
+              >
+                Buscar
+              </Button>
+            </div>
+            {cerrosInfo[cerro]?.mensaje && (
+              <div className="flex border rounded-lg items-center gap-2 p-2 border-blue-200">
+                <GoAlert className="animate-bounce text-blue-500" />
+                <div className="text-xs text-gray-500 flex flex-col space-y-2 w-fit">
+                  {cerrosInfo[cerro]?.mensaje}
+                </div>
+              </div>
+            )}
           </div>
         </form>
       </div>

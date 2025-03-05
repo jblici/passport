@@ -104,7 +104,7 @@ const useAlojamientos = () => {
 
   useEffect(() => {
     obtenerAlojamientos();
-  });
+  },[]);
 
   return { paquetes, reglas };
 };

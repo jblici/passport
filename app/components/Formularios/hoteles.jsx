@@ -18,6 +18,28 @@ import MultiSelect from "react-select";
 import { GoAlert } from "react-icons/go";
 import Spinner from "../ui/Spinner";
 
+const cerrosInfo = {
+  "Las Leñas": {
+    mensaje: (
+      <>
+        <span>Menores: 6 a 11 años</span>
+        <span>Mayores: + 12 años</span>
+        <span>Menores 0 a 2 años: GRATIS en cuna.</span>
+      </>
+    ),
+  },
+  "Castor": {
+    mensaje: (
+      <>
+        <span>Infantes: de 0 a 4 años, pase sin cargo.</span>
+        <span>Menor: 5 a 11 años.</span>
+        <span>Adulto: 12 a 69 años.</span>
+        <span>Senior: + 70 años, pase sin cargo.</span>
+      </>
+    ),
+  },
+};
+
 export default function Hoteles({
   category,
   paquetes,
@@ -313,13 +335,11 @@ export default function Hoteles({
                 Buscar
               </Button>
             </div>
-            {cerro === "Las Leñas" && (
+            {cerrosInfo[cerro]?.mensaje && (
               <div className="flex border rounded-lg items-center gap-2 p-2 border-blue-200">
                 <GoAlert className="animate-bounce text-blue-500" />
                 <div className="text-xs text-gray-500 flex flex-col space-y-2 w-fit">
-                  <span>Menores: 6 a 11 años</span>
-                  <span>Mayores: + 12 años</span>
-                  <span>Menores 0 a 2 años: GRATIS en cuna </span>
+                  {cerrosInfo[cerro]?.mensaje}
                 </div>
               </div>
             )}
