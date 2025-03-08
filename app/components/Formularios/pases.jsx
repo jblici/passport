@@ -9,6 +9,57 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { handlePases, scrollToSection } from "@/app/lib/utils";
 import { GoAlert } from "react-icons/go";
 
+const cerrosInfo = {
+  "Las Leñas": {
+    mensaje: (
+      <>
+        <span>Menores 3 a 5 años: NO abona medio de elevación</span>
+        <span>Menores: 6 a 11 años</span>
+        <span>Mayores: + 12 años</span>
+        <span>+ 70 años: NO abona medio de elevación</span>
+        <span>Principiantes: Válido para pistas Eros 1 y 2 y Venus 1 y 2</span>
+      </>
+    ),
+  },
+  Castor: {
+    mensaje: (
+      <>
+        <span>Infantes: 0 a 4 años, pase sin cargo.</span>
+        <span>Menor: 5 a 11 años.</span>
+        <span>Adulto: 12 a 69 años.</span>
+        <span>Senior: + 70 años, pase sin cargo.</span>
+      </>
+    ),
+  },
+  Catedral: {
+    mensaje: (
+      <>
+        <span>Infante: de 3 a 5 años. Solo paga KeyCard.</span>
+        <span>Menor: de 6 a 11 años</span>
+        <span>Mayor: de 12 a 64 años.</span>
+        <span>Senior: de 65 a 69 años.</span>
+        <span>+ 70 AÑOS: Pase Free. Solo paga KeyCard.</span>
+        <span>Todos los pases aplican costo retornable por KeyCard.</span>
+      </>
+    ),
+    tipos: (
+      <SelectContent>
+        <SelectItem value="PASS PACK">Pass Pack</SelectItem>
+        <SelectItem value="FLEXI PACK">Flexi Pack</SelectItem>
+        <SelectItem value="EXCLUSIVE PACK">Exclusive Pack</SelectItem>
+      </SelectContent>
+    ),
+  },
+  Chapelco: {
+    tipos: (
+      <SelectContent>
+        <SelectItem value="NORMAL">Normal</SelectItem>
+        <SelectItem value="FLEXIBLE">Flexible</SelectItem>
+      </SelectContent>
+    ),
+  },
+};
+
 export default function Pases({
   category,
   pases,
@@ -119,11 +170,8 @@ export default function Pases({
                 <Select id="pase" onValueChange={handlePase}>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar Pase" />
+                    {cerrosInfo[cerro]?.tipos && cerrosInfo[cerro]?.tipos}
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="NORMAL">Normal</SelectItem>
-                    <SelectItem value="FLEXIBLE">Flexible</SelectItem>
-                  </SelectContent>
                 </Select>
               </div>
             )}
@@ -139,17 +187,11 @@ export default function Pases({
                 Buscar
               </Button>
             </div>
-            {cerro === "Las Leñas" && (
+            {cerrosInfo[cerro]?.mensaje && (
               <div className="flex border rounded-lg items-center gap-2 p-2 border-blue-200">
                 <GoAlert className="animate-bounce text-blue-500" />
                 <div className="text-xs text-gray-500 flex flex-col space-y-2 w-fit">
-                  <span>Menores 03 a 05 años: NO abona medio de elevación</span>
-                  <span>Mayores de 70 años: NO abona medio de elevación</span>
-                  <span>Menores: 6 a 11 años</span>
-                  <span>Mayores: + 12 años</span>
-                  <span>
-                    Pase de Principiantes: solo válido para pistas Eros 1 y 2 y Venus 1 y 2
-                  </span>
+                  {cerrosInfo[cerro]?.mensaje}
                 </div>
               </div>
             )}

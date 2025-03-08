@@ -28,13 +28,11 @@ const cerrosInfo = {
       </>
     ),
   },
-  "Castor": {
+  Catedral: {
     mensaje: (
       <>
-        <span>Infantes: de 0 a 4 años, pase sin cargo.</span>
-        <span>Menor: 5 a 11 años.</span>
+        <span>Junior: hasta 11 años.</span>
         <span>Adulto: 12 a 69 años.</span>
-        <span>Senior: + 70 años, pase sin cargo.</span>
       </>
     ),
   },

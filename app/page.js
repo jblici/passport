@@ -67,7 +67,7 @@ export default function Cotizador() {
             </div>
             <div className="flex justify-center px-4 pt-4 sm:px-6 md:px-8">
               <div className="space-y-2">
-                {["Alojamientos", "Pases", "Equipos", "Clases", "Transporte"].map((cat) => (
+                {["Alojamientos", "Medios de Elevación", "Equipos", "Clases", "Transporte"].map((cat) => (
                   <Button
                     key={cat}
                     onClick={() => handleCategorySelect(cat)}

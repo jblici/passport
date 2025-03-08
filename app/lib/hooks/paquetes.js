@@ -89,6 +89,13 @@ const useAlojamientos = () => {
         reglasUrl:
           "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=395989538&single=true&output=csv",
       },
+      {
+        nombre: "Catedral",
+        paquetesUrl:
+          "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrgSNgmR8oRvUSBWiPH7971xx2p37mw1w958m0T0PwR6yNiEO3c1PaDWTSjkaAgyz4sJfYfwM8_i5v/pub?gid=0&single=true&output=csv",
+        reglasUrl:
+          "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrgSNgmR8oRvUSBWiPH7971xx2p37mw1w958m0T0PwR6yNiEO3c1PaDWTSjkaAgyz4sJfYfwM8_i5v/pub?gid=395989538&single=true&output=csv",
+      },
       // Agrega aquí las URLs de los demás centros de ski
     ];
 
@@ -104,7 +111,7 @@ const useAlojamientos = () => {
 
   useEffect(() => {
     obtenerAlojamientos();
-  },[]);
+  }, []);
 
   return { paquetes, reglas };
 };

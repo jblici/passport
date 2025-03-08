@@ -36,6 +36,18 @@ const cerrosInfo = {
       </SelectContent>
     ),
   },
+  Catedral: {
+    mensaje: (
+      <>
+        <span>Los equipos deportivos son ideales para principiantes e intermedios.</span>
+        <span>
+          Los equipos Junior son para niños de nivel principiante e intermedio hasta 11 años.
+        </span>
+        <span>Los equipos de alto nivel son ideales para intermedios y avanzados.</span>
+        <span>En ningún caso incluyen seguro de rotura, robo o extravío.</span>
+      </>
+    ),
+  },
 };
 
 export default function Equipos({

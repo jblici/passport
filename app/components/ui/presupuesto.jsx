@@ -123,7 +123,7 @@ const ResumenPresupuesto = ({
       </div>
       <div className=" flex items-start justify-between bg-gray-100 p-4 md:items-center">
         <AnimatedDropdown discount={discount} handleDiscount={handleDiscount} />
-        {familyPlan && (
+        {familyPlan && cerro === "Las Leñas" (
           <div className="flex items-center gap-2">
             <span>Activar Family Plan</span>
             <label

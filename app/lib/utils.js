@@ -655,9 +655,7 @@ export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) =>
   let clasesFiltradas = clases;
 
   if (cerro) {
-    clasesFiltradas = clasesFiltradas.filter(
-      (clase) => clase.cerro.toUpperCase() === cerro.toUpperCase()
-    );
+    clasesFiltradas = clasesFiltradas.filter((clase) => clase.cerro === cerro);
   }
 
   if (tipo) {
@@ -760,11 +758,7 @@ export const handleTransporte = (
       const paseInicio = parseDate(clase.fechaInicio);
       const paseFinal = parseDate(clase.fechaFinal);
 
-      if (cerro === "Las Leñas") {
-        return paseInicio <= startDate && startDate <= paseFinal;
-      } else {
-        return paseInicio <= startDate && paseFinal >= fechaFin;
-      }
+      return paseInicio <= startDate && startDate <= paseFinal;
     });
   }
 
@@ -802,11 +796,13 @@ export const handleTransporte = (
       fin,
     }));
 
+    console.log(transporteFiltrado)
+
     ida = transporteFiltrado.filter((paquete) => paquete.tramo === "Ida");
     vuelta = transporteFiltrado.filter((paquete) => paquete.tramo === "Vuelta");
 
     if (ida.length === 0 || vuelta.length === 0) {
-      setTraslado([]);
+      setTraslado(transporteFiltrado);
     } else {
       setTraslado({ ida, vuelta });
     }
@@ -887,7 +883,7 @@ export const handleFormularios = (
         setStartDate={setStartDate}
       />
     );
-  } else if (category === "Pases") {
+  } else if (category === "Medios de Elevación") {
     return (
       <Pases
         category={category}
