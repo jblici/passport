@@ -59,18 +59,18 @@ const useAlojamientos = () => {
   const fetchReglas = async (url) => {
     const response = await fetch(url);
     const text = await response.text();
+
     return text
       .split("\n")
-      .slice(1)
+      .slice(1) // Omitimos la primera fila (headers)
       .map((row) => {
-        // Dividir solo por la primera coma
-        const [hotel, ...rest] = row.split(",");
-        const descripcion = rest.join(","); // Reunir todo lo que está después de la primera coma
-        return {
-          hotel: hotel.trim(), // Limpiar espacios extra
-          descripcion: descripcion.trim().replace(/\. /g, ".\n"), // Limpiar espacios extra
-        };
-      });
+        const columns = row.split(","); // Dividimos la fila en columnas
+        const hotel = columns[0]?.trim(); // Primera columna (hotel)
+        const traduccion = columns[1]?.trim(); // Segunda columna (traducción)
+
+        return { hotel, traduccion };
+      })
+      .filter((row) => row.hotel && row.traduccion); // Filtramos posibles filas vacías
   };
 
   const obtenerAlojamientos = async () => {

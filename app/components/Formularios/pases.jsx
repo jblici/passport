@@ -98,6 +98,7 @@ export default function Pases({
   };
 
   useEffect(() => {
+    console.log(pases)
     if (cerro && dias && startDate) {
       setDisabled(false);
     }
@@ -116,10 +117,10 @@ export default function Pases({
                   <SelectValue placeholder="Seleccionar Centro" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Catedral">Catedral</SelectItem>
+                  <SelectItem value="Catedral">Cerro Catedral</SelectItem>
+                  <SelectItem value="Castor">Cerro Castor</SelectItem>
                   <SelectItem value="Chapelco">Chapelco</SelectItem>
-                  <SelectItem value="Castor">Castor</SelectItem>
-                  <SelectItem value="Las Leñas">Las Leñas</SelectItem>
+                  <SelectItem value="Las Leñas">Valle de Las Leñas</SelectItem>
                 </SelectContent>
               </Select>
             </div>

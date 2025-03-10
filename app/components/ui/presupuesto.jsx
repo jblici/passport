@@ -78,6 +78,12 @@ const ResumenPresupuesto = ({
     );
   };
 
+  const formatReglas = (text) => {
+    return text
+      .replace(/;/g, ",") // Reemplaza ; por ,
+      .replace(/\. /g, ".\n"); // Agrega un salto de línea después de cada punto
+  };
+
   useEffect(() => {
     const total = paquetesSeleccionados.reduce(
       (acumulador, paquete) =>
@@ -171,7 +177,7 @@ const ResumenPresupuesto = ({
                         className="text-gray-500 text-xs w-[80%] text-pretty pl-1"
                         style={{ whiteSpace: "pre-wrap" }}
                       >
-                        {paquete.reglas}
+                        {formatReglas(paquete.reglas)}
                       </span>
                     )}
                   </div>

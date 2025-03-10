@@ -161,8 +161,10 @@ export default function Hoteles({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="todos">Todos</SelectItem>
-                  <SelectItem value="Las Leñas">Las Leñas</SelectItem>
-                  <SelectItem value="Castor">Castor</SelectItem>
+                  <SelectItem value="Catedral">Cerro Catedral</SelectItem>
+                  <SelectItem value="Castor">Cerro Castor</SelectItem>
+                  <SelectItem value="Chapelco">Chapelco</SelectItem>
+                  <SelectItem value="Las Leñas">Valle de Las Leñas</SelectItem>
                 </SelectContent>
               </Select>
             </div>

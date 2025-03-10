@@ -779,8 +779,6 @@ export const handleTransporte = (
       if (claseTransporte === "Privado") {
         transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.personas > 1);
       } else {
-        console.log("entre");
-        console.log(transporteFiltrado);
         transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.personas === 1);
       }
     }
@@ -826,7 +824,7 @@ export const handleBusqueda = (
   } else if (category === "Clases") {
     if (!resClases) return null;
     return <PaquetesClases resultados={resClases} agregarPaquete={agregarPaquete} />;
-  } else if (category === "Pases") {
+  } else if (category === "Medios de Elevación") {
     if (!resPases) return null;
     return <PaquetesPases resultados={resPases} agregarPaquete={agregarPaquete} />;
   } else if (category === "Transporte") {

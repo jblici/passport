@@ -4,7 +4,6 @@ import { Button } from "../ui/button";
 import { formatNumberWithDots } from "@/app/lib/utils";
 
 const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
-  console.log(resultados);
   if (!resultados) return null;
   if (Object.keys(resultados).length === 0) {
     return (
@@ -77,11 +76,11 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                                 seccion: "alojamiento",
                                 reglas: reglas.find(
                                   (result) => result.hotel === r.paquetesUtilizados.hotel
-                                ).descripcion,
+                                ).traduccion,
                                 name: `${r.paquetesUtilizados.hotel} - ${
                                   r.paquetesUtilizados.habitacion
-                                } - ${r.mayores && "Adultos: " + r.mayores} ${
-                                  r.menores && " Menores: " + r.menores
+                                } - ${r.mayores > 0 ? "Adultos: " + r.mayores : ""} ${
+                                  r.menores > 0 ? " Menores: " + r.menores : ""
                                 }`,
                                 discount: 0,
                                 noches: r.noches.toString(),
@@ -117,7 +116,9 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                             </span>
                           )}
                         </TableCell>
-                        <TableCell>{`${r.paquetesUtilizados.paquetes[0].moneda === "USD" ? "USD" : "$"} ${formatNumberWithDots(r.precioTotal)}`}</TableCell>
+                        <TableCell>{`${
+                          r.paquetesUtilizados.paquetes[0].moneda === "USD" ? "USD" : "$"
+                        } ${formatNumberWithDots(r.precioTotal)}`}</TableCell>
                         <TableCell>
                           <Button
                             variant="outline"
@@ -128,11 +129,15 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                                 reglas: reglas.find(
                                   (result) =>
                                     result.hotel === r.paquetesUtilizados.paquetes[0].hotel
-                                ).descripcion,
-                                name: `${r.paquetesUtilizados.paquetes[0].hotel} - ${r.paquetesUtilizados.paquetes[0].habitacion}`,
+                                ).traduccion,
+                                name: `${r.paquetesUtilizados.paquetes[0].hotel} - ${
+                                  r.paquetesUtilizados.paquetes[0].habitacion
+                                } - ${r.mayores > 0 ? "Adultos: " + r.mayores : ""} ${
+                                  r.menores > 0 ? " Menores: " + r.menores : ""
+                                }`,
                                 discount: 0,
                                 noches: r.noches.toString(),
-                                price: r.precioTotal - descuento,
+                                price: r.precioTotal,
                               })
                             }
                           >
