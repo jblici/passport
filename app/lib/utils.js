@@ -116,6 +116,8 @@ export const generatePDF = (
       alturaY = alturaY + 20;
     } else {
       // Agregar texto al documento PDF
+      const maxWidth = 380;
+      textoPaquete= doc.splitTextToSize(textoPaquete,maxWidth);
       doc.setFontSize(12);
       doc.text(textoPaquete, 17, alturaY);
 
