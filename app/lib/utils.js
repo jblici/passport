@@ -9,6 +9,7 @@ import Clases from "../components/Formularios/clases";
 import Pases from "../components/Formularios/pases";
 import Transporte from "../components/Formularios/transporte";
 import Hoteles from "../components/Formularios/hoteles";
+import { max } from "date-fns";
 
 export const generatePDF = (
   paquetesSeleccionados,
@@ -94,7 +95,8 @@ export const generatePDF = (
       doc.setFontSize(12);
       doc.text(textoPaquete, 17, alturaY);
       doc.setFontSize(8);
-
+      const maxWidth = 380; // Adjust width based on your margins and page size
+      descripcion = doc.splitTextToSize(descripcion,maxWidth)
       doc.text(descripcion, 20, alturaY + 10);
       doc.setFontSize(12);
       alturaY = alturaY + 40;
