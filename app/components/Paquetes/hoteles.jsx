@@ -1,7 +1,7 @@
 import React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
-import { formatNumberWithDots } from "@/app/lib/utils";
+import { formatNumberWithDots, parseDate } from "@/app/lib/utils";
 
 const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
   if (!resultados) return null;
@@ -66,7 +66,9 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                           )}
                         </TableCell>
 
-                        <TableCell>{`$ ${formatNumberWithDots(r.precioTotal)}`}</TableCell>
+                        <TableCell>{`${
+                          r.paquetesUtilizados.moneda === "USD" ? "USD" : "$"
+                        }  ${formatNumberWithDots(r.precioTotal)}`}</TableCell>
                         <TableCell>
                           <Button
                             variant="outline"
@@ -85,6 +87,9 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                                 discount: 0,
                                 noches: r.noches.toString(),
                                 price: r.precioTotal,
+                                fechaInicio: r.fechaInicio,
+                                fechaFinal: r.fechaFinal,
+                                moneda: r.paquetesUtilizados.moneda
                               })
                             }
                           >
@@ -138,6 +143,9 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                                 discount: 0,
                                 noches: r.noches.toString(),
                                 price: r.precioTotal,
+                                fechaInicio: r.fechaInicio,
+                                fechaFinal: r.fechaFinal,
+                                moneda: r.paquetesUtilizados.paquetes[0].moneda
                               })
                             }
                           >

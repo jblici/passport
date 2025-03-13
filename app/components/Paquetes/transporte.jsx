@@ -4,8 +4,7 @@ import { useState } from "react";
 
 const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
-
-  console.log(resultados);
+  //console.log(resultados);
   if (!resultados) return null;
   if (Object.keys(resultados).length === 0) {
     return (
@@ -53,7 +52,7 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                   <TableCell>{r.origen}</TableCell>
                   <TableCell>{r.destino}</TableCell>
                   <TableCell>{r.tramo}</TableCell>
-                  <TableCell>{r.descripcion}</TableCell>
+                  <TableCell>{r.descripcion.toLowerCase()}</TableCell>
                   <TableCell>{r.personas}</TableCell>
                   <TableCell>{`$ ${r.precio}`}</TableCell>
                   <TableCell>
@@ -126,7 +125,7 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                         <TableCell>{r.servicio}</TableCell>
                         <TableCell>{r.origen}</TableCell>
                         <TableCell>{r.destino}</TableCell>
-                        <TableCell>{r.descripcion}</TableCell>
+                        <TableCell>{r.descripcion.toLowerCase()}</TableCell>
                         <TableCell>{r.personas}</TableCell>
                         <TableCell>{`$ ${r.precio}`}</TableCell>
                         <TableCell>

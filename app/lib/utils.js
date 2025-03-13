@@ -25,6 +25,8 @@ export const generatePDF = (
     return grupos;
   }, {});
 
+  console.log(busqueda)
+
   // Obtener las secciones ordenadas (alojamiento primero)
   const seccionesOrdenadas = Object.entries(paquetesPorSeccion).sort(([seccionA], [seccionB]) => {
     if (seccionA === "alojamiento") return -1; // "alojamiento" primero
@@ -55,11 +57,9 @@ export const generatePDF = (
   let personas;
   if (busqueda.detalleHabitaciones) personas = calcularTotalPersonas(busqueda.detalleHabitaciones);
 
-  const dias = calcularDiferenciaDiasProducto(busqueda.producto);
-  const fechasFormateadas = formatDate(busqueda.startDate, dias);
+  const diasViaje = calcularDiferenciaDiasProducto(busqueda.producto);
+  const fechasFormateadas = formatDate(busqueda.startDate, diasViaje);
   const doc = new jsPDF("p", "px", "a4");
-  // ppi pixel per inch 72
-  //break long texts
 
   let img = new Image();
   img.height = 40;
@@ -71,12 +71,19 @@ export const generatePDF = (
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(20);
-  doc.text("Presupuesto Passport Ski 2024", 10, 90);
+  doc.text(`Presupuesto Passport Ski ${new Date().getFullYear()}`, 10, 90);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(14);
   doc.text(`Fecha del presupuesto: ${obtenerFechaActual()}`, 14, 110);
 
-  if (personas) doc.text(`${personas.total} Personas`, 14, 125);
+  if (personas)
+    doc.text(
+      `${personas.total} Personas - Fechas del viaje: ${stringDate(busqueda.startDate)} - ${
+        busqueda.endDate ? stringDate(busqueda.endDate) : fechasFormateadas.fechaFinal
+      }`,
+      14,
+      125
+    );
 
   let alturaY = 125;
 
@@ -148,8 +155,6 @@ export const createPDF = (config) => {
     paquetesSeleccionados,
     busqueda,
     calcularTotalPersonas,
-    calcularDiferenciaDiasProducto,
-    formatDate,
     formatNumberWithDots,
   } = config;
 
@@ -270,6 +275,18 @@ const formatDate = (date, dias) => {
   return { fechaInicial, fechaFinal };
 };
 
+const stringDate = (dateString) => {
+  const date = new Date(dateString);
+
+  if (isNaN(date)) return "Fecha inválida"; // Verifica si la fecha es válida
+
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth() devuelve 0-11, por eso sumamos 1
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+};
+
 //BUSQUEDA PAQUETES HOTELES
 
 export const handleHoteles = (
@@ -293,7 +310,7 @@ export const handleHoteles = (
       producto,
       totalPersonas
     );
-    //console.log(busquedaHoteles)
+    console.log(busquedaHoteles);
     setHoteles(busquedaHoteles);
   } catch (error) {
     console.error(error);
@@ -326,8 +343,6 @@ function calcularHoteles(
     );
   }
 
-  console.log(cerro);
-
   // Filtrado adicional para "Las Leñas"
   if (cerro === "Las Leñas" && producto) {
     const noches = calcularDiferenciaDiasProducto(producto);
@@ -336,14 +351,10 @@ function calcularHoteles(
     fechaFin.setDate(fechaInicio.getDate() + noches); // Calculamos la fecha final
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.week === producto);
 
-    console.log(paquetesFiltrados);
-
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
-      console.log(paquete.minNoches >= noches);
       return paquete.minNoches <= noches;
     });
 
-    console.log(paquetesFiltrados);
     // Filtrar paquetes que contengan la fecha de inicio
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
       const fechaInicio = parseDate(paquete.fechaInicio);
@@ -396,6 +407,8 @@ function calcularHoteles(
           noches,
           precioTotal: precioHabitacion,
           paquetesUtilizados: paquete,
+          fechaInicio: stringDate(startDate),
+          fechaFinal: stringDate(fechaFin),
         });
       });
     });
@@ -479,6 +492,7 @@ function calcularHoteles(
                       : paquete.precio * menores);
                 }
                 totalPrecio += noches * precioHabitacion;
+                totalNoches += noches;
               } else {
                 totalPrecio += noches * (paquete.precio * total);
                 totalNoches += noches;
@@ -506,6 +520,8 @@ function calcularHoteles(
                   noches: totalNoches,
                   precioTotal: totalPrecio,
                   precioPromedio: Math.round(totalPrecio / totalNoches),
+                  fechaInicio: stringDate(inicio),
+                  fechaFinal: stringDate(fin),
                   paquetesUtilizados:
                     combinacionActual.length > 1
                       ? { paquetes: combinacionActual }
@@ -584,7 +600,7 @@ function parseDate(dateString) {
 
 function calcularDiferenciaDias(fechaInicio, fechaFin) {
   const unDia = 1000 * 60 * 60 * 24;
-  return Math.ceil((fechaFin - fechaInicio) / unDia) + 1;
+  return Math.ceil((fechaFin - fechaInicio) / unDia);
 }
 
 function calcularDiferenciaDiasProducto(producto) {
@@ -690,7 +706,7 @@ export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) =>
 
 //BUSQUEDA PASES
 
-export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
+export const handlePases = (cerro, pases, setPases, startDate, dias, tipo) => {
   let pasesFiltrados = pases;
 
   if (cerro) {
@@ -699,9 +715,9 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
     );
   }
 
-  if (pase) {
+  if (tipo) {
     pasesFiltrados = pasesFiltrados.filter(
-      (pase) => pase.tipo.toUpperCase() === pase.toUpperCase()
+      (pase) => pase.tipo.toUpperCase() === tipo.toUpperCase()
     );
   }
 
@@ -715,9 +731,9 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, pase) => {
   if (startDate && dias) {
     const fechaFin = sumarDias(new Date(startDate), dias - 1); // Clonar startDate
 
-    pasesFiltrados = pasesFiltrados.filter((clase) => {
-      const paseInicio = parseDate(clase.fechaInicio);
-      const paseFinal = parseDate(clase.fechaFinal);
+    pasesFiltrados = pasesFiltrados.filter((pase) => {
+      const paseInicio = parseDate(pase.fechaInicio);
+      const paseFinal = parseDate(pase.fechaFinal);
 
       if (cerro === "Las Leñas") {
         return paseInicio <= startDate && startDate <= paseFinal;
@@ -794,7 +810,7 @@ export const handleTransporte = (
       fin,
     }));
 
-    console.log(transporteFiltrado)
+    console.log(transporteFiltrado);
 
     ida = transporteFiltrado.filter((paquete) => paquete.tramo === "Ida");
     vuelta = transporteFiltrado.filter((paquete) => paquete.tramo === "Vuelta");
@@ -933,7 +949,7 @@ export const verificarFamilyPlan = (
   let activarFamilyPlan = false;
   const nuevosPaquetes = JSON.parse(JSON.stringify(paquetesTemp));
 
-  console.log("entre a verificar family plan");
+  //console.log("entre a verificar family plan");
 
   secciones.forEach((seccion) => {
     const paquetesPorSeccion = nuevosPaquetes.filter((paquete) => {

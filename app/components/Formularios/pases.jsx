@@ -70,7 +70,7 @@ export default function Pases({
   setStartDate,
 }) {
   const [dias, setDias] = useState("1");
-  const [pase, setPase] = useState(null);
+  const [tipo, setTipo] = useState(null);
   const [disabled, setDisabled] = useState(true);
   const currentYear = new Date().getFullYear();
 
@@ -80,7 +80,7 @@ export default function Pases({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handlePases(cerro, pases, setPases, startDate, Number(dias), pase);
+    handlePases(cerro, pases, setPases, startDate, Number(dias), tipo);
   };
 
   useEffect(() => {}, [pases]);
@@ -93,16 +93,16 @@ export default function Pases({
     setDias(value);
   };
 
-  const handlePase = (value) => {
-    setPase(value);
+  const handleTipo = (value) => {
+    setTipo(value);
   };
 
   useEffect(() => {
-    console.log(pases)
+    console.log(pases);
     if (cerro && dias && startDate) {
       setDisabled(false);
     }
-  }, [cerro, dias, startDate]);
+  }, [cerro, dias, startDate, pases]);
 
   return (
     <div className="h-fit w-full">
@@ -167,8 +167,8 @@ export default function Pases({
             </div>
             {(cerro === "Catedral" || cerro === "Chapelco") && (
               <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
-                <Label htmlFor="pase">Pase:</Label>
-                <Select id="pase" onValueChange={handlePase}>
+                <Label htmlFor="tipo">Pase:</Label>
+                <Select id="tipo" onValueChange={handleTipo}>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar Pase" />
                     {cerrosInfo[cerro]?.tipos && cerrosInfo[cerro]?.tipos}

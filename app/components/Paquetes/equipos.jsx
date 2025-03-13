@@ -47,9 +47,9 @@ const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
             {resultados?.map((r, index) => (
               <TableRow key={index}>
                 <TableCell>{r.cerro}</TableCell>
-                <TableCell>{r.gama}</TableCell>
-                <TableCell>{r.articulo}</TableCell>
-                <TableCell>{r.edad}</TableCell>
+                <TableCell>{r.gama.toLowerCase()}</TableCell>
+                <TableCell>{r.articulo.toLowerCase()}</TableCell>
+                <TableCell>{r.edad.toLowerCase()}</TableCell>
                 <TableCell>{r.dias}</TableCell>
                 <TableCell>{`$ ${formatNumberWithDots(r.precio)}`}</TableCell>
                 <TableCell>

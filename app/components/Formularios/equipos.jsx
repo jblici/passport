@@ -47,6 +47,16 @@ const cerrosInfo = {
         <span>En ningún caso incluyen seguro de rotura, robo o extravío.</span>
       </>
     ),
+    gama: (
+      <SelectContent>
+        <SelectItem value="DEPORTIVO MAYOR SKI">Deportivo Mayor Ski</SelectItem>
+        <SelectItem value="DEPORTIVO MAYOR SNOWBOARD">Deportivo Mayor Snowboard</SelectItem>
+        <SelectItem value="DEPORTIVO MENOR SKI">Deportivo Menor Ski</SelectItem>
+        <SelectItem value="DEPORTIVO MENOR SNOWBOARD">Deportivo Menor Snowboard</SelectItem>
+        <SelectItem value="ALTO NIVEL MAYOR SKI">Alto Nivel Mayor Ski</SelectItem>
+        <SelectItem value="ALTO NIVEL MAYOR SNOWBOARD">Alto Nivel Mayor Snowboard</SelectItem>
+      </SelectContent>
+    ),
   },
 };
 

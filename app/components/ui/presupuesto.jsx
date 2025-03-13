@@ -185,8 +185,8 @@ const ResumenPresupuesto = ({
                 <div className="flex flex-col items-center">
                   <div className="flex items-center justify-between gap-3">
                     <span className="flex gap-1">
-                      <span>$</span>
-                      {formatNumberWithDots(
+                    <span>{paquete.moneda === "USD" ? "USD " : "$ "}</span>
+                    {formatNumberWithDots(
                         paquete.discount ? paquete.price - paquete.discount : paquete.price
                       )}
                     </span>
@@ -201,7 +201,7 @@ const ResumenPresupuesto = ({
                   {paquete.seccion === "alojamiento" && paquete.discount !== 0 && (
                     <div className="text-gray-500 flex items-center justify-between w-full">
                       <span className="flex gap-1">
-                        <span>$</span>
+                        <span>{paquete.moneda === "USD" ? "USD " : "$ "}</span>
                         {formatNumberWithDots(paquete.discount)}
                       </span>
                       <CiDiscount1 />
