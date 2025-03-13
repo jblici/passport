@@ -12,7 +12,8 @@ import Hoteles from "../components/Formularios/hoteles";
 
 export const generatePDF = (
   paquetesSeleccionados,
-  totalCompra,
+  totalPesos,
+  totalDolares,
   busqueda,
   imageData,
   clientName
@@ -25,7 +26,7 @@ export const generatePDF = (
     return grupos;
   }, {});
 
-  console.log(busqueda)
+  console.log(busqueda);
 
   // Obtener las secciones ordenadas (alojamiento primero)
   const seccionesOrdenadas = Object.entries(paquetesPorSeccion).sort(([seccionA], [seccionB]) => {
@@ -130,7 +131,17 @@ export const generatePDF = (
   alturaY = alturaY + 30;
   doc.setFontSize(16);
   doc.setFont("helvetica", "bold");
-  doc.text(`Total: $${formatNumberWithDots(totalCompra)}`, 14, alturaY);
+  if (totalDolares === 0) {
+    doc.text(`Total: $${formatNumberWithDots(totalPesos)}`, 14, alturaY);
+  } else {
+    doc.text(
+      `Total ARS: $${formatNumberWithDots(totalPesos)} | Total USD: $${formatNumberWithDots(
+        totalDolares
+      )}`,
+      14,
+      alturaY
+    );
+  }
   doc.setFontSize(10);
 
   doc.setFont("helvetica", "italic");

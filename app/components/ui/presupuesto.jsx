@@ -1,12 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/app/components/ui/button";
 import { XIcon } from "../svg/svg";
-import { formatNumberWithDots, createPDF, verificarFamilyPlan,generatePDF } from "@/app/lib/utils";
+import { formatNumberWithDots, createPDF, verificarFamilyPlan, generatePDF } from "@/app/lib/utils";
 import Passport from "/public/Passport.png";
 import AnimatedDropdown from "./animated-dropdown";
 import { CiDiscount1 } from "react-icons/ci";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 
 const ResumenPresupuesto = ({
   paquetesSeleccionados,
@@ -20,31 +18,11 @@ const ResumenPresupuesto = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [discount, setDiscount] = useState(0);
   const [clientName, setClientName] = useState("");
-  const [total, setTotal] = useState(0);
+  const [total, setTotal] = useState({ pesos: 0, dolares: 0 });
   const [familyPlan, setFamilyPlan] = useState(false);
   const [fpActivado, setFpActivado] = useState(false);
   const [isChecked, setIsChecked] = useState(null);
   const [flag, setFlag] = useState(true);
-  const pdfRef = useRef();
-
-  const handleCreatePDF = () => {
-    if (!clientName) {
-      // Ensure client name is provided
-      setIsModalOpen(true);
-      return;
-    }
-  
-    const pdfConfig = {
-      paquetesSeleccionados,
-      totalCompra: total,
-      busqueda,
-      imageData: Passport,
-      clientName
-    };
-  
-    createPDF(pdfConfig);
-    setIsModalOpen(false);
-  };
 
   const handleToggle = () => {
     setIsChecked((prevState) => !prevState);
@@ -53,16 +31,6 @@ const ResumenPresupuesto = ({
     } else {
       setFlag(true);
     }
-  };
-
-  const generatePdf = () => {
-    const input = document.getElementById("pdf-content");
-    html2canvas(input, {scale: 1}).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF();
-      pdf.addImage(imgData, "PNG", 10, 10, 180, 110);
-      pdf.save("example.pdf");
-    });
   };
 
   const handleDiscount = (e) => {
@@ -85,12 +53,22 @@ const ResumenPresupuesto = ({
   };
 
   useEffect(() => {
-    const total = paquetesSeleccionados.reduce(
-      (acumulador, paquete) =>
-        acumulador + (paquete.price - (paquete.discount ? paquete.discount : 0)),
-      0
+    const { totalPesos, totalDolares } = paquetesSeleccionados.reduce(
+      (acumulador, paquete) => {
+        const precioFinal = paquete.price - (paquete.discount ? paquete.discount : 0);
+
+        if (paquete.seccion === "alojamiento" && paquete.moneda === "USD") {
+          acumulador.totalDolares += precioFinal;
+        } else {
+          acumulador.totalPesos += precioFinal;
+        }
+
+        return acumulador;
+      },
+      { totalPesos: 0, totalDolares: 0 }
     );
-    setTotal(total);
+
+    setTotal({ pesos: totalPesos, dolares: totalDolares });
 
     const paquetesTemp = [...paquetesSeleccionados];
     console.log(paquetesTemp);
@@ -129,25 +107,27 @@ const ResumenPresupuesto = ({
       </div>
       <div className=" flex items-start justify-between bg-gray-100 p-4 md:items-center">
         <AnimatedDropdown discount={discount} handleDiscount={handleDiscount} />
-        {familyPlan && cerro === "Las Leñas" (
-          <div className="flex items-center gap-2">
-            <span>Activar Family Plan</span>
-            <label
-              htmlFor="AcceptConditions"
-              className="relative inline-block h-8 w-14 cursor-pointer rounded-full bg-red-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-red-500"
-            >
-              <input
-                type="checkbox"
-                id="AcceptConditions"
-                className="peer sr-only pr-4"
-                checked={isChecked}
-                onChange={handleToggle}
-              />
+        {familyPlan &&
+          cerro ===
+            "Las Leñas"(
+              <div className="flex items-center gap-2">
+                <span>Activar Family Plan</span>
+                <label
+                  htmlFor="AcceptConditions"
+                  className="relative inline-block h-8 w-14 cursor-pointer rounded-full bg-red-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-red-500"
+                >
+                  <input
+                    type="checkbox"
+                    id="AcceptConditions"
+                    className="peer sr-only pr-4"
+                    checked={isChecked}
+                    onChange={handleToggle}
+                  />
 
-              <span className="absolute inset-y-0 start-0 m-1 size-6 rounded-full bg-red-300 ring-[6px] ring-inset ring-white transition-all peer-checked:start-8 peer-checked:w-2 peer-checked:bg-white peer-checked:ring-transparent"></span>
-            </label>
-          </div>
-        )}
+                  <span className="absolute inset-y-0 start-0 m-1 size-6 rounded-full bg-red-300 ring-[6px] ring-inset ring-white transition-all peer-checked:start-8 peer-checked:w-2 peer-checked:bg-white peer-checked:ring-transparent"></span>
+                </label>
+              </div>
+            )}
       </div>
       <div className="p-4 sm:p-6 md:p-8 space-y-4">
         <div className="pb-2">
@@ -185,8 +165,8 @@ const ResumenPresupuesto = ({
                 <div className="flex flex-col items-center">
                   <div className="flex items-center justify-between gap-3">
                     <span className="flex gap-1">
-                    <span>{paquete.moneda === "USD" ? "USD " : "$ "}</span>
-                    {formatNumberWithDots(
+                      <span>{paquete.moneda === "USD" ? "USD " : "$ "}</span>
+                      {formatNumberWithDots(
                         paquete.discount ? paquete.price - paquete.discount : paquete.price
                       )}
                     </span>
@@ -211,7 +191,13 @@ const ResumenPresupuesto = ({
               </div>
             ))}
             <div className="flex items-center justify-end pt-2 mt-4 border-t">
-              <span className="text-2xl font-bold">Total: ${formatNumberWithDots(total)}</span>
+              <span className="text-2xl font-bold">
+                {total.dolares === 0
+                  ? `Total: $ ${formatNumberWithDots(total.pesos)}`
+                  : `Total: ARS $ ${formatNumberWithDots(
+                      total.pesos
+                    )} | USD $ ${formatNumberWithDots(total.dolares)}`}{" "}
+              </span>
             </div>
           </div>
           <div className="flex justify-end pt-4">
@@ -234,13 +220,16 @@ const ResumenPresupuesto = ({
                   />
                   <div className="flex justify-end">
                     <button
-                      onClick={() =>generatePDF(
+                      onClick={() =>
+                        generatePDF(
                           paquetesSeleccionados,
-                          totalCompra,
+                          total.pesos,
+                          total.dolares,
                           busqueda,
                           Passport,
                           clientName
-                      )}
+                        )
+                      }
                       className="mr-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                     >
                       Aceptar
