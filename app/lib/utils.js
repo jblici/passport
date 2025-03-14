@@ -10,6 +10,13 @@ import Pases from "../components/Formularios/pases";
 import Transporte from "../components/Formularios/transporte";
 import Hoteles from "../components/Formularios/hoteles";
 
+
+const formatReglas = (text) => {
+  return text
+    .replace(/;/g, ",") // Reemplaza ; por ,
+    .replace(/\. /g, ".\n"); // Agrega un salto de línea después de cada punto
+};
+
 export const generatePDF = (
   paquetesSeleccionados,
   totalPesos,
@@ -46,6 +53,8 @@ export const generatePDF = (
   const handleCreatePDFClick = () => {
     setIsModalOpen(true);
   };
+
+  
 
   function obtenerFechaActual() {
     const hoy = new Date(); // Obtiene la fecha actual
@@ -90,7 +99,7 @@ export const generatePDF = (
     // Agregar detalles específicos si es un traslado
     if (paquete.seccion === "alojamiento") {
       //console.log(espacioExtra);
-      let descripcion = paquete.reglas;
+      let descripcion = formatReglas(paquete.reglas);
       textoPaquete += ` - ${paquete.noches} noches`;
       
       if (personas) doc.text(`${personas.total} Personas - Fechas del viaje: ${fechasFormateadas.fechaInicial} - ${
@@ -158,6 +167,8 @@ export const generatePDF = (
   doc.setProperties({ title: "Passport-Presupuesto" });
   doc.output("dataurlnewwindow");
 };
+
+
 // createPFf no funciona!
 // export const createPDF = (config) => {
 //   const {
