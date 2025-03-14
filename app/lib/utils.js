@@ -77,14 +77,7 @@ export const generatePDF = (
   doc.setFontSize(14);
   doc.text(`Fecha del presupuesto: ${obtenerFechaActual()}`, 14, 110);
 
-  if (personas)
-    doc.text(
-      `${personas.total} Personas - Fechas del viaje: ${stringDate(busqueda.startDate)} - ${
-        busqueda.endDate ? stringDate(busqueda.endDate) : fechasFormateadas.fechaFinal
-      }`,
-      14,
-      125
-    );
+
 
   let alturaY = 125;
 
@@ -99,10 +92,16 @@ export const generatePDF = (
       //console.log(espacioExtra);
       let descripcion = paquete.reglas;
       textoPaquete += ` - ${paquete.noches} noches`;
+      
+      if (personas) doc.text(`${personas.total} Personas - Fechas del viaje: ${fechasFormateadas.fechaInicial} - ${
+        busqueda.endDate ? formatDate(busqueda.endDate) : fechasFormateadas.fechaFinal
+      }`, 14, 125);
+
       doc.setFontSize(12);
       doc.text(textoPaquete, 17, alturaY);
       doc.setFontSize(8);
-
+      const maxWidth = 380; // Adjust width based on your margins and page size
+      descripcion = doc.splitTextToSize(descripcion,maxWidth)
       doc.text(descripcion, 20, alturaY + 10);
       doc.setFontSize(12);
       alturaY = alturaY + 40;
@@ -122,6 +121,7 @@ export const generatePDF = (
       alturaY = alturaY + 20;
     } else {
       // Agregar texto al documento PDF
+      textoPaquete= doc.splitTextToSize(textoPaquete,maxWidth);
       doc.setFontSize(12);
       doc.text(textoPaquete, 17, alturaY);
 
@@ -158,106 +158,106 @@ export const generatePDF = (
   doc.setProperties({ title: "Passport-Presupuesto" });
   doc.output("dataurlnewwindow");
 };
+// createPFf no funciona!
+// export const createPDF = (config) => {
+//   const {
+//     clientName,
+//     imageData,
+//     paquetesSeleccionados,
+//     busqueda,
+//     calcularTotalPersonas,
+//     formatNumberWithDots,
+//   } = config;
 
-export const createPDF = (config) => {
-  const {
-    clientName,
-    imageData,
-    paquetesSeleccionados,
-    busqueda,
-    calcularTotalPersonas,
-    formatNumberWithDots,
-  } = config;
+//   const doc = new jsPDF();
+//   let currentY = 20; // Starting Y position
+//   const margin = 14;
+//   const lineHeight = 10;
 
-  const doc = new jsPDF();
-  let currentY = 20; // Starting Y position
-  const margin = 14;
-  const lineHeight = 10;
+//   // Helper function to add text and update Y position
+//   const addText = (text, fontSize = 12, font = "helvetica", style = "normal", indent = 0) => {
+//     doc.setFont(font, style);
+//     doc.setFontSize(fontSize);
+//     doc.text(text, margin + indent, currentY);
+//     currentY += lineHeight;
+//     return doc;
+//   };
 
-  // Helper function to add text and update Y position
-  const addText = (text, fontSize = 12, font = "helvetica", style = "normal", indent = 0) => {
-    doc.setFont(font, style);
-    doc.setFontSize(fontSize);
-    doc.text(text, margin + indent, currentY);
-    currentY += lineHeight;
-    return doc;
-  };
+//   // Helper function to check if content will overflow page
+//   const willOverflow = (yPosition, additionalSpace = 0) => {
+//     return yPosition + additionalSpace > 280; // A4 height is ~297, leaving margin
+//   };
 
-  // Helper function to check if content will overflow page
-  const willOverflow = (yPosition, additionalSpace = 0) => {
-    return yPosition + additionalSpace > 280; // A4 height is ~297, leaving margin
-  };
+//   // Add logo
+//   if (imageData?.src) {
+//     const img = new Image();
+//     img.src = imageData.src;
+//     doc.addImage(img, "png", margin, currentY - 10, 40, 40);
+//   }
 
-  // Add logo
-  if (imageData?.src) {
-    const img = new Image();
-    img.src = imageData.src;
-    doc.addImage(img, "png", margin, currentY - 10, 40, 40);
-  }
+//   // Add client name (if exists) aligned to the right
+//   if (clientName) {
+//     doc.setFont("helvetica", "normal");
+//     doc.setFontSize(12);
+//     doc.text(`Cliente: ${clientName}`, 150, currentY);
+//   }
 
-  // Add client name (if exists) aligned to the right
-  if (clientName) {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(12);
-    doc.text(`Cliente: ${clientName}`, 150, currentY);
-  }
+//   currentY += 30; // Space after header
 
-  currentY += 30; // Space after header
+//   // Title
+//   addText("Presupuesto Passport Ski 2024", 20, "helvetica", "bold");
+//   currentY += 5;
 
-  // Title
-  addText("Presupuesto Passport Ski 2024", 20, "helvetica", "bold");
-  currentY += 5;
+//   // Date
+//   const getCurrentDate = () => {
+//     const today = new Date();
+//     return `${String(today.getDate()).padStart(2, "0")}/${String(today.getMonth() + 1).padStart(
+//       2,
+//       "0"
+//     )}/${today.getFullYear()}`;
+//   };
+//   addText(`Fecha del presupuesto: ${getCurrentDate()}`, 14);
 
-  // Date
-  const getCurrentDate = () => {
-    const today = new Date();
-    return `${String(today.getDate()).padStart(2, "0")}/${String(today.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}/${today.getFullYear()}`;
-  };
-  addText(`Fecha del presupuesto: ${getCurrentDate()}`, 14);
+//   // Total persons (if available)
+//   if (busqueda?.detalleHabitaciones) {
+//     const personas = calcularTotalPersonas(busqueda.detalleHabitaciones);
+//     if (personas) {
+//       addText(`${personas.total} Personas`, 14);
+//     }
+//   }
 
-  // Total persons (if available)
-  if (busqueda?.detalleHabitaciones) {
-    const personas = calcularTotalPersonas(busqueda.detalleHabitaciones);
-    if (personas) {
-      addText(`${personas.total} Personas`, 14);
-    }
-  }
+//   currentY += 10; // Extra space before packages
 
-  currentY += 10; // Extra space before packages
+//   // Process packages
+//   paquetesSeleccionados.forEach((paquete, index) => {
+//     // Check if we need a new page
+//     if (willOverflow(currentY, 40)) {
+//       doc.addPage();
+//       currentY = 20;
+//     }
 
-  // Process packages
-  paquetesSeleccionados.forEach((paquete, index) => {
-    // Check if we need a new page
-    if (willOverflow(currentY, 40)) {
-      doc.addPage();
-      currentY = 20;
-    }
+//     // Package name and price
+//     const textoPaquete = `• ${paquete.name}: $${formatNumberWithDots(paquete.price)}`;
+//     addText(textoPaquete, 12, "helvetica", "normal", 3);
 
-    // Package name and price
-    const textoPaquete = `• ${paquete.name}: $${formatNumberWithDots(paquete.price)}`;
-    addText(textoPaquete, 12, "helvetica", "normal", 3);
+//     // Handle specific package types
+//     if (paquete.seccion === "transporte") {
+//       const fechas = paquete.clave
+//         ? `Fecha: ${paquete.clave === "ida" ? paquete.fechaInicio : paquete.fechaFin}`
+//         : `Fechas: ${paquete.fechaInicio} - ${paquete.fechaFin}`;
+//       addText(fechas, 10, "helvetica", "normal", 6);
+//       currentY += 2;
+//     } else if (paquete.seccion === "alojamiento") {
+//       const descripcion = `${paquete.noches} noches - ${paquete.reglas}`;
+//       addText(descripcion, 8, "helvetica", "normal", 6);
+//       currentY += 5;
+//     }
 
-    // Handle specific package types
-    if (paquete.seccion === "transporte") {
-      const fechas = paquete.clave
-        ? `Fecha: ${paquete.clave === "ida" ? paquete.fechaInicio : paquete.fechaFin}`
-        : `Fechas: ${paquete.fechaInicio} - ${paquete.fechaFin}`;
-      addText(fechas, 10, "helvetica", "normal", 6);
-      currentY += 2;
-    } else if (paquete.seccion === "alojamiento") {
-      const descripcion = `${paquete.noches} noches - ${paquete.reglas}`;
-      addText(descripcion, 8, "helvetica", "normal", 6);
-      currentY += 5;
-    }
+//     currentY += 3; // Space between packages
+//   });
 
-    currentY += 3; // Space between packages
-  });
-
-  return doc;
-};
+//   return doc;
+// };
 
 export function formatNumberWithDots(number) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
