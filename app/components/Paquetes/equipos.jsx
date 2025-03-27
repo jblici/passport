@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
-import { formatNumberWithDots } from "@/app/lib/utils";
+import { formatNumberWithDots } from "@/app/lib/utils/extras";
 
 const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
@@ -75,7 +75,7 @@ const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
                           seccion: "equipos",
                           days: r.dias,
                           count: Number(count),
-                          name: `${r.articulo} - ${r.edad} - ${r.gama}`,
+                          name: `${r.articulo} - ${r.edad} - ${r.gama} x ${count}`,
                           price: r.precio * count,
                         });
                       }}

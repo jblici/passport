@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/app/components/ui/button";
-import { XIcon } from "../svg/svg";
-import { formatNumberWithDots, createPDF, verificarFamilyPlan, generatePDF } from "@/app/lib/utils";
+import { XIcon } from "./svg/svg";
 import Passport from "/public/Passport.png";
-import AnimatedDropdown from "./animated-dropdown";
+import AnimatedDropdown from "./ui/animated-dropdown";
 import { CiDiscount1 } from "react-icons/ci";
+import { formatNumberWithDots, formatReglas, verificarFamilyPlan } from "../lib/utils/extras";
+import { generatePDF } from "../lib/utils/pdf";
 
 const ResumenPresupuesto = ({
   paquetesSeleccionados,
@@ -44,12 +45,6 @@ const ResumenPresupuesto = ({
           : paquete
       )
     );
-  };
-
-  const formatReglas = (text) => {
-    return text
-      .replace(/;/g, ",") // Reemplaza ; por ,
-      .replace(/\. /g, ".\n"); // Agrega un salto de línea después de cada punto
   };
 
   useEffect(() => {
@@ -136,7 +131,7 @@ const ResumenPresupuesto = ({
               <div key={index} className="flex items-center justify-between py-1">
                 {paquete.count ? (
                   <span>
-                    {paquete.name} x {paquete.count}
+                    {paquete.name}
                   </span>
                 ) : (
                   <div className="flex flex-col w-4/5">

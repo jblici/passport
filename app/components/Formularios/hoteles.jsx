@@ -13,18 +13,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { handleHoteles, scrollToSection } from "@/app/lib/utils";
 import MultiSelect from "react-select";
 import { GoAlert } from "react-icons/go";
 import Spinner from "../ui/Spinner";
+import { handleHoteles } from "@/app/lib/utils/hoteles";
+import { scrollToSection } from "@/app/lib/utils/extras";
 
 const cerrosInfo = {
   "Las Leñas": {
     mensaje: (
       <>
+        <span>Menores 0 a 2 años: GRATIS en cuna.</span>
         <span>Menores: 6 a 11 años</span>
         <span>Mayores: + 12 años</span>
-        <span>Menores 0 a 2 años: GRATIS en cuna.</span>
       </>
     ),
   },
@@ -135,6 +136,8 @@ export default function Hoteles({
     setSelectedHoteles([]); // Limpiar hoteles al cambiar de cerro
     if (value !== "Las Leñas") {
       setProducto(null);
+    } else if (value === "Las Leñas") {
+      setEndDate(null)
     }
   };
 

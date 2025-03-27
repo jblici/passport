@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
-import { formatNumberWithDots } from "@/app/lib/utils";
+import { formatNumberWithDots } from "@/app/lib/utils/extras";
 
 const PaquetesPases = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
@@ -28,7 +28,7 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
   return (
     <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
       <div className="p-4 sm:p-6 md:p-8 border-b">
-        <h2 className="text-xl font-bold mb-2">Pases</h2>
+        <h2 className="text-xl font-bold mb-2">Medios de Elevación:</h2>
       </div>
       <div className="p-4 sm:p-6 md:p-8">
         <Table className="w-full">
@@ -75,7 +75,7 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
                           seccion: "pases",
                           days: r.dias,
                           count: Number(count),
-                          name: `Medios de Elevación: ${r.tipo} - ${r.edad}`,
+                          name: `Medios de Elevación: ${r.tipo} - ${r.edad} x ${count}`,
                           price: r.precio * count,
                         });
                       }}

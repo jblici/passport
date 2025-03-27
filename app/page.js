@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import Navbar from "@/app/components/ui/navbar";
-import Presupuesto from "./components/ui/presupuesto";
-import { handleBusqueda, handleFormularios } from "./lib/utils";
+import Presupuesto from "./components/presupuesto";
+import { handleBusqueda, handleFormularios } from "./lib/utils/secciones";
 import { Button } from "./components/ui/button";
 import Passport from "/public/Passport.png";
 import Image from "next/image";
@@ -12,7 +12,7 @@ import useGroupedSpreadsheets from "./lib/hooks/spreadsheet";
 
 export default function Cotizador() {
   const { paquetes, reglas } = useAlojamientos(null);
-  const { rentals, pases, clases, traslados } = useGroupedSpreadsheets(paquetes ? null : "delay");  
+  const { rentals, pases, clases, traslados } = useGroupedSpreadsheets(paquetes ? null : "delay");
   const [startDate, setStartDate] = useState(null);
   const [busqueda, setBusqueda] = useState("");
   const [cerro, setCerro] = useState("");
@@ -25,11 +25,8 @@ export default function Cotizador() {
   const [originales, setOriginales] = useState([]);
   const [totalCompra, setTotalCompra] = useState(0);
   const [category, setCategory] = useState("Alojamientos");
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-
-  }, [rentals])
+  useEffect(() => {}, [rentals]);
 
   const handleCategorySelect = (cat) => {
     setCategory(cat);
@@ -67,15 +64,17 @@ export default function Cotizador() {
             </div>
             <div className="flex justify-center px-4 pt-4 sm:px-6 md:px-8">
               <div className="space-y-2">
-                {["Alojamientos", "Medios de Elevación", "Equipos", "Clases", "Transporte"].map((cat) => (
-                  <Button
-                    key={cat}
-                    onClick={() => handleCategorySelect(cat)}
-                    className={`mx-2 ${category === cat ? "bg-blue-500" : "bg-black"}`}
-                  >
-                    {cat}
-                  </Button>
-                ))}
+                {["Alojamientos", "Medios de Elevación", "Equipos", "Clases", "Transporte"].map(
+                  (cat) => (
+                    <Button
+                      key={cat}
+                      onClick={() => handleCategorySelect(cat)}
+                      className={`mx-2 ${category === cat ? "bg-blue-500" : "bg-black"}`}
+                    >
+                      {cat}
+                    </Button>
+                  )
+                )}
               </div>
             </div>
             <div className="p-4 sm:p-6 md:p-8">

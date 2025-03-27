@@ -1,7 +1,7 @@
 import React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
-import { formatNumberWithDots, parseDate } from "@/app/lib/utils";
+import { formatNumberWithDots } from "@/app/lib/utils/extras";
 
 const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
   if (!resultados) return null;
@@ -89,7 +89,7 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                                 price: r.precioTotal,
                                 fechaInicio: r.fechaInicio,
                                 fechaFinal: r.fechaFinal,
-                                moneda: r.paquetesUtilizados.moneda
+                                moneda: r.paquetesUtilizados.moneda,
                               })
                             }
                           >
@@ -145,7 +145,7 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                                 price: r.precioTotal,
                                 fechaInicio: r.fechaInicio,
                                 fechaFinal: r.fechaFinal,
-                                moneda: r.paquetesUtilizados.paquetes[0].moneda
+                                moneda: r.paquetesUtilizados.paquetes[0].moneda,
                               })
                             }
                           >

@@ -2,13 +2,13 @@
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
-import { formatNumberWithDots } from "@/app/lib/utils";
+import { formatNumberWithDots } from "@/app/lib/utils/extras";
 
 const PaquetesClases = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
 
   if (!resultados) return null;
-  console.log(resultados)
+  console.log(resultados);
   if (Object.keys(resultados).length === 0) {
     return (
       <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
@@ -25,7 +25,6 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
       [index]: value,
     }));
   };
-
 
   return (
     <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">

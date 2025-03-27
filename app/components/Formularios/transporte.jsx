@@ -7,8 +7,9 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { CalendarDaysIcon } from "../svg/svg";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { handleTransporte, scrollToSection } from "@/app/lib/utils";
 import ToggleYesNo from "../ui/ToggleYesNo";
+import { handleTransporte } from "@/app/lib/utils/secciones";
+import { scrollToSection } from "@/app/lib/utils/extras";
 
 export default function Transporte({
   category,

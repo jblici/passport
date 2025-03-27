@@ -6,7 +6,8 @@ import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { CalendarDaysIcon } from "../svg/svg";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { handleClases, scrollToSection } from "@/app/lib/utils";
+import { handleClases } from "@/app/lib/utils/secciones";
+import { scrollToSection } from "@/app/lib/utils/extras";
 
 export default function Clases({
   category,
