@@ -72,7 +72,7 @@ export const generatePDF = (
       const margin = 10;
       doc.setFontSize(fontSize);
       const pageWidth = doc.internal.pageSize.getWidth();
-      const textLines = doc.splitTextToSize(leftText, pageWidth - 2 * margin);
+      const textLines = doc.splitTextToSize(leftText, pageWidth - 4 * margin);
 
       doc.setFont("helvetica", fontStyle);
 
@@ -85,7 +85,11 @@ export const generatePDF = (
       // Texto a la derecha (alineado desde la derecha hacia la izquierda)
       const textWidth = doc.getTextWidth(rightText);
       doc.setFont("helvetica", "bold");
-      doc.text(rightText, pageWidth - margin - textWidth, y - 4);
+      if (textLines.length > 1) {
+        doc.text(rightText, pageWidth - margin - textWidth, y - 8);
+      } else {
+        doc.text(rightText, pageWidth - margin - textWidth, y - 4);
+      }
 
       return y;
     };
@@ -114,21 +118,24 @@ export const generatePDF = (
     currentY = addText(`Fecha del presupuesto: ${obtenerFechaActual()}`, margin, currentY, 14);
     currentY += 5;
 
-    currentY = addText(
-      `${
-        calcularTotalPersonas(busqueda.detalleHabitaciones).total
-      } Personas - Fechas del viaje: ${stringDate(busqueda.startDate)} - ${
-        busqueda.endDate
-          ? stringDate(busqueda.endDate)
-          : formatDate(busqueda.startDate, calcularDiferenciaDiasProducto(busqueda.producto))
-              .fechaFinal
-      }`,
-      margin,
-      currentY,
-      12
-    );
-    currentY += 5;
+    if (busqueda.detalleHabitaciones) {
+      currentY = addText(
+        `${
+          calcularTotalPersonas(busqueda.detalleHabitaciones).total
+        } Personas - Fechas del viaje: ${stringDate(busqueda.startDate)} - ${
+          busqueda.endDate
+            ? stringDate(busqueda.endDate)
+            : formatDate(busqueda.startDate, calcularDiferenciaDiasProducto(busqueda.producto))
+                .fechaFinal
+        }`,
+        margin,
+        currentY,
+        12
+      );
+      currentY += 5;
+    }
 
+    console.log(paquetesSeleccionados);
     paquetesSeleccionados.forEach((paquete) => {
       if (paquete.seccion === "alojamiento") {
         currentY = addRow(
