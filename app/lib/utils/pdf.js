@@ -81,25 +81,26 @@ export const generatePDF = (
         currentY += 30;
 
         currentY = addText(`Presupuesto Passport Ski ${new Date().getFullYear()}`, margin, currentY, 20, "bold");
-        currentY += 10;
+        currentY += 5;
 
         currentY = addText(`Fecha del presupuesto: ${obtenerFechaActual()}`, margin, currentY, 14);
-        currentY += 10;
+        currentY += 5;
 
-        if (busqueda.detalleHabitaciones) {
-            currentY = addText(
-                `${calcularTotalPersonas(busqueda.detalleHabitaciones).total} Personas - Fechas del viaje: ${stringDate(busqueda.startDate)} - ${
-                    busqueda.endDate ? stringDate(busqueda.endDate) : formatDate(busqueda.startDate, calcularDiferenciaDiasProducto(busqueda.producto)).fechaFinal
-                }`,
-                margin,
-                currentY,
-                12
-            );
-            currentY += 15;
-        }
+
+        currentY = addText(
+            `${calcularTotalPersonas(busqueda.detalleHabitaciones).total} Personas - Fechas del viaje: ${stringDate(busqueda.startDate)} - ${
+                busqueda.endDate ? stringDate(busqueda.endDate) : formatDate(busqueda.startDate, calcularDiferenciaDiasProducto(busqueda.producto)).fechaFinal
+            }`,
+            margin,
+            currentY,
+            12
+        );
+        currentY += 5;
+        
 
         paquetesSeleccionados.forEach((paquete) => {
             if (paquete.seccion === "alojamiento") {
+                currentY = addText(`• ${paquete.name} - ${paquete.noches} noches: $${formatNumberWithDots(paquete.price)}`, 17, currentY, 12)
                 currentY = addText(formatReglas(paquete.reglas), 20, currentY, 8);
                 currentY += 5
             } else if (paquete.seccion === "transporte") {
@@ -119,6 +120,8 @@ export const generatePDF = (
                 currentY = addText(`• ${paquete.name}: $${formatNumberWithDots(paquete.price)}`, 17, currentY, 12);
             }
         });
+
+        currentY += 5
 
         currentY = addText(
             totalDolares === 0
