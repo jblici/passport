@@ -73,8 +73,8 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
                           seccion: "clases",
                           noches: r.dias,
                           count: Number(count),
-                          name: `Clase ${r.tipo} - ${r.dias} dias ${
-                            count > 1 ? "x " + count + " personas" : ""
+                          name: `Clase ${r.tipo} - ${r.dias} días${
+                            count > 1 ? " x " + count + " personas" : ""
                           }`,
                           price: r.precio * count,
                         });

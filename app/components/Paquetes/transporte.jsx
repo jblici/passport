@@ -161,15 +161,15 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                                   fechaInicio: r.inicio,
                                   clave: clave,
                                   fechaFin: r.fin,
-                                  name: `${r.descripcion} - ${r.origen} / ${r.destino} ${
+                                  name: `${r.descripcion} - ${r.origen} / ${r.destino}${
                                     r.personas > 1
-                                      ? ` - ${r.personas} PAX ${
+                                      ? ` - ${r.personas} PAX${
                                           count > 1
-                                            ? `x ${count} ${r.cerro === "Castor" ? "días" : ""}`
+                                            ? ` x ${count} ${r.cerro === "Castor" ? "días" : ""}`
                                             : ""
                                         }`
                                       : count > 1
-                                      ? `x ${count} ${r.cerro === "Castor" ? "días" : ""}`
+                                      ? ` x ${count} ${r.cerro === "Castor" ? "días" : ""}`
                                       : ""
                                   }`,
                                   price: r.precio * count,
