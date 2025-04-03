@@ -73,9 +73,11 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
 
                         agregarPaquete({
                           seccion: "pases",
-                          days: r.dias,
+                          noches: r.dias,
                           count: Number(count),
-                          name: `Medios de Elevación: ${r.tipo} - ${r.edad} x ${count}`,
+                          name: `Medios de Elevación: ${r.tipo} - ${r.edad} - ${r.dias} dias ${
+                            count > 1 ? "x " + count + " personas" : ""
+                          }`,
                           price: r.precio * count,
                         });
                       }}

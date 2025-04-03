@@ -78,7 +78,15 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                             fechaInicio: r.inicio,
                             fechaFin: r.fin,
                             name: `${r.descripcion} - ${r.origen} / ${r.destino} ${
-                              r.personas > 1 ? " - " + r.personas + " PAX x " + count : count > 1 ? "x " + count : ""
+                              r.personas > 1
+                                ? ` - ${r.personas} PAX ${
+                                    count > 1
+                                      ? `x ${count} ${r.cerro === "Castor" ? "días" : ""}`
+                                      : ""
+                                  }`
+                                : count > 1
+                                ? `x ${count} ${r.cerro === "Castor" ? "días" : ""}`
+                                : ""
                             }`,
                             price: r.precio * count,
                           });
@@ -154,7 +162,15 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                                   clave: clave,
                                   fechaFin: r.fin,
                                   name: `${r.descripcion} - ${r.origen} / ${r.destino} ${
-                                    r.personas > 1 ? " - " + r.personas + " PAX x " + count : count > 1 ? "x " + count : ""
+                                    r.personas > 1
+                                      ? ` - ${r.personas} PAX ${
+                                          count > 1
+                                            ? `x ${count} ${r.cerro === "Castor" ? "días" : ""}`
+                                            : ""
+                                        }`
+                                      : count > 1
+                                      ? `x ${count} ${r.cerro === "Castor" ? "días" : ""}`
+                                      : ""
                                   }`,
                                   price: r.precio * count,
                                 });

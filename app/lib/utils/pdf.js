@@ -99,7 +99,6 @@ export const generatePDF = (
         }
 
         paquetesSeleccionados.forEach((paquete) => {
-            currentY = addText(`• ${paquete.name}: $${formatNumberWithDots(paquete.price)} - ${paquete.noches} noches`, 17, currentY, 12);
             if (paquete.seccion === "alojamiento") {
                 currentY = addText(formatReglas(paquete.reglas), 20, currentY, 8);
                 currentY += 5

@@ -90,6 +90,8 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                                 fechaInicio: r.fechaInicio,
                                 fechaFinal: r.fechaFinal,
                                 moneda: r.paquetesUtilizados.moneda,
+                                menores: r.menores,
+                                mayores: r.mayores,
                               })
                             }
                           >
@@ -146,6 +148,8 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                                 fechaInicio: r.fechaInicio,
                                 fechaFinal: r.fechaFinal,
                                 moneda: r.paquetesUtilizados.paquetes[0].moneda,
+                                menores: r.menores,
+                                mayores: r.mayores,
                               })
                             }
                           >
