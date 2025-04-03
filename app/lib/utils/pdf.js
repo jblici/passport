@@ -72,7 +72,7 @@ export const generatePDF = (
       const margin = 10;
       doc.setFontSize(fontSize);
       const pageWidth = doc.internal.pageSize.getWidth();
-      const textLines = doc.splitTextToSize(leftText, pageWidth - 4 * margin);
+      const textLines = doc.splitTextToSize(leftText, pageWidth - 4.2 * margin);
 
       doc.setFont("helvetica", fontStyle);
 
@@ -102,7 +102,7 @@ export const generatePDF = (
     doc.addImage(img, "png", margin, currentY);
 
     if (clientName) {
-      currentY = addText(`Cliente: ${clientName}`, 150, currentY + 10, 12);
+      currentY = addText(`Cliente: ${clientName}`, pageWidth, currentY + 10, 12);
     }
     currentY += 30;
 
