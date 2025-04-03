@@ -1,5 +1,4 @@
 import jsPDF from "jspdf";
-import "../font/calibri-normal.js";
 import { formatDate, formatNumberWithDots, formatReglas, stringDate } from "./extras";
 import { calcularDiferenciaDiasProducto, calcularTotalPersonas } from "./hoteles";
 
@@ -133,7 +132,7 @@ export const generatePDF = (
     paquetesSeleccionados.forEach((paquete) => {
       if (paquete.seccion === "alojamiento") {
         currentY = addRow(
-          `• ${paquete.name} - ${paquete.noches} noches`,
+          `• ${paquete.name}`,
           `$${formatNumberWithDots(paquete.price)}`,
           10,
           currentY,
