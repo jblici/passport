@@ -68,13 +68,13 @@ export const generatePDF = (
       return y;
     };
 
-    const addRow = (leftText, rightText, x, y, fontSize, fontStyle = "normal") => {
+    const addRow = (leftText, rightText, x, y, fontSize, discount) => {
       const margin = 10;
       doc.setFontSize(fontSize);
       const pageWidth = doc.internal.pageSize.getWidth();
       const textLines = doc.splitTextToSize(leftText, pageWidth - 4.2 * margin);
 
-      doc.setFont("helvetica", fontStyle);
+      doc.setFont("helvetica", "normal");
 
       // Texto a la izquierda
       textLines.forEach((line) => {
@@ -87,8 +87,23 @@ export const generatePDF = (
       doc.setFont("helvetica", "bold");
       if (textLines.length > 1) {
         doc.text(rightText, pageWidth - margin - textWidth, y - 8);
+        if (discount) {
+          doc.setFontSize(8);
+          doc.setFont("helvetica", "italic");
+          doc.setTextColor(150); // Gris
+          doc.text(discount, pageWidth - margin - textWidth, y - 4);
+          doc.setTextColor(0); // Volver a negro
+          doc.setFontSize(fontSize);
+        }
       } else {
         doc.text(rightText, pageWidth - margin - textWidth, y - 4);
+        if (discount) {
+          doc.setFontSize(8);
+          doc.setFont("helvetica", "italic");
+          doc.setTextColor(150); // Gris
+          doc.text(discount, pageWidth - margin - textWidth, y);
+          doc.setTextColor(0); // Volver a negro
+        }
       }
 
       return y;
@@ -143,7 +158,8 @@ export const generatePDF = (
           `$${formatNumberWithDots(paquete.price)}`,
           10,
           currentY,
-          12
+          12,
+          paquete.discount > 0 ? `- $${formatNumberWithDots(paquete.discount)}` : null
         );
         currentY = addText(formatReglas(paquete.reglas), 12, currentY, 8);
         currentY += 5;
