@@ -99,7 +99,6 @@ export default function Pases({
   };
 
   useEffect(() => {
-    console.log(pases);
     if (cerro && dias && startDate) {
       setDisabled(false);
     }
@@ -140,6 +139,7 @@ export default function Pases({
                   <SelectItem value="6">6</SelectItem>
                   <SelectItem value="7">7</SelectItem>
                   <SelectItem value="8">8</SelectItem>
+                  <SelectItem value="15">15</SelectItem>
                 </SelectContent>
               </Select>
             </div>

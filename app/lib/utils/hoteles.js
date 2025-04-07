@@ -21,7 +21,7 @@ export const handleHoteles = (
       producto,
       totalPersonas
     );
-    console.log(busquedaHoteles);
+    //console.log(busquedaHoteles);
     setHoteles(busquedaHoteles);
   } catch (error) {
     console.error(error);
@@ -130,7 +130,7 @@ function calcularHoteles(
       const paquetesPorHabitacion = {};
 
       const cantidadNoches = calcularDiferenciaDias(inicio, fin);
-      console.log(cantidadNoches);
+      //console.log(cantidadNoches);
       paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
         return paquete.minNoches <= cantidadNoches;
       });
@@ -253,7 +253,7 @@ function calcularHoteles(
     throw new Error("No se encontraron paquetes continuos que cubran las fechas seleccionadas.");
   }
 
-  return resultados;
+  return ordenarResultadoPorMonedaYPrecio(resultados);
 }
 
 //CALCULAR HABITACIONES
@@ -326,4 +326,50 @@ export function calcularDiferenciaDiasProducto(producto) {
   }
 
   return diasASumar;
+}
+
+function ordenarResultadoPorMonedaYPrecio(resultado) {
+  // Función auxiliar para obtener la moneda del paquete
+  const obtenerMoneda = (item) => {
+    const paquetesUtilizados = item.paquetesUtilizados;
+    if (!paquetesUtilizados) return 'ZZZ'; // En caso de que no haya info
+    const paquete = Array.isArray(paquetesUtilizados.paquetes)
+      ? paquetesUtilizados.paquetes[0]
+      : paquetesUtilizados;
+
+    return paquete?.moneda || 'ZZZ'; // Si no hay moneda, va al final
+  };
+
+  // Función para obtener el orden de moneda (ARS primero, luego USD)
+  const prioridadMoneda = (moneda) => {
+    if (moneda === 'ARS') return 0;
+    if (moneda === 'USD') return 1;
+    return 2; // Cualquier otra moneda va después
+  };
+
+  // Creamos un nuevo objeto ordenado
+  const resultadoOrdenado = {};
+
+  Object.keys(resultado).forEach((habitacionKey) => {
+
+    const arrayHabitacion = resultado[habitacionKey];
+
+    const ordenado = arrayHabitacion.sort((a, b) => {
+      const monedaA = obtenerMoneda(a);
+      const monedaB = obtenerMoneda(b);
+
+      const prioridadA = prioridadMoneda(monedaA);
+      const prioridadB = prioridadMoneda(monedaB);
+
+      if (prioridadA !== prioridadB) {
+        return prioridadA - prioridadB;
+      }
+
+      return a.precioTotal - b.precioTotal;
+    });
+
+    resultadoOrdenado[habitacionKey] = ordenado;
+  });
+
+  return resultadoOrdenado;
 }

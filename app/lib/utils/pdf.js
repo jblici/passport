@@ -63,7 +63,7 @@ export const generatePDF = (
       const textLines = doc.splitTextToSize(text, pageWidth - 2 * margin);
       textLines.forEach((line) => {
         doc.text(line, x, y);
-        y += fontSize * 0.35; // Approximate line height
+        y += fontSize * 0.5; // Approximate line height
       });
       return y;
     };
@@ -79,24 +79,24 @@ export const generatePDF = (
       // Texto a la izquierda
       textLines.forEach((line) => {
         doc.text(line, x, y);
-        y += fontSize * 0.35; // Approximate line height
+        y += fontSize * 0.5; // Approximate line height
       });
 
       // Texto a la derecha (alineado desde la derecha hacia la izquierda)
       const textWidth = doc.getTextWidth(rightText);
       doc.setFont("helvetica", "bold");
       if (textLines.length > 1) {
-        doc.text(rightText, pageWidth - margin - textWidth, y - 8);
+        doc.text(rightText, pageWidth - margin - textWidth, y - 11.5);
         if (discount) {
           doc.setFontSize(8);
           doc.setFont("helvetica", "italic");
           doc.setTextColor(150); // Gris
-          doc.text(discount, pageWidth - margin - textWidth, y - 4);
+          doc.text(discount, pageWidth - margin - textWidth, y - 6);
           doc.setTextColor(0); // Volver a negro
           doc.setFontSize(fontSize);
         }
       } else {
-        doc.text(rightText, pageWidth - margin - textWidth, y - 4);
+        doc.text(rightText, pageWidth - margin - textWidth, y - 6);
         if (discount) {
           doc.setFontSize(8);
           doc.setFont("helvetica", "italic");
@@ -150,7 +150,7 @@ export const generatePDF = (
       currentY += 5;
     }
 
-    console.log(paquetesSeleccionados);
+    //console.log(paquetesSeleccionados);
     paquetesSeleccionados.forEach((paquete) => {
       if (paquete.seccion === "alojamiento") {
         currentY = addRow(
@@ -184,7 +184,7 @@ export const generatePDF = (
         currentY += 10;
       } else {
         currentY = addRow(
-          `• ${paquete.name}`,
+          `• ${paquete.name} x ${paquete.count} personas`,
           `$${formatNumberWithDots(paquete.price)}`,
           10,
           currentY,

@@ -122,6 +122,7 @@ export default function Cotizador() {
               setTotalCompra={setTotalCompra}
               eliminarPaquete={eliminarPaquete}
               originales={originales}
+              cerro={cerro}
             />
           )}
         </div>

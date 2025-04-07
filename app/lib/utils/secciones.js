@@ -160,7 +160,7 @@ export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama)
     });
   }
 
-  setEquipos(rentalsFiltradas);
+  setEquipos(rentalsFiltradas.sort((a,b) => a.precio - b.precio));
 };
 
 export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) => {
@@ -197,7 +197,7 @@ export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) =>
     });
   }
 
-  setClases(clasesFiltradas);
+  setClases(clasesFiltradas.sort((a,b) => a.precio - b.precio));
 };
 
 //BUSQUEDA PASES
@@ -238,9 +238,9 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, tipo) => {
       }
     });
   }
-  console.log("final fechas", pasesFiltrados);
+  //console.log(pasesFiltrados);
 
-  setPases(pasesFiltrados);
+  setPases(pasesFiltrados.sort((a,b) => a.precio - b.precio));
 };
 
 export const handleTransporte = (
@@ -254,7 +254,6 @@ export const handleTransporte = (
   personas
 ) => {
   let transporteFiltrado = traslado;
-  console.log(tipoTransporte, claseTransporte, startDate, endDate);
   let ida = [];
   let vuelta = [];
   const inicio = new Date(startDate).toLocaleDateString("es-AR");
@@ -325,14 +324,14 @@ export const handleTransporte = (
       fin,
     }));
 
-    console.log(transporteFiltrado);
+    //console.log(transporteFiltrado);
 
     // Dividir en secciones de ida y vuelta
-    ida = transporteFiltrado.filter((paquete) => paquete.tramo === "Ida");
-    vuelta = transporteFiltrado.filter((paquete) => paquete.tramo === "Vuelta");
+    ida = transporteFiltrado.filter((paquete) => paquete.tramo === "Ida").sort((a,b) => a.personas - b.personas);
+    vuelta = transporteFiltrado.filter((paquete) => paquete.tramo === "Vuelta").sort((a,b) => a.personas - b.personas);
 
     if (ida.length === 0 || vuelta.length === 0) {
-      setTraslado(transporteFiltrado);
+      setTraslado(transporteFiltrado.sort((a,b) => a.personas - b.personas));
     } else {
       setTraslado({ ida, vuelta });
     }

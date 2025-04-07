@@ -8,7 +8,7 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
 
   if (!resultados) return null;
-  console.log(resultados);
+  //console.log(resultados);
   if (Object.keys(resultados).length === 0) {
     return (
       <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
@@ -73,9 +73,7 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
                           seccion: "clases",
                           noches: r.dias,
                           count: Number(count),
-                          name: `Clase ${r.tipo} - ${r.dias} días${
-                            count > 1 ? " x " + count + " personas" : ""
-                          }`,
+                          name: `Clase ${r.tipo} (${r.edad}) - ${r.dias} días`,
                           price: r.precio * count,
                         });
                       }}

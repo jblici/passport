@@ -14,8 +14,9 @@ const ResumenPresupuesto = ({
   eliminarPaquete,
   busqueda,
   originales,
+  cerro,
 }) => {
-  console.log(paquetesSeleccionados);
+  //console.log(paquetesSeleccionados);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [discount, setDiscount] = useState(0);
   const [clientName, setClientName] = useState("");
@@ -48,26 +49,8 @@ const ResumenPresupuesto = ({
   };
 
   useEffect(() => {
-    const { totalPesos, totalDolares } = paquetesSeleccionados.reduce(
-      (acumulador, paquete) => {
-        const precioFinal = paquete.price - (paquete.discount ? paquete.discount : 0);
-
-        if (paquete.seccion === "alojamiento" && paquete.moneda === "USD") {
-          acumulador.totalDolares += precioFinal;
-        } else {
-          acumulador.totalPesos += precioFinal;
-        }
-
-        return acumulador;
-      },
-      { totalPesos: 0, totalDolares: 0 }
-    );
-
-    setTotal({ pesos: totalPesos, dolares: totalDolares });
-
     const paquetesTemp = [...paquetesSeleccionados];
-    console.log(paquetesTemp);
-
+    //console.log(paquetesTemp);
     if (flag) {
       verificarFamilyPlan(
         paquetesTemp,
@@ -95,6 +78,25 @@ const ResumenPresupuesto = ({
     originales,
   ]);
 
+  useEffect(() => {
+    const { totalPesos, totalDolares } = paquetesSeleccionados.reduce(
+      (acumulador, paquete) => {
+        const precioFinal = paquete.price - (paquete.discount ? paquete.discount : 0);
+
+        if (paquete.seccion === "alojamiento" && paquete.moneda === "USD") {
+          acumulador.totalDolares += precioFinal;
+        } else {
+          acumulador.totalPesos += precioFinal;
+        }
+
+        return acumulador;
+      },
+      { totalPesos: 0, totalDolares: 0 }
+    );
+
+    setTotal({ pesos: totalPesos, dolares: totalDolares });
+  }, [setTotal, paquetesSeleccionados]);
+
   return (
     <div className="bg-card rounded-lg shadow-lg h-fit mt-4">
       <div className="p-4 sm:p-6 md:p-8 border-b">
@@ -102,36 +104,36 @@ const ResumenPresupuesto = ({
       </div>
       <div className=" flex items-start justify-between bg-gray-100 p-4 md:items-center">
         <AnimatedDropdown discount={discount} handleDiscount={handleDiscount} />
-        {familyPlan &&
-          cerro ===
-            "Las Leñas"(
-              <div className="flex items-center gap-2">
-                <span>Activar Family Plan</span>
-                <label
-                  htmlFor="AcceptConditions"
-                  className="relative inline-block h-8 w-14 cursor-pointer rounded-full bg-red-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-red-500"
-                >
-                  <input
-                    type="checkbox"
-                    id="AcceptConditions"
-                    className="peer sr-only pr-4"
-                    checked={isChecked}
-                    onChange={handleToggle}
-                  />
+        {familyPlan && cerro === "Las Leñas" && (
+          <div className="flex items-center gap-2">
+            <span>Activar Family Plan</span>
+            <label
+              htmlFor="AcceptConditions"
+              className="relative inline-block h-8 w-14 cursor-pointer rounded-full bg-red-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-red-500"
+            >
+              <input
+                type="checkbox"
+                id="AcceptConditions"
+                className="peer sr-only pr-4"
+                checked={isChecked}
+                onChange={handleToggle}
+              />
 
-                  <span className="absolute inset-y-0 start-0 m-1 size-6 rounded-full bg-red-300 ring-[6px] ring-inset ring-white transition-all peer-checked:start-8 peer-checked:w-2 peer-checked:bg-white peer-checked:ring-transparent"></span>
-                </label>
-              </div>
-            )}
+              <span className="absolute inset-y-0 start-0 m-1 size-6 rounded-full bg-red-300 ring-[6px] ring-inset ring-white transition-all peer-checked:start-8 peer-checked:w-2 peer-checked:bg-white peer-checked:ring-transparent"></span>
+            </label>
+          </div>
+        )}
       </div>
       <div className="p-4 sm:p-6 md:p-8 space-y-4">
         <div className="pb-2">
           <div id="pdf-content">
             {paquetesSeleccionados.map((paquete, index) => (
               <div key={index} className="flex items-center justify-between py-1">
-                {paquete.count ? (
+                {paquete.seccion === "clases" ||
+                paquete.seccion === "equipos" ||
+                paquete.seccion === "pases" ? (
                   <span>
-                    {paquete.name}
+                    {paquete.name} x {paquete.count} personas
                   </span>
                 ) : (
                   <div className="flex flex-col w-4/5">

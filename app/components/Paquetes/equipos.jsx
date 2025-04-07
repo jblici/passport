@@ -75,9 +75,7 @@ const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
                           seccion: "equipos",
                           noches: r.dias,
                           count: Number(count),
-                          name: `${r.articulo} - ${r.edad} - ${r.gama} - ${r.dias} días${
-                            count > 1 ? " x " + count + " personas" : ""
-                          }`,
+                          name: `${r.articulo} - ${r.edad} - ${r.gama} - ${r.dias} días`,
                           price: r.precio * count,
                         });
                       }}
