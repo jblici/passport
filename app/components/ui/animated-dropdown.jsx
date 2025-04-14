@@ -14,27 +14,36 @@ const dropdownVariants = {
   },
 };
 
-export default function AnimatedDropdown({ discount, handleDiscount }) {
+export default function AnimatedDropdown({ discount, handleDiscount, agregarPaquete }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isItemOpen, setIsItemOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState();
+  const [error, setError] = useState(false);
+
+  const handleItem = () => {
+    if (!name || !price || price <= 0) {
+      setError(true);
+      return;
+    }
+
+    agregarPaquete({ name, price });
+    setIsItemOpen(false);
+    setName("");
+    setPrice(0);
+    setError(false);
+  };
 
   const toggleDropdown = () => setIsOpen(!isOpen);
-  const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
 
   const handleModal = () => {
-    setIsModalOpen(false)
-    setIsOpen(false)
-  }
+    setIsModalOpen(false);
+    setIsOpen(false);
+  };
 
   return (
     <div className="relative">
-      {/* <InputModal
-        isOpen={isDiscountModalOpen}
-        onClose={() => isDiscountModalOpen(false)}
-        onSubmit={handleDiscountSubmit}
-        title="Enter Client's Name"
-        placeholder="Client's Name"
-      /> */}
       <Button
         onClick={toggleDropdown}
         variant="default"
@@ -94,10 +103,65 @@ export default function AnimatedDropdown({ discount, handleDiscount }) {
                     </div>
                   </div>
                 )}
+                <Button variant="default" onClick={() => setIsItemOpen(true)}>
+                  Ingresar Item
+                </Button>
+                {isItemOpen && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white p-6 rounded shadow-lg flex flex-col w-80">
+                      <h2 className="text-xl font-bold mb-4">Ingresar Item</h2>
 
-                {/* <Button variant="defualt" button onClick={() => setIsDiscountModalOpen(true)}>Descuento Alojamiento</Button> */}
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => {
+                          setName(e.target.value);
+                          if (error) setError(false);
+                        }}
+                        placeholder="Nombre del item"
+                        className="w-full p-2 mb-2 border rounded"
+                      />
+                      <input
+                        type="number"
+                        value={price}
+                        min={0}
+                        onChange={(e) => {
+                          setPrice(Number(e.target.value));
+                          if (error) setError(false);
+                        }}
+                        placeholder="Precio"
+                        className="w-full p-2 mb-2 border rounded"
+                      />
 
-                <Button variant="default">Ingresar Item</Button>
+                      {error && (
+                        <span className="text-red-500 text-sm mb-2">
+                          * Completá ambos campos correctamente
+                        </span>
+                      )}
+
+                      <div className="flex justify-end">
+                        <button
+                          onClick={handleItem}
+                          className="mr-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                          Aceptar
+                        </button>
+                        <button
+                          onClick={() => {
+                            setIsItemOpen(false);
+                            setName("");
+                            setPrice(0);
+                            setError(false);
+                            setIsOpen(false)
+                          }}
+                          className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </motion.div>
           </React.Fragment>

@@ -11,6 +11,7 @@ const ResumenPresupuesto = ({
   paquetesSeleccionados,
   setPaquetesSeleccionados,
   totalCompra,
+  agregarPaquete,
   eliminarPaquete,
   busqueda,
   originales,
@@ -18,7 +19,7 @@ const ResumenPresupuesto = ({
 }) => {
   //console.log(paquetesSeleccionados);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [discount, setDiscount] = useState(0);
+  const [discount, setDiscount] = useState();
   const [clientName, setClientName] = useState("");
   const [total, setTotal] = useState({ pesos: 0, dolares: 0 });
   const [familyPlan, setFamilyPlan] = useState(false);
@@ -103,7 +104,7 @@ const ResumenPresupuesto = ({
         <h2 className="text-xl font-bold mb-2">Presupuesto</h2>
       </div>
       <div className=" flex items-start justify-between bg-gray-100 p-4 md:items-center">
-        <AnimatedDropdown discount={discount} handleDiscount={handleDiscount} />
+        <AnimatedDropdown discount={discount} handleDiscount={handleDiscount} agregarPaquete={agregarPaquete} />
         {familyPlan && cerro === "Las Leñas" && (
           <div className="flex items-center gap-2">
             <span>Activar Family Plan</span>

@@ -120,6 +120,7 @@ export default function Cotizador() {
               busqueda={busqueda}
               totalCompra={totalCompra}
               setTotalCompra={setTotalCompra}
+              agregarPaquete={agregarPaquete}
               eliminarPaquete={eliminarPaquete}
               originales={originales}
               cerro={cerro}
