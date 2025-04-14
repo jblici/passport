@@ -79,13 +79,9 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                             fechaFin: r.fin,
                             name: `${r.descripcion} - ${r.origen} / ${r.destino} ${
                               r.personas > 1
-                                ? ` - ${r.personas} PAX ${
-                                    count > 1
-                                      ? `x ${count} ${r.cerro === "Castor" ? "días" : ""}`
-                                      : ""
-                                  }`
+                                ? ` - ${r.personas} PAX ${count > 1 ? `x ${count}` : ""}`
                                 : count > 1
-                                ? `x ${count} ${r.cerro === "Castor" ? "días" : ""}`
+                                ? `x ${count}`
                                 : ""
                             }`,
                             price: r.precio * count,
@@ -163,13 +159,9 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                                   fechaFin: r.fin,
                                   name: `${r.descripcion} - ${r.origen} / ${r.destino}${
                                     r.personas > 1
-                                      ? ` - ${r.personas} PAX${
-                                          count > 1
-                                            ? ` x ${count} ${r.cerro === "Castor" ? "días" : ""}`
-                                            : ""
-                                        }`
+                                      ? ` - ${r.personas} PAX${count > 1 ? ` x ${count}` : ""}`
                                       : count > 1
-                                      ? ` x ${count} ${r.cerro === "Castor" ? "días" : ""}`
+                                      ? ` x ${count}`
                                       : ""
                                   }`,
                                   price: r.precio * count,
