@@ -1,5 +1,11 @@
 import jsPDF from "jspdf";
-import { formatDate, formatNumberWithDots, formatReglas, stringDate } from "./extras";
+import {
+  formatDate,
+  formatNumberPercentage,
+  formatNumberWithDots,
+  formatReglas,
+  stringDate,
+} from "./extras";
 import { calcularDiferenciaDiasProducto, calcularTotalPersonas } from "./hoteles";
 
 export const generatePDF = (
@@ -91,7 +97,7 @@ export const generatePDF = (
           doc.setFontSize(8);
           doc.setFont("helvetica", "italic");
           doc.setTextColor(150); // Gris
-          doc.text(discount, pageWidth - margin - textWidth, y - 6);
+          doc.text(discount, pageWidth - 6, y - 6);
           doc.setTextColor(0); // Volver a negro
           doc.setFontSize(fontSize);
         }
@@ -101,7 +107,7 @@ export const generatePDF = (
           doc.setFontSize(8);
           doc.setFont("helvetica", "italic");
           doc.setTextColor(150); // Gris
-          doc.text(discount, pageWidth - margin - textWidth, y);
+          doc.text(discount, pageWidth - margin - 6, y);
           doc.setTextColor(0); // Volver a negro
         }
       }
@@ -155,11 +161,17 @@ export const generatePDF = (
       if (paquete.seccion === "alojamiento") {
         currentY = addRow(
           `• ${paquete.name}`,
-          `$${formatNumberWithDots(paquete.price)}`,
+          `$${
+            paquete.discount > 0
+              ? formatNumberWithDots(paquete.price - paquete.discount)
+              : formatNumberWithDots(paquete.price)
+          }`,
           10,
           currentY,
           12,
-          paquete.discount > 0 ? `- $${formatNumberWithDots(paquete.discount)}` : null
+          paquete.discount > 0
+            ? `%${formatNumberPercentage(paquete.discount, paquete.price)}`
+            : null
         );
         currentY = addText(formatReglas(paquete.reglas), 12, currentY, 8);
         currentY += 5;

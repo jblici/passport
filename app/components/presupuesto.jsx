@@ -4,7 +4,12 @@ import { XIcon } from "./svg/svg";
 import Passport from "/public/Passport.png";
 import AnimatedDropdown from "./ui/animated-dropdown";
 import { CiDiscount1 } from "react-icons/ci";
-import { formatNumberWithDots, formatReglas, verificarFamilyPlan } from "../lib/utils/extras";
+import {
+  formatNumberPercentage,
+  formatNumberWithDots,
+  formatReglas,
+  verificarFamilyPlan,
+} from "../lib/utils/extras";
 import { generatePDF } from "../lib/utils/pdf";
 
 const ResumenPresupuesto = ({
@@ -82,7 +87,9 @@ const ResumenPresupuesto = ({
   useEffect(() => {
     const { totalPesos, totalDolares } = paquetesSeleccionados.reduce(
       (acumulador, paquete) => {
+        console.log(paquete);
         const precioFinal = paquete.price - (paquete.discount ? paquete.discount : 0);
+        console.log(precioFinal);
 
         if (paquete.seccion === "alojamiento" && paquete.moneda === "USD") {
           acumulador.totalDolares += precioFinal;
@@ -104,7 +111,11 @@ const ResumenPresupuesto = ({
         <h2 className="text-xl font-bold mb-2">Presupuesto</h2>
       </div>
       <div className=" flex items-start justify-between bg-gray-100 p-4 md:items-center">
-        <AnimatedDropdown discount={discount} handleDiscount={handleDiscount} agregarPaquete={agregarPaquete} />
+        <AnimatedDropdown
+          discount={discount}
+          handleDiscount={handleDiscount}
+          agregarPaquete={agregarPaquete}
+        />
         {familyPlan && cerro === "Las Leñas" && (
           <div className="flex items-center gap-2">
             <span>Activar Family Plan</span>
@@ -164,9 +175,9 @@ const ResumenPresupuesto = ({
                   <div className="flex items-center justify-between gap-3">
                     <span className="flex gap-1">
                       <span>{paquete.moneda === "USD" ? "USD " : "$ "}</span>
-                      {formatNumberWithDots(
-                        paquete.discount ? paquete.price - paquete.discount : paquete.price
-                      )}
+                      {paquete.discount > 0
+                        ? formatNumberWithDots(paquete.price - paquete.discount)
+                        : formatNumberWithDots(paquete.price)}
                     </span>
                     <button
                       onClick={() => eliminarPaquete(index)}
@@ -177,12 +188,11 @@ const ResumenPresupuesto = ({
                     </button>
                   </div>
                   {paquete.seccion === "alojamiento" && paquete.discount !== 0 && (
-                    <div className="text-gray-500 flex items-center justify-between w-full">
-                      <span className="flex gap-1">
-                        <span>{paquete.moneda === "USD" ? "USD " : "$ "}</span>
-                        {formatNumberWithDots(paquete.discount)}
+                    <div className="text-gray-500 flex items-center justify-end w-full">
+                      <span className="flex gap-1 items-center">
+                        {formatNumberPercentage(paquete.discount, paquete.price)}
+                        <CiDiscount1 />
                       </span>
-                      <CiDiscount1 />
                     </div>
                   )}
                 </div>

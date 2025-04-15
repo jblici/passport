@@ -19,11 +19,11 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isItemOpen, setIsItemOpen] = useState(false);
   const [name, setName] = useState("");
-  const [price, setPrice] = useState();
+  const [price, setPrice] = useState(0);
   const [error, setError] = useState(false);
 
   const handleItem = () => {
-    if (!name || !price || price <= 0) {
+    if (!name) {
       setError(true);
       return;
     }

@@ -9,6 +9,12 @@ export function formatNumberWithDots(number) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
+export function formatNumberPercentage(number, total) {
+  if (!number || !total) return 0;
+  console.log(number, total)
+  return Math.round((number * 100) / total);
+}
+
 
 export const formatDate = (date, dias) => {
   const fecha = new Date(date);

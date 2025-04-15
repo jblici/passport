@@ -137,8 +137,7 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                                   (result) =>
                                     result.hotel === r.paquetesUtilizados.paquetes[0].hotel
                                 ).traduccion,
-                                name: `${r.paquetesUtilizados.paquetes[0].hotel} - ${
-                                  r.paquetesUtilizados.paquetes[0].habitacion
+                                name: `${r.paquetesUtilizados.paquetes[0].hotel} - ${r.paquetesUtilizados.paquetes[0].habitacion
                                 } - ${r.noches} noches - ${r.mayores > 0 ? "Adultos: " + r.mayores : ""} ${
                                   r.menores > 0 ? " Menores: " + r.menores : ""
                                 }`,
