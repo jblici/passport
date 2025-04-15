@@ -110,7 +110,6 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
                   <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
                     <div className="bg-white p-6 rounded shadow-lg flex flex-col w-80">
                       <h2 className="text-xl font-bold mb-4">Ingresar Item</h2>
-
                       <input
                         type="text"
                         value={name}
@@ -121,6 +120,7 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
                         placeholder="Nombre del item"
                         className="w-full p-2 mb-2 border rounded"
                       />
+                      {/*
                       <input
                         type="number"
                         value={price}
@@ -132,7 +132,7 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
                         placeholder="Precio"
                         className="w-full p-2 mb-2 border rounded"
                       />
-
+                      */}
                       {error && (
                         <span className="text-red-500 text-sm mb-2">
                           * Completá ambos campos correctamente
@@ -152,7 +152,7 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
                             setName("");
                             setPrice(0);
                             setError(false);
-                            setIsOpen(false)
+                            setIsOpen(false);
                           }}
                           className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
                         >

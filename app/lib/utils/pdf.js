@@ -195,13 +195,23 @@ export const generatePDF = (
         );
         currentY += 10;
       } else {
-        currentY = addRow(
-          `• ${paquete.name} x ${paquete.count} personas`,
-          `$${formatNumberWithDots(paquete.price)}`,
-          10,
-          currentY,
-          12
-        );
+        if (!paquete.seccion) {
+          currentY = addRow(
+            `• ${paquete.name}`,
+            `$${formatNumberWithDots(paquete.price)}`,
+            10,
+            currentY,
+            12
+          );
+        } else {
+          currentY = addRow(
+            `• ${paquete.name} x ${paquete.count} personas`,
+            `$${formatNumberWithDots(paquete.price)}`,
+            10,
+            currentY,
+            12
+          );
+        }
       }
     });
 
