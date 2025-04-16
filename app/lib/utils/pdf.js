@@ -107,7 +107,7 @@ export const generatePDF = (
           doc.setFontSize(8);
           doc.setFont("helvetica", "italic");
           doc.setTextColor(150); // Gris
-          doc.text(discount, pageWidth - margin - 6, y);
+          doc.text(discount, pageWidth - margin - textWidth, y);
           doc.setTextColor(0); // Volver a negro
         }
       }
@@ -170,7 +170,7 @@ export const generatePDF = (
           currentY,
           12,
           paquete.discount > 0
-            ? `%${formatNumberPercentage(paquete.discount, paquete.price)}`
+            ? `${formatNumberPercentage(paquete.discount, paquete.price)}% OFF ya aplicado`
             : null
         );
         currentY = addText(formatReglas(paquete.reglas), 12, currentY, 8);

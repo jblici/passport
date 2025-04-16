@@ -172,7 +172,7 @@ const ResumenPresupuesto = ({
                   </div>
                 )}
                 <div className="flex flex-col items-center">
-                  <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center justify-end gap-3">
                     <span className="flex gap-1">
                       <span>{paquete.moneda === "USD" ? "USD " : "$ "}</span>
                       {paquete.discount > 0
@@ -189,9 +189,9 @@ const ResumenPresupuesto = ({
                   </div>
                   {paquete.seccion === "alojamiento" && paquete.discount !== 0 && (
                     <div className="text-gray-500 flex items-center justify-end w-full">
-                      <span className="flex gap-1 items-center">
+                      <span className="flex gap-1 items-center text-xs">
                         {formatNumberPercentage(paquete.discount, paquete.price)}
-                        <CiDiscount1 />
+                        % OFF ya aplicado
                       </span>
                     </div>
                   )}
