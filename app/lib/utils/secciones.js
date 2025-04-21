@@ -268,6 +268,7 @@ export const handleTransporte = (
   let transporteFiltrado = traslado;
   let ida = [];
   let vuelta = [];
+  let idayvuelta = [];
   const inicio = new Date(startDate).toLocaleDateString("es-AR");
   const fin = new Date(endDate).toLocaleDateString("es-AR");
 
@@ -301,7 +302,7 @@ export const handleTransporte = (
     if (claseTransporte) {
       if (claseTransporte === "Privado") {
         // En Castor, diferenciar por descripción en lugar de cantidad de personas
-        if (cerro === "Castor") {
+        if (cerro === "Castor" || cerro === "Chapelco") {
           transporteFiltrado = transporteFiltrado.filter(
             (paquete) =>
               paquete.descripcion.toLowerCase().includes("privado") ||
@@ -311,7 +312,7 @@ export const handleTransporte = (
           transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.personas > 1);
         }
       } else {
-        if (cerro === "Castor") {
+        if (cerro === "Castor" || cerro === "Chapelco") {
           // Filtrar público en Castor excluyendo paquetes con "privado" o "privada" en la descripción
           transporteFiltrado = transporteFiltrado.filter(
             (paquete) =>
@@ -336,7 +337,7 @@ export const handleTransporte = (
       fin,
     }));
 
-    //console.log(transporteFiltrado);
+    console.log(transporteFiltrado);
 
     // Dividir en secciones de ida y vuelta
     ida = transporteFiltrado
@@ -345,11 +346,14 @@ export const handleTransporte = (
     vuelta = transporteFiltrado
       .filter((paquete) => paquete.tramo === "Vuelta")
       .sort((a, b) => a.personas - b.personas);
+    idayvuelta = transporteFiltrado
+      .filter((paquete) => paquete.tramo === "Ida y Vuelta")
+      .sort((a, b) => a.personas - b.personas);
 
     if (ida.length === 0 || vuelta.length === 0) {
       setTraslado(transporteFiltrado.sort((a, b) => a.personas - b.personas));
     } else {
-      setTraslado({ ida, vuelta });
+      setTraslado({ ida, vuelta, idayvuelta });
     }
   }
 };
