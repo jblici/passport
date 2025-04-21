@@ -160,7 +160,7 @@ export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama)
     });
   }
 
-  setEquipos(rentalsFiltradas.sort((a,b) => a.precio - b.precio));
+  setEquipos(rentalsFiltradas.sort((a, b) => a.precio - b.precio));
 };
 
 export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) => {
@@ -197,7 +197,7 @@ export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) =>
     });
   }
 
-  setClases(clasesFiltradas.sort((a,b) => a.precio - b.precio));
+  setClases(clasesFiltradas.sort((a, b) => a.precio - b.precio));
 };
 
 //BUSQUEDA PASES
@@ -212,9 +212,21 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, tipo) => {
   }
 
   if (tipo) {
-    pasesFiltrados = pasesFiltrados.filter(
-      (pase) => pase.tipo.toUpperCase() === tipo.toUpperCase()
-    );
+    if (cerro === "Chapelco") {
+      if (tipo.toUpperCase() === "FLEXIBLE") {
+        pasesFiltrados = pasesFiltrados.filter((pase) =>
+          pase.tipo.toUpperCase().includes("FLEXIBLE")
+        );
+      } else if (tipo.toUpperCase() === "NORMAL") {
+        pasesFiltrados = pasesFiltrados.filter(
+          (pase) => !pase.tipo.toUpperCase().includes("FLEXIBLE")
+        );
+      }
+    } else {
+      pasesFiltrados = pasesFiltrados.filter(
+        (pase) => pase.tipo.toUpperCase() === tipo.toUpperCase()
+      );
+    }
   }
 
   if (dias) {
@@ -240,7 +252,7 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, tipo) => {
   }
   //console.log(pasesFiltrados);
 
-  setPases(pasesFiltrados.sort((a,b) => a.precio - b.precio));
+  setPases(pasesFiltrados.sort((a, b) => a.precio - b.precio));
 };
 
 export const handleTransporte = (
@@ -327,11 +339,15 @@ export const handleTransporte = (
     //console.log(transporteFiltrado);
 
     // Dividir en secciones de ida y vuelta
-    ida = transporteFiltrado.filter((paquete) => paquete.tramo === "Ida").sort((a,b) => a.personas - b.personas);
-    vuelta = transporteFiltrado.filter((paquete) => paquete.tramo === "Vuelta").sort((a,b) => a.personas - b.personas);
+    ida = transporteFiltrado
+      .filter((paquete) => paquete.tramo === "Ida")
+      .sort((a, b) => a.personas - b.personas);
+    vuelta = transporteFiltrado
+      .filter((paquete) => paquete.tramo === "Vuelta")
+      .sort((a, b) => a.personas - b.personas);
 
     if (ida.length === 0 || vuelta.length === 0) {
-      setTraslado(transporteFiltrado.sort((a,b) => a.personas - b.personas));
+      setTraslado(transporteFiltrado.sort((a, b) => a.personas - b.personas));
     } else {
       setTraslado({ ida, vuelta });
     }

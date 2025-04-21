@@ -52,6 +52,16 @@ const cerrosInfo = {
     ),
   },
   Chapelco: {
+    mensaje: (
+      <>
+        <span>Infante: 0 a 5 años FREE.</span>
+        <span>Menor: de 6 a 11 años</span>
+        <span>Jóvenes Universitarios: 18 a 28 años.</span>
+        <span>Mayor: de 12 a 59 años.</span>
+        <span>Senior: de 60 a 69 años.</span>
+        <span>+ 70 años FREE</span>
+      </>
+    ),
     tipos: (
       <SelectContent>
         <SelectItem value="NORMAL">Normal</SelectItem>
