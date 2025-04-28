@@ -21,6 +21,18 @@ const cerrosInfo = {
         <span>Principiantes: Válido para pistas Eros 1 y 2 y Venus 1 y 2</span>
       </>
     ),
+    pases: (
+      <SelectContent>
+        <SelectItem value="1">1</SelectItem>
+        <SelectItem value="2">2</SelectItem>
+        <SelectItem value="3">3</SelectItem>
+        <SelectItem value="4">4</SelectItem>
+        <SelectItem value="5">5</SelectItem>
+        <SelectItem value="6">6</SelectItem>
+        <SelectItem value="8">8</SelectItem>
+        <SelectItem value="15">15</SelectItem>
+      </SelectContent>
+    ),
   },
   Castor: {
     mensaje: (
@@ -30,6 +42,21 @@ const cerrosInfo = {
         <span>Adulto: 12 a 69 años.</span>
         <span>Senior: + 70 años, pase sin cargo.</span>
       </>
+    ),
+    pases: (
+      <SelectContent>
+        <SelectItem value="1">1</SelectItem>
+        <SelectItem value="2">2</SelectItem>
+        <SelectItem value="3">3</SelectItem>
+        <SelectItem value="4">4</SelectItem>
+        <SelectItem value="5">5</SelectItem>
+        <SelectItem value="6">6</SelectItem>
+        <SelectItem value="7">7</SelectItem>
+        <SelectItem value="8">8</SelectItem>
+        <SelectItem value="9">9</SelectItem>
+        <SelectItem value="10">10</SelectItem>
+        <SelectItem value="15">15</SelectItem>
+      </SelectContent>
     ),
   },
   Catedral: {
@@ -42,6 +69,16 @@ const cerrosInfo = {
         <span>+ 70 AÑOS: Pase Free. Solo paga KeyCard.</span>
         <span>Todos los pases aplican costo retornable por KeyCard.</span>
       </>
+    ),
+    pases: (
+      <SelectContent>
+        <SelectItem value="2">2</SelectItem>
+        <SelectItem value="3">3</SelectItem>
+        <SelectItem value="4">4</SelectItem>
+        <SelectItem value="5">5</SelectItem>
+        <SelectItem value="6">6</SelectItem>
+        <SelectItem value="7">7</SelectItem>
+      </SelectContent>
     ),
     tipos: (
       <SelectContent>
@@ -61,6 +98,15 @@ const cerrosInfo = {
         <span>Senior: de 60 a 69 años.</span>
         <span>+ 70 años FREE</span>
       </>
+    ),
+    pases: (
+      <SelectContent>
+        <SelectItem value="3">3</SelectItem>
+        <SelectItem value="4">4</SelectItem>
+        <SelectItem value="5">5</SelectItem>
+        <SelectItem value="6">6</SelectItem>
+        <SelectItem value="7">7</SelectItem>
+      </SelectContent>
     ),
     tipos: (
       <SelectContent>
@@ -140,17 +186,7 @@ export default function Pases({
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar Dias" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">1</SelectItem>
-                  <SelectItem value="2">2</SelectItem>
-                  <SelectItem value="3">3</SelectItem>
-                  <SelectItem value="4">4</SelectItem>
-                  <SelectItem value="5">5</SelectItem>
-                  <SelectItem value="6">6</SelectItem>
-                  <SelectItem value="7">7</SelectItem>
-                  <SelectItem value="8">8</SelectItem>
-                  <SelectItem value="15">15</SelectItem>
-                </SelectContent>
+                {cerrosInfo[cerro]?.pases && cerrosInfo[cerro].pases}
               </Select>
             </div>
           </div>
@@ -182,7 +218,7 @@ export default function Pases({
                 <Select id="tipo" onValueChange={handleTipo}>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar Pase" />
-                    {cerrosInfo[cerro]?.tipos && cerrosInfo[cerro]?.tipos}
+                    {cerrosInfo[cerro]?.tipos && cerrosInfo[cerro].tipos}
                   </SelectTrigger>
                 </Select>
               </div>

@@ -21,7 +21,7 @@ export const handleHoteles = (
       producto,
       totalPersonas
     );
-    //console.log(busquedaHoteles);
+    console.log(busquedaHoteles);
     setHoteles(busquedaHoteles);
   } catch (error) {
     console.error(error);
@@ -56,7 +56,7 @@ function calcularHoteles(
 
   // Filtrado adicional para "Las Leñas"
   if (cerro === "Las Leñas" && producto) {
-    const noches = calcularDiferenciaDiasProducto(producto);
+    const noches = calcularDiferenciaDiasProducto(producto) - 1;
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(startDate);
     fechaFin.setDate(fechaInicio.getDate() + noches); // Calculamos la fecha final
@@ -130,7 +130,7 @@ function calcularHoteles(
       const paquetesPorHabitacion = {};
 
       const cantidadNoches = calcularDiferenciaDias(inicio, fin);
-      //console.log(cantidadNoches);
+      console.log(cantidadNoches);
       paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
         return paquete.minNoches <= cantidadNoches;
       });
@@ -202,9 +202,13 @@ function calcularHoteles(
                       ? paquete.precioMenor * menores
                       : paquete.precio * menores);
                 }
+                console.log("noches", noches)
+                console.log("precio Habitacion", precioHabitacion)
                 totalPrecio += noches * precioHabitacion;
                 totalNoches += noches;
               } else {
+                console.log("noches", noches)
+                console.log("paquete", paquete.precio * total, paquete.precio, total)
                 totalPrecio += noches * (paquete.precio * total);
                 totalNoches += noches;
               }
