@@ -35,7 +35,7 @@ const useAlojamientos = () => {
 
         return {
           id: index + 1,
-          cerro,
+          cerro: cerro,
           hotel,
           week,
           habitacion,
@@ -78,7 +78,7 @@ const useAlojamientos = () => {
       {
         nombre: "Las Leñas",
         paquetesUrl:
-          "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?output=csv",
+          "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=0&single=true&output=csv",
         reglasUrl:
           "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1338090560&single=true&output=csv",
       },

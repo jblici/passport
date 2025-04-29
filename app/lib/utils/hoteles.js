@@ -66,7 +66,6 @@ function calcularHoteles(
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
       return paquete.minNoches <= noches;
     });
-    console.log(paquetesFiltrados, "producto")
 
     // Filtrar paquetes que contengan la fecha de inicio
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
