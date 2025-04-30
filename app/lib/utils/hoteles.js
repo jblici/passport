@@ -203,13 +203,17 @@ function calcularHoteles(
                       ? paquete.precioMenor * menores
                       : paquete.precio * menores);
                 }
-                console.log("noches", noches)
-                console.log("precio Habitacion", precioHabitacion)
+                if(noches === 0) {
+                  totalNoches += 1
+                  totalPrecio += 1 * (paquete.precio * total);
+                }
                 totalPrecio += noches * precioHabitacion;
                 totalNoches += noches;
               } else {
-                console.log("noches", noches)
-                console.log("paquete", paquete.precio * total, paquete.precio, total)
+                if(noches === 0) {
+                  totalNoches += 1
+                  totalPrecio += 1 * (paquete.precio * total);
+                }
                 totalPrecio += noches * (paquete.precio * total);
                 totalNoches += noches;
               }
