@@ -60,9 +60,10 @@ function calcularHoteles(
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(startDate);
     fechaFin.setDate(fechaInicio.getDate() + noches); // Calculamos la fecha final
-    console.log(producto);
-    paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.week.toLowerCase() === producto.toLowerCase());
-    
+    paquetesFiltrados = paquetesFiltrados.filter(
+      (paquete) => paquete.week.toLowerCase() === producto.toLowerCase()
+    );
+
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
       return paquete.minNoches <= noches;
     });
@@ -131,7 +132,7 @@ function calcularHoteles(
       const paquetesPorHabitacion = {};
 
       const cantidadNoches = calcularDiferenciaDias(inicio, fin);
-      console.log(cantidadNoches);
+      //console.log(cantidadNoches);
       paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
         return paquete.minNoches <= cantidadNoches;
       });
@@ -175,10 +176,22 @@ function calcularHoteles(
 
             // Verificar si el paquete es continuo con la última fecha de la combinación
             if (paqueteInicio <= fechaContinua && paqueteFin >= fechaContinua) {
-              const noches = calcularDiferenciaDias(
-                Math.max(paqueteInicio, fechaContinua),
-                Math.min(paqueteFin, fin)
-              );
+              const esPrimerPaquete = combinacionActual.length === 0;
+
+              let noches;
+              if (esPrimerPaquete) {
+                noches = calcularDiferenciaDias(
+                  Math.max(paqueteInicio, fechaContinua),
+                  new Date(Math.min(paqueteFin, fin) + 1000 * 60 * 60 * 24) // sumamos 1 día
+                );
+              } else {
+                noches = calcularDiferenciaDias(
+                  Math.max(paqueteInicio, fechaContinua),
+                  Math.min(paqueteFin, fin)
+                );
+              }
+
+              //console.log(noches);
 
               if (cerro === "Castor") {
                 let precioHabitacion;
@@ -203,15 +216,17 @@ function calcularHoteles(
                       ? paquete.precioMenor * menores
                       : paquete.precio * menores);
                 }
-                if(noches === 0) {
-                  totalNoches += 1
+                if (noches === 0) {
+                  console.log("entre noches 0");
+                  totalNoches += 1;
                   totalPrecio += 1 * (paquete.precio * total);
                 }
                 totalPrecio += noches * precioHabitacion;
                 totalNoches += noches;
               } else {
-                if(noches === 0) {
-                  totalNoches += 1
+                if (noches === 0) {
+                  console.log("entre noches 0");
+                  totalNoches += 1;
                   totalPrecio += 1 * (paquete.precio * total);
                 }
                 totalPrecio += noches * (paquete.precio * total);
@@ -306,6 +321,11 @@ export function calcularTotalPersonas(detalleHabitaciones) {
   return resultado;
 }
 
+export function calcularNochesHotel(checkIn, checkOut) {
+  const diff = Math.floor((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+  return diff > 0 ? diff : 0;
+}
+
 //FORMATEAR FECHAS
 
 export function parseDate(dateString) {
@@ -341,18 +361,18 @@ function ordenarResultadoPorMonedaYPrecio(resultado) {
   // Función auxiliar para obtener la moneda del paquete
   const obtenerMoneda = (item) => {
     const paquetesUtilizados = item.paquetesUtilizados;
-    if (!paquetesUtilizados) return 'ZZZ'; // En caso de que no haya info
+    if (!paquetesUtilizados) return "ZZZ"; // En caso de que no haya info
     const paquete = Array.isArray(paquetesUtilizados.paquetes)
       ? paquetesUtilizados.paquetes[0]
       : paquetesUtilizados;
 
-    return paquete?.moneda || 'ZZZ'; // Si no hay moneda, va al final
+    return paquete?.moneda || "ZZZ"; // Si no hay moneda, va al final
   };
 
   // Función para obtener el orden de moneda (ARS primero, luego USD)
   const prioridadMoneda = (moneda) => {
-    if (moneda === 'ARS') return 0;
-    if (moneda === 'USD') return 1;
+    if (moneda === "ARS") return 0;
+    if (moneda === "USD") return 1;
     return 2; // Cualquier otra moneda va después
   };
 
@@ -360,7 +380,6 @@ function ordenarResultadoPorMonedaYPrecio(resultado) {
   const resultadoOrdenado = {};
 
   Object.keys(resultado).forEach((habitacionKey) => {
-
     const arrayHabitacion = resultado[habitacionKey];
 
     const ordenado = arrayHabitacion.sort((a, b) => {
