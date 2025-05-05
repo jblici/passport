@@ -176,15 +176,38 @@ function calcularHoteles(
 
             // Verificar si el paquete es continuo con la última fecha de la combinación
             if (paqueteInicio <= fechaContinua && paqueteFin >= fechaContinua) {
-              const esPrimerPaquete = combinacionActual.length === 0;
+              // Detectar si este es el último paquete en la combinación posible
+              const esUltimoPaquete =
+                j === paquetess.length - 1 || parseDate(paquetess[j + 1]?.fechaInicio) > fin;
+
+              // Determinar si se va a formar una combinación múltiple
+              const combinacionCompleta =
+                parseDate(paquetess[i].fechaInicio) <= inicio &&
+                parseDate(paquetess[j].fechaFinal) >= fin;
+              const esCombinacionMultiple = combinacionActual.length > 0 || !esUltimoPaquete;
 
               let noches;
-              if (esPrimerPaquete) {
-                noches = calcularDiferenciaDias(
-                  Math.max(paqueteInicio, fechaContinua),
-                  new Date(Math.min(paqueteFin, fin) + 1000 * 60 * 60 * 24) // sumamos 1 día
-                );
+
+              if (esCombinacionMultiple) {
+                // Lógica para combinaciones múltiples
+                if (esUltimoPaquete) {
+                  // Último paquete: no contar la noche de salida
+                  noches = calcularDiferenciaDias(
+                    Math.max(paqueteInicio, fechaContinua),
+                    Math.min(paqueteFin, fin)
+                  );
+                } else {
+                  // Paquete intermedio: contar noche de salida también
+                  const finIncluido = new Date(
+                    Math.min(paqueteFin, fin) + 1000 * 60 * 60 * 24
+                  );
+                  noches = calcularDiferenciaDias(
+                    Math.max(paqueteInicio, fechaContinua),
+                    finIncluido
+                  );
+                }
               } else {
+                // Lógica normal para un solo paquete
                 noches = calcularDiferenciaDias(
                   Math.max(paqueteInicio, fechaContinua),
                   Math.min(paqueteFin, fin)
