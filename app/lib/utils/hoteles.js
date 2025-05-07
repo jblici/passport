@@ -180,10 +180,6 @@ function calcularHoteles(
               const esUltimoPaquete =
                 j === paquetess.length - 1 || parseDate(paquetess[j + 1]?.fechaInicio) > fin;
 
-              // Determinar si se va a formar una combinación múltiple
-              const combinacionCompleta =
-                parseDate(paquetess[i].fechaInicio) <= inicio &&
-                parseDate(paquetess[j].fechaFinal) >= fin;
               const esCombinacionMultiple = combinacionActual.length > 0 || !esUltimoPaquete;
 
               let noches;
@@ -198,9 +194,7 @@ function calcularHoteles(
                   );
                 } else {
                   // Paquete intermedio: contar noche de salida también
-                  const finIncluido = new Date(
-                    Math.min(paqueteFin, fin) + 1000 * 60 * 60 * 24
-                  );
+                  const finIncluido = new Date(Math.min(paqueteFin, fin) + 1000 * 60 * 60 * 24);
                   noches = calcularDiferenciaDias(
                     Math.max(paqueteInicio, fechaContinua),
                     finIncluido
@@ -239,19 +233,10 @@ function calcularHoteles(
                       ? paquete.precioMenor * menores
                       : paquete.precio * menores);
                 }
-                if (noches === 0) {
-                  console.log("entre noches 0");
-                  totalNoches += 1;
-                  totalPrecio += 1 * (paquete.precio * total);
-                }
+
                 totalPrecio += noches * precioHabitacion;
                 totalNoches += noches;
               } else {
-                if (noches === 0) {
-                  console.log("entre noches 0");
-                  totalNoches += 1;
-                  totalPrecio += 1 * (paquete.precio * total);
-                }
                 totalPrecio += noches * (paquete.precio * total);
                 totalNoches += noches;
               }
