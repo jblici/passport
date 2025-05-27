@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { GoAlert } from "react-icons/go";
 import { handleEquipos } from "@/app/lib/utils/secciones";
 import { scrollToSection } from "@/app/lib/utils/extras";
+import { cerros } from "../ui/cerros";
 
 const cerrosInfo = {
   Castor: {
@@ -110,12 +111,7 @@ export default function Equipos({
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar Centro" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Catedral">Cerro Catedral</SelectItem>
-                  <SelectItem value="Castor">Cerro Castor</SelectItem>
-                  <SelectItem value="Chapelco">Chapelco</SelectItem>
-                  <SelectItem value="Las Leñas">Valle de Las Leñas</SelectItem>
-                </SelectContent>
+                {cerros}
               </Select>
             </div>
             <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">

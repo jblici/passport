@@ -48,6 +48,8 @@ function calcularHoteles(
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.cerro === cerro);
   }
 
+  console.log(paquetesFiltrados, cerro)
+
   if (hotelSeleccionado.length > 0) {
     paquetesFiltrados = paquetesFiltrados.filter((paquete) =>
       hotelSeleccionado.includes(paquete.hotel)
@@ -127,6 +129,7 @@ function calcularHoteles(
     });
   } else {
     // Agrupar paquetes por hotel, habitación y personas
+    console.log(paquetesFiltrados)
     totalPersonas.habitaciones.forEach((habitacion, index) => {
       const { mayores, menores, total } = habitacion;
       const paquetesPorHabitacion = {};
@@ -136,7 +139,7 @@ function calcularHoteles(
       paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
         return paquete.minNoches <= cantidadNoches;
       });
-
+      
       const paquetesHabitacion = paquetesFiltrados.filter(
         (paquete) =>
           paquete.personas === total ||

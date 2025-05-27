@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import ToggleYesNo from "../ui/ToggleYesNo";
 import { handleTransporte } from "@/app/lib/utils/secciones";
 import { scrollToSection } from "@/app/lib/utils/extras";
+import { cerros } from "../ui/cerros";
 
 export default function Transporte({
   category,
@@ -95,12 +96,7 @@ export default function Transporte({
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar Centro" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Catedral">Cerro Catedral</SelectItem>
-                  <SelectItem value="Castor">Cerro Castor</SelectItem>
-                  <SelectItem value="Chapelco">Chapelco</SelectItem>
-                  <SelectItem value="Las Leñas">Valle de Las Leñas</SelectItem>
-                </SelectContent>
+                {cerros}
               </Select>
             </div>
             {claseTransporte === "Privado" && tipoTransporte === "Transfer" && (

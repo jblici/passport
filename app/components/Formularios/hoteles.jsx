@@ -18,6 +18,7 @@ import { GoAlert } from "react-icons/go";
 import Spinner from "../ui/Spinner";
 import { handleHoteles } from "@/app/lib/utils/hoteles";
 import { scrollToSection } from "@/app/lib/utils/extras";
+import { cerros } from "../ui/cerros";
 
 const cerrosInfo = {
   "Las Leñas": {
@@ -34,6 +35,14 @@ const cerrosInfo = {
       <>
         <span>Junior: hasta 11 años.</span>
         <span>Adulto: 12 a 69 años.</span>
+      </>
+    ),
+  },
+  Cavihue: {
+    mensaje: (
+      <>
+        <span>Menores: 0 a 2 años: GRATIS en cuna</span>
+        <span>Mayores: + 3 años</span>
       </>
     ),
   },
@@ -137,7 +146,7 @@ export default function Hoteles({
     if (value !== "Las Leñas") {
       setProducto(null);
     } else if (value === "Las Leñas") {
-      setEndDate(null)
+      setEndDate(null);
     }
   };
 
@@ -162,13 +171,7 @@ export default function Hoteles({
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar centro" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todos</SelectItem>
-                  <SelectItem value="Catedral">Cerro Catedral</SelectItem>
-                  <SelectItem value="Castor">Cerro Castor</SelectItem>
-                  <SelectItem value="Chapelco">Chapelco</SelectItem>
-                  <SelectItem value="Las Leñas">Valle de Las Leñas</SelectItem>
-                </SelectContent>
+                {cerros}
               </Select>
             </div>
             {cerro && cerrosHoteles[cerro] && cerrosHoteles[cerro].length > 0 && (

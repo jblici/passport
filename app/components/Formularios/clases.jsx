@@ -8,6 +8,7 @@ import { CalendarDaysIcon } from "../svg/svg";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { handleClases } from "@/app/lib/utils/secciones";
 import { scrollToSection } from "@/app/lib/utils/extras";
+import { cerros } from "../ui/cerros";
 
 export default function Clases({
   category,
@@ -58,12 +59,7 @@ export default function Clases({
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar Centro" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Catedral">Cerro Catedral</SelectItem>
-                  <SelectItem value="Castor">Cerro Castor</SelectItem>
-                  <SelectItem value="Chapelco">Chapelco</SelectItem>
-                  <SelectItem value="Las Leñas">Valle de Las Leñas</SelectItem>
-                </SelectContent>
+                {cerros}
               </Select>
             </div>
             <div className="flex flex-col w-full sm:w-1/2 justify-between">
