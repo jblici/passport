@@ -4,7 +4,9 @@ import { useState } from "react";
 
 const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
+
   //console.log(resultados);
+
   if (!resultados) return null;
   if (Object.keys(resultados).length === 0) {
     return (

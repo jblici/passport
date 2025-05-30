@@ -116,7 +116,7 @@ const cerrosInfo = {
       </SelectContent>
     ),
   },
-  Cavihue: {
+  Caviahue: {
     pases: (
       <SelectContent>
         <SelectItem value="3">3</SelectItem>

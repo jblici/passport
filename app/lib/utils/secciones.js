@@ -125,8 +125,11 @@ export const handleFormularios = (
   }
 };
 
+// EQUIPOS
+
 export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama) => {
   let rentalsFiltradas = rentals;
+  const fechaFin = sumarDias(new Date(startDate), dias - 1);
 
   if (cerro) {
     rentalsFiltradas = rentalsFiltradas.filter(
@@ -141,37 +144,81 @@ export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama)
   }
 
   if (dias) {
-    rentalsFiltradas = rentalsFiltradas.filter((pase) => pase.dias === dias);
+    rentalsFiltradas = rentalsFiltradas.filter((rental) =>
+      dias === 1 ? Number(rental.dias) <= dias : Number(rental.dias) === dias
+    );
   }
 
-  // Filtrar por fechas
-  if (startDate && dias) {
-    const fechaFin = sumarDias(new Date(startDate), dias - 1); // Clonar startDate
+  // FILTRADO ESPECIAL PARA CASTOR y CHAPELCO
+  if (cerro === "Castor" || cerro === "Chapelco" || cerro === "Caviahue") {
+    rentalsFiltradas = rentalsFiltradas.filter((rental) => {
+      const inicio = parseDate(rental.fechaInicio);
+      const fin = parseDate(rental.fechaFinal);
 
-    rentalsFiltradas = rentalsFiltradas.filter((pase) => {
-      const paseInicio = parseDate(pase.fechaInicio);
-      const paseFinal = parseDate(pase.fechaFinal);
+      return (
+        (inicio <= startDate && startDate <= fin) ||
+        (inicio <= fechaFin && fechaFin <= fin) ||
+        (startDate <= inicio && fechaFin >= fin)
+      );
+    });
 
-      if (cerro === "Las Leñas") {
-        return paseInicio <= startDate && startDate <= paseFinal;
-      } else {
-        return paseInicio <= startDate && paseFinal >= fechaFin;
+    const diasSeleccionados = Array.from({ length: dias }, (_, i) =>
+      sumarDias(new Date(startDate), i)
+    );
+
+    // No hay grupos por edad en rentals, se toma 1 paquete x día
+    let total = 0;
+    const paquetes = [];
+
+    diasSeleccionados.forEach((fecha) => {
+      const paqueteDelDia = rentalsFiltradas.find((rental) => {
+        const inicio = parseDate(rental.fechaInicio);
+        const fin = parseDate(rental.fechaFinal);
+        return fecha >= inicio && fecha <= fin;
+      });
+      if (paqueteDelDia) {
+        total += Number(paqueteDelDia.precio) / dias;
+        paquetes.push(paqueteDelDia);
       }
     });
-  }
 
-  setEquipos(rentalsFiltradas.sort((a, b) => a.precio - b.precio));
+    setEquipos([
+      {
+        precio: total,
+        paquete: paquetes[0],
+      },
+    ]);
+  } else {
+    // Bariloche y Las Leñas funcionan como antes
+    if (startDate && dias) {
+      rentalsFiltradas = rentalsFiltradas.filter((rental) => {
+        const inicio = parseDate(rental.fechaInicio);
+        const fin = parseDate(rental.fechaFinal);
+        if (cerro === "Las Leñas") {
+          return inicio <= startDate && startDate <= fin;
+        } else {
+          return inicio <= startDate && inicio <= fechaFin;
+        }
+      });
+    }
+    setEquipos(rentalsFiltradas.sort((a, b) => a.precio - b.precio));
+  }
 };
+
+// CLASES
 
 export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) => {
   let clasesFiltradas = clases;
+  const fechaFin = sumarDias(new Date(startDate), dias - 1);
 
   if (cerro) {
     clasesFiltradas = clasesFiltradas.filter((clase) => clase.cerro === cerro);
   }
 
   if (tipo) {
-    clasesFiltradas = clasesFiltradas.filter((clase) => clase.tipo === tipo);
+    clasesFiltradas = clasesFiltradas.filter(
+      (clase) => clase.tipo.toUpperCase() === tipo.toUpperCase()
+    );
   }
 
   if (dias) {
@@ -180,30 +227,63 @@ export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) =>
     );
   }
 
-  // Filtrar por fechas
-  if (startDate && dias) {
-    const fechaFin = sumarDias(new Date(startDate), dias - 1); // Clonar startDate
-
+  if (cerro === "Castor" || cerro === "Chapelco" || cerro === "Caviahue") {
     clasesFiltradas = clasesFiltradas.filter((clase) => {
-      const paseInicio = parseDate(clase.fechaInicio);
-      const paseFinal = parseDate(clase.fechaFinal);
+      const inicio = parseDate(clase.fechaInicio);
+      const fin = parseDate(clase.fechaFinal);
+      return (
+        (inicio <= startDate && startDate <= fin) ||
+        (inicio <= fechaFin && fechaFin <= fin) ||
+        (startDate <= inicio && fechaFin >= fin)
+      );
+    });
 
-      // Chequear si startDate esta dentro de las fechas del pase
-      if (cerro === "Las Leñas") {
-        return paseInicio <= startDate && startDate <= paseFinal;
-      } else {
-        return paseInicio <= startDate && paseFinal >= fechaFin;
+    const diasSeleccionados = Array.from({ length: dias }, (_, i) =>
+      sumarDias(new Date(startDate), i)
+    );
+
+    let total = 0;
+    const paquetes = [];
+
+    diasSeleccionados.forEach((fecha) => {
+      const paqueteDelDia = clasesFiltradas.find((clase) => {
+        const inicio = parseDate(clase.fechaInicio);
+        const fin = parseDate(clase.fechaFinal);
+        return fecha >= inicio && fecha <= fin;
+      });
+      if (paqueteDelDia) {
+        total += Number(paqueteDelDia.precio) / dias;
+        paquetes.push(paqueteDelDia);
       }
     });
-  }
 
-  setClases(clasesFiltradas.sort((a, b) => a.precio - b.precio));
+    setClases([
+      {
+        precio: total,
+        paquete: paquetes[0],
+      },
+    ]);
+  } else {
+    if (startDate && dias) {
+      clasesFiltradas = clasesFiltradas.filter((clase) => {
+        const inicio = parseDate(clase.fechaInicio);
+        const fin = parseDate(clase.fechaFinal);
+        if (cerro === "Las Leñas") {
+          return inicio <= startDate && startDate <= fin;
+        } else {
+          return inicio <= startDate && inicio <= fechaFin;
+        }
+      });
+    }
+    setClases(clasesFiltradas.sort((a, b) => a.precio - b.precio));
+  }
 };
 
-//BUSQUEDA PASES
+// BUSQUEDA PASES
 
 export const handlePases = (cerro, pases, setPases, startDate, dias, tipo) => {
   let pasesFiltrados = pases;
+  const fechaFin = sumarDias(new Date(startDate), dias - 1);
 
   if (cerro) {
     pasesFiltrados = pasesFiltrados.filter(
@@ -235,24 +315,73 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, tipo) => {
     );
   }
 
-  // Filtrar por fechas (la fecha de inicio debe estar dentro del rango de fechas del pase)
-  if (startDate && dias) {
-    const fechaFin = sumarDias(new Date(startDate), dias - 1); // Clonar startDate
-
+  if (cerro === "Castor" || cerro === "Chapelco" || cerro === "Caviahue") {
     pasesFiltrados = pasesFiltrados.filter((pase) => {
       const paseInicio = parseDate(pase.fechaInicio);
       const paseFinal = parseDate(pase.fechaFinal);
 
-      if (cerro === "Las Leñas") {
-        return paseInicio <= startDate && startDate <= paseFinal;
-      } else {
-        return paseInicio <= startDate && paseFinal >= fechaFin;
+      return (
+        (paseInicio <= startDate && startDate <= paseFinal) ||
+        (paseInicio <= fechaFin && fechaFin <= paseFinal) ||
+        (startDate <= paseInicio && fechaFin >= paseFinal)
+      );
+    });
+
+    const diasSeleccionados = Array.from({ length: dias }, (_, i) =>
+      sumarDias(new Date(startDate), i)
+    );
+
+    // Agrupar por edad
+    const gruposPorEdad = pasesFiltrados.reduce((acc, paquete) => {
+      const key = paquete.edad || "default";
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(paquete);
+      return acc;
+    }, {});
+
+    const resultado = [];
+
+    Object.entries(gruposPorEdad).forEach(([edad, paquetes]) => {
+      let total = 0;
+
+      diasSeleccionados.forEach((fecha) => {
+        const paqueteDelDia = paquetes.find((p) => {
+          const inicio = parseDate(p.fechaInicio);
+          const fin = parseDate(p.fechaFinal);
+          return fecha >= inicio && fecha <= fin;
+        });
+
+        if (paqueteDelDia) {
+          total += Number(paqueteDelDia.precio) / dias;
+        }
+      });
+
+      if (paquetes.length > 0) {
+        resultado.push({
+          precio: total,
+          paquete: paquetes[0], // usamos el primero como referencia
+        });
       }
     });
-  }
-  //console.log(pasesFiltrados);
 
-  setPases(pasesFiltrados.sort((a, b) => a.precio - b.precio));
+    setPases(resultado);
+  } else {
+    if (startDate && dias) {
+      pasesFiltrados = pasesFiltrados.filter((pase) => {
+        const paseInicio = parseDate(pase.fechaInicio);
+        const paseFinal = parseDate(pase.fechaFinal);
+
+        if (cerro === "Las Leñas") {
+          return paseInicio <= startDate && startDate <= paseFinal;
+        } else {
+          return paseInicio <= startDate && paseInicio <= fechaFin;
+        }
+      });
+    }
+    console.log(pasesFiltrados, "final");
+    // Bariloche y Las Leñas funcionan como hasta ahora
+    setPases(pasesFiltrados.sort((a, b) => a.precio - b.precio));
+  }
 };
 
 export const handleTransporte = (

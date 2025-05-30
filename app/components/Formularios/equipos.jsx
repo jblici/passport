@@ -115,34 +115,6 @@ export default function Equipos({
               </Select>
             </div>
             <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
-              <Label htmlFor="gama">Gama:</Label>
-              <Select id="gama" onValueChange={handleGama}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar Gama" />
-                </SelectTrigger>
-                {cerrosInfo[cerro]?.gama && cerrosInfo[cerro]?.gama}
-              </Select>
-            </div>
-          </div>
-          <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
-            <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
-              <Label htmlFor="start-date">
-                <span className="flex items-center gap-1">
-                  <CalendarDaysIcon /> Fecha de Inicio:
-                </span>
-              </Label>
-              <DatePicker
-                selected={startDate}
-                minDate={minDate}
-                maxDate={maxDate}
-                dateFormat="dd/MM/yyyy"
-                onChange={(date) => setStartDate(date)}
-                className="w-full p-2 border rounded"
-                withPortal
-                placeholderText="Seleccionar fecha"
-              />
-            </div>
-            <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
               <Label htmlFor="dias">Dias:</Label>
               <Select id="dias" onValueChange={handleDias}>
                 <SelectTrigger>
@@ -160,6 +132,40 @@ export default function Equipos({
                 </SelectContent>
               </Select>
             </div>
+          </div>
+          <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
+            <div
+              className={`flex flex-col space-y-2 w-full sm:w-1/2 justify-between ${
+                !cerrosInfo[cerro] && "pr-2"
+              }`}
+            >
+              <Label htmlFor="start-date">
+                <span className="flex items-center gap-1">
+                  <CalendarDaysIcon /> Fecha de Inicio:
+                </span>
+              </Label>
+              <DatePicker
+                selected={startDate}
+                minDate={minDate}
+                maxDate={maxDate}
+                dateFormat="dd/MM/yyyy"
+                onChange={(date) => setStartDate(date)}
+                className="w-full p-2 border rounded"
+                withPortal
+                placeholderText="Seleccionar fecha"
+              />
+            </div>
+            {cerrosInfo[cerro] && (
+              <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
+                <Label htmlFor="gama">Gama:</Label>
+                <Select id="gama" onValueChange={handleGama}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar Gama" />
+                  </SelectTrigger>
+                  {cerrosInfo[cerro]?.gama && cerrosInfo[cerro]?.gama}
+                </Select>
+              </div>
+            )}
           </div>
           <div className="flex justify-between w-full">
             <div className="flex w-fit">
