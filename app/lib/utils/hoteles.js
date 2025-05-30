@@ -48,8 +48,6 @@ function calcularHoteles(
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.cerro === cerro);
   }
 
-  console.log(paquetesFiltrados, cerro)
-
   if (hotelSeleccionado.length > 0) {
     paquetesFiltrados = paquetesFiltrados.filter((paquete) =>
       hotelSeleccionado.includes(paquete.hotel)
@@ -129,7 +127,7 @@ function calcularHoteles(
     });
   } else {
     // Agrupar paquetes por hotel, habitación y personas
-    console.log(paquetesFiltrados)
+    //console.log(paquetesFiltrados)
     totalPersonas.habitaciones.forEach((habitacion, index) => {
       const { mayores, menores, total } = habitacion;
       const paquetesPorHabitacion = {};
@@ -139,12 +137,13 @@ function calcularHoteles(
       paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
         return paquete.minNoches <= cantidadNoches;
       });
-      
+
       const paquetesHabitacion = paquetesFiltrados.filter(
         (paquete) =>
           paquete.personas === total ||
           (paquete.personas === total - 1 && paquete.camaExtra === "Si")
       );
+      //console.log(paquetesFiltrados)
 
       const habitacionKey = `Habitacion ${index + 1}`;
       if (!resultados[habitacionKey]) {
@@ -153,13 +152,14 @@ function calcularHoteles(
 
       paquetesHabitacion.forEach((paquete) => {
         const clave = `${paquete.hotel}-${paquete.habitacion}-${paquete.personas}-${
-          paquete.minNoches
-        }-${paquete.menor ? paquete.menor : null}-${paquete.tarifa ? paquete.tarifa : null}`;
+          paquete.menor ? paquete.menor : null
+        }-${paquete.tarifa ? paquete.tarifa : null}`;
         if (!paquetesPorHabitacion[clave]) {
           paquetesPorHabitacion[clave] = [];
         }
         paquetesPorHabitacion[clave].push(paquete);
       });
+      console.log(paquetesPorHabitacion);
 
       // Verificar paquetes que cubren completamente las fechas seleccionadas y combinaciones continuas
       for (const clave in paquetesPorHabitacion) {
@@ -257,6 +257,8 @@ function calcularHoteles(
                 combinacionActual[combinacionActual.length - 1].fechaFinal
               );
 
+              console.log("entra", combinacionActual);
+              console.log(combinacionInicio <= inicio, combinacionFin >= fin);
               if (combinacionInicio <= inicio && combinacionFin >= fin) {
                 resultados[habitacionKey].push({
                   id: i + j + 1,
