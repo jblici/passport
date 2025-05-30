@@ -37,6 +37,7 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
               <TableHead>Cerro</TableHead>
               <TableHead>Días</TableHead>
               <TableHead>Edad</TableHead>
+              <TableHead>Tipo</TableHead>
               <TableHead>Pack</TableHead>
               <TableHead>Precio</TableHead>
               <TableHead>Agregar</TableHead>
@@ -49,6 +50,7 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
                   <TableCell>{r.paquete.cerro}</TableCell>
                   <TableCell>{r.paquete.dias}</TableCell>
                   <TableCell>{r.paquete.edad}</TableCell>
+                  <TableCell>{r.paquete.tipo}</TableCell>
                   <TableCell>{r.paquete.pack}</TableCell>
                   <TableCell>{`$ ${formatNumberWithDots(r.precio)}`}</TableCell>
                   <TableCell>
@@ -89,6 +91,7 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
                   <TableCell>{r.cerro}</TableCell>
                   <TableCell>{r.dias}</TableCell>
                   <TableCell>{r.edad}</TableCell>
+                  <TableCell>{r.tipo}</TableCell>
                   <TableCell className="text-sm">{r.pack}</TableCell>
                   <TableCell>{`$ ${formatNumberWithDots(r.precio)}`}</TableCell>
                   <TableCell>
