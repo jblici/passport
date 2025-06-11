@@ -150,7 +150,7 @@ export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama)
   }
 
   // FILTRADO ESPECIAL PARA CASTOR y CHAPELCO
-  if (cerro === "Castor" || cerro === "Chapelco" || cerro === "Caviahue") {
+  if (cerro === "Castor" || cerro === "Chapelco") {
     rentalsFiltradas = rentalsFiltradas.filter((rental) => {
       const inicio = parseDate(rental.fechaInicio);
       const fin = parseDate(rental.fechaFinal);
@@ -185,7 +185,7 @@ export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama)
     setEquipos([
       {
         precio: total,
-        paquete: paquetes[0],
+        paquetes: paquetes,
       },
     ]);
   } else {
@@ -227,7 +227,7 @@ export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) =>
     );
   }
 
-  if (cerro === "Castor" || cerro === "Chapelco" || cerro === "Caviahue") {
+  if (cerro === "Castor" || cerro === "Chapelco") {
     clasesFiltradas = clasesFiltradas.filter((clase) => {
       const inicio = parseDate(clase.fechaInicio);
       const fin = parseDate(clase.fechaFinal);
@@ -315,7 +315,7 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, tipo) => {
     );
   }
 
-  if (cerro === "Castor" || cerro === "Chapelco" || cerro === "Caviahue") {
+  if (cerro === "Castor" || cerro === "Chapelco") {
     pasesFiltrados = pasesFiltrados.filter((pase) => {
       const paseInicio = parseDate(pase.fechaInicio);
       const paseFinal = parseDate(pase.fechaFinal);
