@@ -5,6 +5,8 @@ import { formatNumberWithDots } from "@/app/lib/utils/extras";
 
 const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
   if (!resultados) return null;
+  console.log(resultados);
+  console.log(reglas)
   if (Object.keys(resultados).length === 0) {
     return (
       <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
