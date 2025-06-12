@@ -159,7 +159,7 @@ function calcularHoteles(
         }
         paquetesPorHabitacion[clave].push(paquete);
       });
-      console.log(paquetesPorHabitacion);
+      //console.log(paquetesPorHabitacion);
 
       // Verificar paquetes que cubren completamente las fechas seleccionadas y combinaciones continuas
       for (const clave in paquetesPorHabitacion) {
@@ -213,10 +213,11 @@ function calcularHoteles(
 
               //console.log(noches);
 
-              if (cerro === "Castor") {
+              if (cerro === "Castor" || cerro === "Caviahue") {
                 let precioHabitacion;
 
                 if (paquete.personas === total - 1 && paquete.camaExtra === "Si") {
+                  console.log('entre cama extra')
                   // Si necesita usar la cama extra
                   if (menores > 0) {
                     precioHabitacion =
@@ -236,6 +237,8 @@ function calcularHoteles(
                       ? paquete.precioMenor * menores
                       : paquete.precio * menores);
                 }
+                console.log('entre no cama extra', precioHabitacion, noches)
+                console.log('menores y precio', menores, paquete.precioMenor)
 
                 totalPrecio += noches * precioHabitacion;
                 totalNoches += noches;
@@ -257,8 +260,8 @@ function calcularHoteles(
                 combinacionActual[combinacionActual.length - 1].fechaFinal
               );
 
-              console.log("entra", combinacionActual);
-              console.log(combinacionInicio <= inicio, combinacionFin >= fin);
+              //console.log("entra", combinacionActual);
+              //console.log(combinacionInicio <= inicio, combinacionFin >= fin);
               if (combinacionInicio <= inicio && combinacionFin >= fin) {
                 resultados[habitacionKey].push({
                   id: i + j + 1,

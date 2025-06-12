@@ -371,12 +371,15 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, tipo) => {
         const paseInicio = parseDate(pase.fechaInicio);
         const paseFinal = parseDate(pase.fechaFinal);
 
+        console.log(startDate, fechaFin)
+
         if (cerro === "Las Leñas") {
           return paseInicio <= startDate && startDate <= paseFinal;
         } else {
-          return paseInicio <= startDate && paseInicio <= fechaFin;
+          return paseInicio <= startDate && startDate <= paseFinal;
         }
       });
+
     }
     console.log(pasesFiltrados, "final");
     // Bariloche y Las Leñas funcionan como hasta ahora
