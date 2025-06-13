@@ -130,6 +130,7 @@ export const handleFormularios = (
 export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama) => {
   let rentalsFiltradas = rentals;
   const fechaFin = sumarDias(new Date(startDate), dias - 1);
+  console.log(rentalsFiltradas)
 
   if (cerro) {
     rentalsFiltradas = rentalsFiltradas.filter(
@@ -168,7 +169,7 @@ export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama)
 
     // No hay grupos por edad en rentals, se toma 1 paquete x día
     let total = 0;
-    const paquetes = [];
+    const paquete = [];
 
     diasSeleccionados.forEach((fecha) => {
       const paqueteDelDia = rentalsFiltradas.find((rental) => {
@@ -178,14 +179,14 @@ export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama)
       });
       if (paqueteDelDia) {
         total += Number(paqueteDelDia.precio) / dias;
-        paquetes.push(paqueteDelDia);
+        paquete.push(paqueteDelDia);
       }
     });
 
     setEquipos([
       {
         precio: total,
-        paquetes: paquetes,
+        paquete: paquete[0],
       },
     ]);
   } else {
