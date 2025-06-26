@@ -228,7 +228,7 @@ export const handleClases = (cerro, clases, setClases, startDate, dias, tipo) =>
     );
   }
 
-  if (cerro === "Castor" || cerro === "Chapelco") {
+  if (cerro === "Chapelco") {
     clasesFiltradas = clasesFiltradas.filter((clase) => {
       const inicio = parseDate(clase.fechaInicio);
       const fin = parseDate(clase.fechaFinal);
