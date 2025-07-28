@@ -91,9 +91,10 @@ export const generatePDF = (
 
       // Texto a la derecha (alineado desde la derecha hacia la izquierda)
       const textWidth = doc.getTextWidth(rightText);
+      console.log(textWidth);
       doc.setFont("helvetica", "bold");
       if (textLines.length > 1) {
-        doc.text(rightText, pageWidth - margin - textWidth, y - 11.5);
+        doc.text(rightText, pageWidth - margin - textWidth, y - 12);
         if (discount) {
           doc.setFontSize(8);
           doc.setFont("helvetica", "italic");
@@ -108,7 +109,7 @@ export const generatePDF = (
           doc.setFontSize(8);
           doc.setFont("helvetica", "italic");
           doc.setTextColor(150); // Gris
-          doc.text(discount, pageWidth - margin - textWidth, y);
+          doc.text(discount, pageWidth - margin - textWidth === 0 ? 16 : textWidth, y);
           doc.setTextColor(0); // Volver a negro
         }
       }
@@ -172,7 +173,10 @@ export const generatePDF = (
           10,
           currentY,
           12,
-          paquete.discount > 0
+
+          ocultarPrecios
+            ? ""
+            : paquete.discount > 0
             ? `${formatNumberPercentage(paquete.discount, paquete.price)}% OFF ya aplicado`
             : null
         );
@@ -222,7 +226,7 @@ export const generatePDF = (
     currentY += 5;
 
     // --- Agregar Observaciones al fondo de la página ---
-    
+
     const pageHeight = doc.internal.pageSize.getHeight();
     const rightMargin = 10;
     const observaciones = paquetesSeleccionados.filter((p) => p.seccion === "observacion");
