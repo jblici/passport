@@ -21,7 +21,7 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
   const [isItemOpen, setIsItemOpen] = useState(false);
   const [isObservacionOpen, setIsObservacionOpen] = useState(false);
   const [name, setName] = useState("");
-  const [price, setPrice] = useState("$");
+  const [price, setPrice] = useState("");
   const [error, setError] = useState(false);
   const [count, setCount] = useState("");
   const [observacion, setObservacion] = useState("");
@@ -163,12 +163,26 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
                           Precio unitario
                         </label>
                         <input
-                          type="number"
+                          type="text"
                           min={0}
-                          value={formatNumberWithDots(price)}
+                          value={price}
                           onChange={(e) => {
-                            setPrice(Number(e.target.value));
+                            const raw = e.target.value.replace(/\./g, ""); // quitar puntos si vienen
+                            const parsed = Number(raw);
+                            setPrice(parsed);
                             if (error) setError(false);
+                          }}
+                          onBlur={(e) => {
+                            // Formatear con puntos al salir del input si querés
+                            const raw = e.target.value.replace(/\./g, "");
+                            const parsed = Number(raw);
+                            if (!isNaN(parsed)) {
+                              e.target.value = formatNumberWithDots(parsed);
+                            }
+                          }}
+                          onFocus={(e) => {
+                            // Mostrar el valor sin puntos al enfocar
+                            e.target.value = price.toString();
                           }}
                           className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder="Precio"
@@ -192,17 +206,7 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
 
                       <div className="flex justify-end gap-2 pt-4">
                         <button
-                          onClick={() => {
-                            const nuevos = [...paquetesSeleccionados];
-                            nuevos[editingIndex] = {
-                              ...nuevos[editingIndex],
-                              name: editItem.name,
-                              count: editItem.count,
-                              price: editItem.price * editItem.count,
-                            };
-                            setPaquetesSeleccionados(nuevos);
-                            setEditingIndex(null);
-                          }}
+                          onClick={handleItem}
                           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
                         >
                           Guardar

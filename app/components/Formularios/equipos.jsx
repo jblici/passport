@@ -10,6 +10,7 @@ import { GoAlert } from "react-icons/go";
 import { handleEquipos } from "@/app/lib/utils/secciones";
 import { scrollToSection } from "@/app/lib/utils/extras";
 import { cerros } from "../ui/cerros";
+import Spinner from "../ui/Spinner";
 
 const cerrosInfo = {
   Castor: {
@@ -48,6 +49,7 @@ export default function Equipos({
   const [disabled, setDisabled] = useState(true);
   const currentYear = new Date().getFullYear();
   const [cerrosGamas, setCerrosGamas] = useState({});
+  const [loading, setLoading] = useState(true);
 
   // Define los límites de fecha
   const minDate = new Date(currentYear, 5, 1); // Junio (mes 5 porque es basado en 0)
@@ -74,6 +76,7 @@ export default function Equipos({
 
   useEffect(() => {
     if (equipos) {
+      setLoading(true)
       const gamasPorCerro = {};
 
       equipos.forEach((equipo) => {
@@ -83,7 +86,9 @@ export default function Equipos({
           gamasPorCerro[cerro] = new Set();
         }
 
-        gamasPorCerro[cerro].add(gama);
+        if (gama && gama.trim() !== "") {
+          gamasPorCerro[cerro].add(gama);
+        }
       });
 
       const resultado = {};
@@ -91,9 +96,14 @@ export default function Equipos({
         resultado[cerro] = Array.from(gamasPorCerro[cerro]);
       });
 
+      console.log(resultado);
+
       setCerrosGamas(resultado);
+      setLoading(false);
     }
   }, [equipos]);
+
+  if (loading) return <Spinner />;
 
   return (
     <div className="h-fit w-full">

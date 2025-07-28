@@ -150,10 +150,12 @@ export default function Pases({
         resultadoTipos[cerro] = Array.from(tiposPorCerro[cerro]);
       });
 
+      console.log(resultadoTipos[cerro]);
+
       setCerrosDias(resultadoDias);
       setCerrosTipos(resultadoTipos);
     }
-  }, [pases]);
+  }, [pases, cerro]);
 
   return (
     <div className="h-fit w-full">

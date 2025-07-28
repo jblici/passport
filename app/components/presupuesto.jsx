@@ -119,6 +119,8 @@ const ResumenPresupuesto = ({
           discount={discount}
           handleDiscount={handleDiscount}
           agregarPaquete={agregarPaquete}
+          paquetesSeleccionados={paquetesSeleccionados}
+          setPaquetesSeleccionados={setPaquetesSeleccionados}
         />
         {familyPlan && cerro === "Las Leñas" && (
           <div className="flex items-center gap-2">
