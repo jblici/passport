@@ -5,8 +5,6 @@ import { formatNumberWithDots } from "@/app/lib/utils/extras";
 
 const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
   if (!resultados) return null;
-  console.log(resultados);
-  console.log(reglas)
   if (Object.keys(resultados).length === 0) {
     return (
       <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
@@ -83,9 +81,9 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                                 ).traduccion,
                                 name: `${r.paquetesUtilizados.hotel} - ${
                                   r.paquetesUtilizados.habitacion
-                                } - ${r.noches} noches - ${r.mayores > 0 ? "Adultos: " + r.mayores : ""} ${
-                                  r.menores > 0 ? " Menores: " + r.menores : ""
-                                }`,
+                                } - ${r.noches} noches - ${
+                                  r.mayores > 0 ? "Adultos: " + r.mayores : ""
+                                } ${r.menores > 0 ? " Menores: " + r.menores : ""}`,
                                 discount: 0,
                                 noches: r.noches.toString(),
                                 price: r.precioTotal,
@@ -139,10 +137,11 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                                   (result) =>
                                     result.hotel === r.paquetesUtilizados.paquetes[0].hotel
                                 ).traduccion,
-                                name: `${r.paquetesUtilizados.paquetes[0].hotel} - ${r.paquetesUtilizados.paquetes[0].habitacion
-                                } - ${r.noches} noches - ${r.mayores > 0 ? "Adultos: " + r.mayores : ""} ${
-                                  r.menores > 0 ? " Menores: " + r.menores : ""
-                                }`,
+                                name: `${r.paquetesUtilizados.paquetes[0].hotel} - ${
+                                  r.paquetesUtilizados.paquetes[0].habitacion
+                                } - ${r.noches} noches - ${
+                                  r.mayores > 0 ? "Adultos: " + r.mayores : ""
+                                } ${r.menores > 0 ? " Menores: " + r.menores : ""}`,
                                 discount: 0,
                                 noches: r.noches.toString(),
                                 price: r.precioTotal,

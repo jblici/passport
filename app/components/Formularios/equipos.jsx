@@ -19,24 +19,6 @@ const cerrosInfo = {
         <span>Adulto: 12 a 69 años.</span>
       </>
     ),
-    gama: (
-      <SelectContent>
-        <SelectItem value="JUNIOR">Junior</SelectItem>
-        <SelectItem value="ADULTO STANDARD">Adulto Standard</SelectItem>
-        <SelectItem value="ADULTO GAMA ALTA">Adulto Gama Alta</SelectItem>
-        <SelectItem value="ADULTO PREMIUM">Adulto Premium</SelectItem>
-        <SelectItem value="ADULTO SKI GAMA ALTA">Adulto Ski Gama Alta</SelectItem>
-        <SelectItem value="ADULTO SKI PREMIUM">Adulto Ski Premium</SelectItem>
-      </SelectContent>
-    ),
-  },
-  "Las Leñas": {
-    gama: (
-      <SelectContent>
-        <SelectItem value="SPORT">Sport</SelectItem>
-        <SelectItem value="ALTA GAMA">Alta Gama</SelectItem>
-      </SelectContent>
-    ),
   },
   Catedral: {
     mensaje: (
@@ -48,16 +30,6 @@ const cerrosInfo = {
         <span>Los equipos de alto nivel son ideales para intermedios y avanzados.</span>
         <span>En ningún caso incluyen seguro de rotura, robo o extravío.</span>
       </>
-    ),
-    gama: (
-      <SelectContent>
-        <SelectItem value="DEPORTIVO MAYOR SKI">Deportivo Mayor Ski</SelectItem>
-        <SelectItem value="DEPORTIVO MAYOR SNOWBOARD">Deportivo Mayor Snowboard</SelectItem>
-        <SelectItem value="DEPORTIVO MENOR SKI">Deportivo Menor Ski</SelectItem>
-        <SelectItem value="DEPORTIVO MENOR SNOWBOARD">Deportivo Menor Snowboard</SelectItem>
-        <SelectItem value="ALTO NIVEL MAYOR SKI">Alto Nivel Mayor Ski</SelectItem>
-        <SelectItem value="ALTO NIVEL MAYOR SNOWBOARD">Alto Nivel Mayor Snowboard</SelectItem>
-      </SelectContent>
     ),
   },
 };
@@ -75,6 +47,7 @@ export default function Equipos({
   const [gama, setGama] = useState(null);
   const [disabled, setDisabled] = useState(true);
   const currentYear = new Date().getFullYear();
+  const [cerrosGamas, setCerrosGamas] = useState({});
 
   // Define los límites de fecha
   const minDate = new Date(currentYear, 5, 1); // Junio (mes 5 porque es basado en 0)
@@ -98,6 +71,29 @@ export default function Equipos({
   const handleCerro = (value) => {
     setCerro(value);
   };
+
+  useEffect(() => {
+    if (equipos) {
+      const gamasPorCerro = {};
+
+      equipos.forEach((equipo) => {
+        const { cerro, gama } = equipo;
+
+        if (!gamasPorCerro[cerro]) {
+          gamasPorCerro[cerro] = new Set();
+        }
+
+        gamasPorCerro[cerro].add(gama);
+      });
+
+      const resultado = {};
+      Object.keys(gamasPorCerro).forEach((cerro) => {
+        resultado[cerro] = Array.from(gamasPorCerro[cerro]);
+      });
+
+      setCerrosGamas(resultado);
+    }
+  }, [equipos]);
 
   return (
     <div className="h-fit w-full">
@@ -155,14 +151,20 @@ export default function Equipos({
                 placeholderText="Seleccionar fecha"
               />
             </div>
-            {cerrosInfo[cerro] && (
+            {cerrosGamas[cerro] && (
               <div className="flex flex-col space-y-2 w-full sm:w-1/2 justify-between">
                 <Label htmlFor="gama">Gama:</Label>
                 <Select id="gama" onValueChange={handleGama}>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar Gama" />
                   </SelectTrigger>
-                  {cerrosInfo[cerro]?.gama && cerrosInfo[cerro]?.gama}
+                  <SelectContent>
+                    {cerrosGamas[cerro]?.map((g) => (
+                      <SelectItem key={g} value={g}>
+                        {g}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
               </div>
             )}

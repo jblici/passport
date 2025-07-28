@@ -22,18 +22,6 @@ const cerrosInfo = {
         <span>Principiantes: Válido para pistas Eros 1 y 2 y Venus 1 y 2</span>
       </>
     ),
-    pases: (
-      <SelectContent>
-        <SelectItem value="1">1</SelectItem>
-        <SelectItem value="2">2</SelectItem>
-        <SelectItem value="3">3</SelectItem>
-        <SelectItem value="4">4</SelectItem>
-        <SelectItem value="5">5</SelectItem>
-        <SelectItem value="6">6</SelectItem>
-        <SelectItem value="8">8</SelectItem>
-        <SelectItem value="15">15</SelectItem>
-      </SelectContent>
-    ),
   },
   Castor: {
     mensaje: (
@@ -43,21 +31,6 @@ const cerrosInfo = {
         <span>Adulto: 12 a 69 años.</span>
         <span>Senior: + 70 años, pase sin cargo.</span>
       </>
-    ),
-    pases: (
-      <SelectContent>
-        <SelectItem value="1">1</SelectItem>
-        <SelectItem value="2">2</SelectItem>
-        <SelectItem value="3">3</SelectItem>
-        <SelectItem value="4">4</SelectItem>
-        <SelectItem value="5">5</SelectItem>
-        <SelectItem value="6">6</SelectItem>
-        <SelectItem value="7">7</SelectItem>
-        <SelectItem value="8">8</SelectItem>
-        <SelectItem value="9">9</SelectItem>
-        <SelectItem value="10">10</SelectItem>
-        <SelectItem value="15">15</SelectItem>
-      </SelectContent>
     ),
   },
   Catedral: {
@@ -71,23 +44,6 @@ const cerrosInfo = {
         <span>Todos los pases aplican costo retornable por KeyCard.</span>
       </>
     ),
-    pases: (
-      <SelectContent>
-        <SelectItem value="2">2</SelectItem>
-        <SelectItem value="3">3</SelectItem>
-        <SelectItem value="4">4</SelectItem>
-        <SelectItem value="5">5</SelectItem>
-        <SelectItem value="6">6</SelectItem>
-        <SelectItem value="7">7</SelectItem>
-      </SelectContent>
-    ),
-    tipos: (
-      <SelectContent>
-        <SelectItem value="PASS PACK">Pass Pack</SelectItem>
-        <SelectItem value="FLEXI PACK">Flexi Pack</SelectItem>
-        <SelectItem value="EXCLUSIVE PACK">Exclusive Pack</SelectItem>
-      </SelectContent>
-    ),
   },
   Chapelco: {
     mensaje: (
@@ -100,32 +56,8 @@ const cerrosInfo = {
         <span>+ 70 años FREE</span>
       </>
     ),
-    pases: (
-      <SelectContent>
-        <SelectItem value="3">3</SelectItem>
-        <SelectItem value="4">4</SelectItem>
-        <SelectItem value="5">5</SelectItem>
-        <SelectItem value="6">6</SelectItem>
-        <SelectItem value="7">7</SelectItem>
-      </SelectContent>
-    ),
-    tipos: (
-      <SelectContent>
-        <SelectItem value="NORMAL">Normal</SelectItem>
-        <SelectItem value="FLEXIBLE">Flexible</SelectItem>
-      </SelectContent>
-    ),
   },
   Caviahue: {
-    pases: (
-      <SelectContent>
-        <SelectItem value="3">3</SelectItem>
-        <SelectItem value="4">4</SelectItem>
-        <SelectItem value="5">5</SelectItem>
-        <SelectItem value="6">6</SelectItem>
-        <SelectItem value="7">7</SelectItem>
-      </SelectContent>
-    ),
     mensaje: (
       <>
         <span>Niños: 0 a 5 años FREE</span>
@@ -156,6 +88,8 @@ export default function Pases({
   const [tipo, setTipo] = useState(null);
   const [disabled, setDisabled] = useState(true);
   const currentYear = new Date().getFullYear();
+  const [cerrosDias, setCerrosDias] = useState({});
+  const [cerrosTipos, setCerrosTipos] = useState({});
 
   // Define los límites de fecha
   const minDate = new Date(currentYear, 5, 1); // Junio (mes 5 porque es basado en 0)
@@ -186,6 +120,41 @@ export default function Pases({
     }
   }, [cerro, dias, startDate, pases]);
 
+  useEffect(() => {
+    if (pases) {
+      const diasPorCerro = {};
+      const tiposPorCerro = {};
+
+      pases.forEach((pase) => {
+        const { cerro, dias, tipo } = pase;
+
+        if (dias) {
+          if (!diasPorCerro[cerro]) diasPorCerro[cerro] = new Set();
+          diasPorCerro[cerro].add(dias);
+        }
+
+        if (tipo) {
+          if (!tiposPorCerro[cerro]) tiposPorCerro[cerro] = new Set();
+          tiposPorCerro[cerro].add(tipo);
+        }
+      });
+
+      const resultadoDias = {};
+      const resultadoTipos = {};
+
+      Object.keys(diasPorCerro).forEach((cerro) => {
+        resultadoDias[cerro] = Array.from(diasPorCerro[cerro]).sort((a, b) => a - b);
+      });
+
+      Object.keys(tiposPorCerro).forEach((cerro) => {
+        resultadoTipos[cerro] = Array.from(tiposPorCerro[cerro]);
+      });
+
+      setCerrosDias(resultadoDias);
+      setCerrosTipos(resultadoTipos);
+    }
+  }, [pases]);
+
   return (
     <div className="h-fit w-full">
       <h1 className="flex justify-center p-2 text-2xl font-bold">{category}</h1>
@@ -207,7 +176,13 @@ export default function Pases({
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar Dias" />
                 </SelectTrigger>
-                {cerrosInfo[cerro]?.pases && cerrosInfo[cerro].pases}
+                <SelectContent>
+                  {cerrosDias[cerro]?.map((d) => (
+                    <SelectItem key={d} value={String(d)}>
+                      {d}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </div>
           </div>
@@ -239,7 +214,13 @@ export default function Pases({
                 <Select id="tipo" onValueChange={handleTipo}>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar Pase" />
-                    {cerrosInfo[cerro]?.tipos && cerrosInfo[cerro].tipos}
+                    <SelectContent>
+                      {cerrosTipos[cerro]?.map((t) => (
+                        <SelectItem key={t} value={t}>
+                          {t}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </SelectTrigger>
                 </Select>
               </div>

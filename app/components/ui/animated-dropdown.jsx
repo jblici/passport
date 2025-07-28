@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "./button";
 import { ChevronRight, ChevronDown } from "lucide-react";
+import { formatNumberWithDots } from "@/app/lib/utils/extras";
 
 const dropdownVariants = {
   desktop: {
@@ -18,20 +19,49 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isItemOpen, setIsItemOpen] = useState(false);
+  const [isObservacionOpen, setIsObservacionOpen] = useState(false);
   const [name, setName] = useState("");
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState("$");
   const [error, setError] = useState(false);
+  const [count, setCount] = useState("");
+  const [observacion, setObservacion] = useState("");
 
   const handleItem = () => {
-    if (!name) {
+    if (!name || price <= 0 || count <= 0) {
       setError(true);
       return;
     }
 
-    agregarPaquete({ name, price });
+    agregarPaquete({
+      seccion: `item`,
+      name: `${name} x ${count}`,
+      price: price * count,
+      count,
+    });
+
     setIsItemOpen(false);
     setName("");
     setPrice(0);
+    setCount(1);
+    setError(false);
+  };
+
+  const handleObservation = () => {
+    if (!observacion) {
+      setError(true);
+      return;
+    }
+    console.log("agregue observacion");
+
+    agregarPaquete({
+      seccion: `observacion`,
+      name: observacion,
+      price: 0,
+      count: 0,
+    });
+
+    setIsObservacionOpen(false);
+    setObservacion("");
     setError(false);
   };
 
@@ -47,7 +77,7 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
       <Button
         onClick={toggleDropdown}
         variant="default"
-        className="flex items-center gap-2"
+        className={`flex items-center gap-2 ${isOpen & "bg-blue-500"}`}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
@@ -68,34 +98,35 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
               className="absolute left-full top-0 ml-2 hidden md:flex overflow-hidden whitespace-nowrap"
             >
               <div className="flex space-x-2">
-                <Button
-                  onClick={() => setIsModalOpen(true)}
-                  className="w-auto bg-blue-500 text-white hover:bg-blue-600"
-                >
+                <Button onClick={() => setIsModalOpen(true)} variant="default">
                   Descuento Alojamiento
                 </Button>
                 {isModalOpen && (
-                  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-white p-6 rounded shadow-lg">
-                      <h2 className="text-xl font-bold mb-4">Ingresar % de descuento</h2>
+                  <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white rounded-2xl shadow-2xl p-6 w-[90%] max-w-md animate-fade-in">
+                      <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
+                        Ingresar % de descuento
+                      </h2>
+
                       <input
                         type="number"
                         min={0}
                         value={discount}
                         onChange={(e) => handleDiscount(e)}
                         placeholder="%"
-                        className="w-full p-2 mb-4 border rounded"
+                        className="w-full p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
-                      <div className="flex justify-end">
+
+                      <div className="flex justify-end gap-2 pt-2">
                         <button
                           onClick={() => handleModal()}
-                          className="mr-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
                         >
                           Aceptar
                         </button>
                         <button
                           onClick={() => handleModal()}
-                          className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition"
                         >
                           Cancelar
                         </button>
@@ -104,55 +135,116 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
                   </div>
                 )}
                 <Button variant="default" onClick={() => setIsItemOpen(true)}>
-                  Ingresar Item
+                  Item
                 </Button>
                 {isItemOpen && (
-                  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-white p-6 rounded shadow-lg flex flex-col w-80">
-                      <h2 className="text-xl font-bold mb-4">Ingresar Item</h2>
-                      <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => {
-                          setName(e.target.value);
-                          if (error) setError(false);
-                        }}
-                        placeholder="Nombre del item"
-                        className="w-full p-2 mb-2 border rounded"
-                      />
-                      {/*
-                      <input
-                        type="number"
-                        value={price}
-                        min={0}
-                        onChange={(e) => {
-                          setPrice(Number(e.target.value));
-                          if (error) setError(false);
-                        }}
-                        placeholder="Precio"
-                        className="w-full p-2 mb-2 border rounded"
-                      />
-                      */}
-                      {error && (
-                        <span className="text-red-500 text-sm mb-2">
-                          * Completá ambos campos correctamente
-                        </span>
-                      )}
+                  <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white rounded-2xl shadow-2xl p-6 w-[90%] max-w-md animate-fade-in">
+                      <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
+                        Agregar ítem
+                      </h2>
 
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-600">Nombre</label>
+                        <input
+                          type="text"
+                          value={name}
+                          onChange={(e) => {
+                            setName(e.target.value);
+                            if (error) setError(false);
+                          }}
+                          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Nombre del ítem"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-600">
+                          Precio unitario
+                        </label>
+                        <input
+                          type="number"
+                          min={0}
+                          value={formatNumberWithDots(price)}
+                          onChange={(e) => {
+                            setPrice(Number(e.target.value));
+                            if (error) setError(false);
+                          }}
+                          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Precio"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-600">Cantidad</label>
+                        <input
+                          type="number"
+                          min={1}
+                          value={count}
+                          onChange={(e) => {
+                            setCount(Number(e.target.value));
+                            if (error) setError(false);
+                          }}
+                          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Cantidad"
+                        />
+                      </div>
+
+                      <div className="flex justify-end gap-2 pt-4">
+                        <button
+                          onClick={() => {
+                            const nuevos = [...paquetesSeleccionados];
+                            nuevos[editingIndex] = {
+                              ...nuevos[editingIndex],
+                              name: editItem.name,
+                              count: editItem.count,
+                              price: editItem.price * editItem.count,
+                            };
+                            setPaquetesSeleccionados(nuevos);
+                            setEditingIndex(null);
+                          }}
+                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                        >
+                          Guardar
+                        </button>
+                        <button
+                          onClick={() => setIsItemOpen(false)}
+                          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <Button variant="default" onClick={() => setIsObservacionOpen(true)}>
+                  Observación
+                </Button>
+                {isObservacionOpen && (
+                  <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white rounded-2xl shadow-2xl p-6 w-[90%] max-w-md animate-fade-in">
+                      <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
+                        Agregar Observacion
+                      </h2>
+                      <textarea
+                        value={observacion}
+                        onChange={(e) => setObservacion(e.target.value)}
+                        placeholder="Observación (esto aparecerá en el PDF)"
+                        rows={4}
+                        className="w-full p-2 mb-4 border rounded resize-none"
+                      />
                       <div className="flex justify-end">
                         <button
-                          onClick={handleItem}
+                          onClick={handleObservation}
                           className="mr-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                         >
                           Aceptar
                         </button>
                         <button
                           onClick={() => {
-                            setIsItemOpen(false);
-                            setName("");
-                            setPrice(0);
+                            setIsObservacionOpen(false);
+                            setObservacion("");
                             setError(false);
-                            setIsOpen(false);
                           }}
                           className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
                         >

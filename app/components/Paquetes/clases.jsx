@@ -44,14 +44,27 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {resultados?.map((r, index) =>
+            {resultados?.map((r, index) => {
+              let precioBase = r.precio;
+              let cantidadPersonas = 1;
+
+              if (r.cerro === "Castor" && r.tipo.toLowerCase().includes("privada")) {
+                const partes = r.tipo.split(" - ");
+                if (partes.length > 1) {
+                  const match = partes[1].match(/\d+/); // Busca número en "2 Personas"
+                  if (match) {
+                    cantidadPersonas = parseInt(match[0], 10);
+                  }
+                }
+              }
+              const precioFinal = precioBase * cantidadPersonas;
               r.paquete ? (
                 <TableRow key={index}>
                   <TableCell>{r.paquete.cerro}</TableCell>
                   <TableCell>{r.paquete.tipo}</TableCell>
                   <TableCell>{r.paquete.dias}</TableCell>
                   <TableCell>{r.paquete.edad}</TableCell>
-                  <TableCell>{`$ ${formatNumberWithDots(r.precio)}`}</TableCell>
+                  <TableCell>{`$ ${formatNumberWithDots(precioFinal)}`}</TableCell>
                   <TableCell>
                     <div className="flex">
                       <select
@@ -75,7 +88,7 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
                             noches: r.paquete.dias,
                             count: Number(count),
                             name: `Clase ${r.paquete.tipo} (${r.paquete.edad}) - ${r.paquete.dias} días`,
-                            price: r.precio * count,
+                            price: precioFinal * count,
                           });
                         }}
                       >
@@ -90,7 +103,7 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
                   <TableCell>{r.tipo}</TableCell>
                   <TableCell>{r.dias}</TableCell>
                   <TableCell>{r.edad}</TableCell>
-                  <TableCell>{`$ ${formatNumberWithDots(r.precio)}`}</TableCell>
+                  <TableCell>{`$ ${formatNumberWithDots(precioFinal)}`}</TableCell>
                   <TableCell>
                     <div className="flex">
                       <select
@@ -114,7 +127,7 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
                             noches: r.dias,
                             count: Number(count),
                             name: `Clase ${r.tipo} (${r.edad}) - ${r.dias} días`,
-                            price: r.precio * count,
+                            price: precioFinal * count,
                           });
                         }}
                       >
@@ -123,8 +136,8 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
                     </div>
                   </TableCell>
                 </TableRow>
-              )
-            )}
+              );
+            })}
           </TableBody>
         </Table>
       </div>

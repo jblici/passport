@@ -14,7 +14,8 @@ export const generatePDF = (
   totalDolares,
   busqueda,
   imageData,
-  clientName
+  clientName,
+  ocultarPrecios
 ) => {
   try {
     let totalHeight = 10; // Initial height (top margin)
@@ -123,9 +124,9 @@ export const generatePDF = (
     doc.addImage(img, "png", margin, currentY);
 
     if (clientName) {
-      currentY = addText(`Cliente: ${clientName}`, pageWidth, currentY + 10, 12);
+      currentY = addText(`Cliente: ${clientName}`, pageWidth, currentY + 10, 14, "bold");
     }
-    currentY += 30;
+    currentY += 20;
 
     currentY = addText(
       `Presupuesto Passport Ski ${new Date().getFullYear()}`,
@@ -134,10 +135,10 @@ export const generatePDF = (
       20,
       "bold"
     );
-    currentY += 5;
+    currentY;
 
-    currentY = addText(`Fecha del presupuesto: ${obtenerFechaActual()}`, margin, currentY, 14);
-    currentY += 5;
+    currentY = addRow("Fecha del presupuesto", obtenerFechaActual(), margin, currentY, 12);
+    currentY;
 
     if (busqueda.detalleHabitaciones) {
       currentY = addText(
@@ -161,10 +162,12 @@ export const generatePDF = (
       if (paquete.seccion === "alojamiento") {
         currentY = addRow(
           `• ${paquete.name}`,
-          `$${
-            paquete.discount > 0
-              ? formatNumberWithDots(paquete.price - paquete.discount)
-              : formatNumberWithDots(paquete.price)
+          `${
+            ocultarPrecios
+              ? ""
+              : paquete.discount > 0
+              ? `$${formatNumberWithDots(paquete.price - paquete.discount)}`
+              : `$${formatNumberWithDots(paquete.price)}`
           }`,
           10,
           currentY,
@@ -178,7 +181,7 @@ export const generatePDF = (
       } else if (paquete.seccion === "transporte") {
         currentY = addRow(
           `• ${paquete.name}`,
-          `$${formatNumberWithDots(paquete.price)}`,
+          `${ocultarPrecios ? "" : `$${formatNumberWithDots(paquete.price)}`}`,
           10,
           currentY,
           12
@@ -198,15 +201,16 @@ export const generatePDF = (
         if (!paquete.seccion) {
           currentY = addRow(
             `• ${paquete.name}`,
-            `$${formatNumberWithDots(paquete.price)}`,
+            `${ocultarPrecios ? "" : `$${formatNumberWithDots(paquete.price)}`}`,
             10,
             currentY,
             12
           );
         } else {
+          if (paquete.seccion === "observacion") return;
           currentY = addRow(
             `• ${paquete.name} x ${paquete.count} personas`,
-            `$${formatNumberWithDots(paquete.price)}`,
+            `${ocultarPrecios ? "" : `$${formatNumberWithDots(paquete.price)}`}`,
             10,
             currentY,
             12
@@ -217,9 +221,39 @@ export const generatePDF = (
 
     currentY += 5;
 
-    // --- Agregar Total + Disclaimer al fondo de la página ---
+    // --- Agregar Observaciones al fondo de la página ---
+    
     const pageHeight = doc.internal.pageSize.getHeight();
     const rightMargin = 10;
+    const observaciones = paquetesSeleccionados.filter((p) => p.seccion === "observacion");
+    if (observaciones.length > 0) {
+      doc.setFont("helvetica", "italic");
+      doc.setFontSize(10);
+
+      let obsY = pageHeight - 40; // Espacio vertical antes del total
+
+      console.log(observaciones, "Observaciones?");
+
+      observaciones.forEach((obs) => {
+        const obsLines = doc.splitTextToSize(`Observacion: ${obs.name}`, 120); // Ajuste de ancho
+        obsLines.forEach((line) => {
+          doc.text(line, rightMargin, obsY);
+          obsY += 5;
+        });
+      });
+    }
+    // --- Agregar Total + Disclaimer al fondo de la página ---
+
+    const cantidadPersonas = busqueda?.detalleHabitaciones
+      ? calcularTotalPersonas(busqueda.detalleHabitaciones).total
+      : 1;
+
+    const totalPorPersonaText =
+      totalDolares === 0
+        ? `Por persona: $${formatNumberWithDots(Math.floor(totalPesos / cantidadPersonas))}`
+        : `Por persona: ARS $${formatNumberWithDots(
+            Math.floor(totalPesos / cantidadPersonas)
+          )} | USD $${formatNumberWithDots(Math.floor(totalDolares / cantidadPersonas))}`;
 
     const totalText =
       totalDolares === 0
@@ -231,14 +265,20 @@ export const generatePDF = (
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
     const totalTextWidth = doc.getTextWidth(totalText);
+    const totalPorPersonaTextWidth = doc.getTextWidth(totalPorPersonaText);
     doc.text(
       totalText,
       doc.internal.pageSize.getWidth() - rightMargin - totalTextWidth,
+      pageHeight - 27
+    );
+    doc.text(
+      totalPorPersonaText,
+      doc.internal.pageSize.getWidth() - rightMargin - totalPorPersonaTextWidth,
       pageHeight - 20
     );
 
     doc.setFont("helvetica", "italic");
-    doc.setFontSize(10);
+    doc.setFontSize(8);
     const disclaimer = "El precio está sujeto a variación dependiendo de la fecha de pago.";
     const disclaimerWidth = doc.getTextWidth(disclaimer);
     doc.text(
