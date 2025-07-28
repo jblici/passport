@@ -34,7 +34,7 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
 
     agregarPaquete({
       seccion: `item`,
-      name: `${name} x ${count}`,
+      name: `${name}`,
       price: price * count,
       count,
     });

@@ -149,9 +149,10 @@ const ResumenPresupuesto = ({
               <div key={index} className="flex items-center justify-between py-1">
                 {paquete.seccion === "clases" ||
                 paquete.seccion === "equipos" ||
-                paquete.seccion === "pases" ? (
+                paquete.seccion === "pases" ||
+                paquete.seccion === "item" ? (
                   <span>
-                    {paquete.name} x {paquete.count} personas
+                    {paquete.name} {paquete.count && `x ${paquete.count} personas`}
                   </span>
                 ) : (
                   <div className="flex flex-col w-4/5">
@@ -375,7 +376,6 @@ const ResumenPresupuesto = ({
                 placeholder="Nombre del ítem"
               />
             </div>
-
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-600">Precio unitario</label>
               <input
