@@ -284,12 +284,18 @@ const ResumenPresupuesto = ({
                     />
                     <label
                       htmlFor="ocultarPrecios"
-                      className="flex items-center cursor-pointer text-sm text-gray-700 peer-checked:font-semibold"
+                      className="flex items-center cursor-pointer text-sm text-gray-700"
                     >
-                      <div className="w-5 h-5 mr-2 border border-gray-400 rounded-sm flex items-center justify-center peer-checked:bg-blue-500">
-                        {ocultarPrecios && <span className="text-white text-sm">✓</span>}
+                      <div
+                        className={`w-5 h-5 mr-2 border border-gray-400 rounded-sm flex items-center justify-center ${
+                          ocultarPrecios ? "bg-blue-500" : "bg-white"
+                        }`}
+                      >
+                        {ocultarPrecios && <span className="text-white text-sm font-bold">✓</span>}
                       </div>
-                      Ocultar precios en PDF
+                      <span className={ocultarPrecios ? "font-semibold" : ""}>
+                        Ocultar precios en PDF
+                      </span>
                     </label>
                   </div>
 
