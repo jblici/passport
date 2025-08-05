@@ -58,7 +58,7 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
                 }
               }
               const precioFinal = precioBase * cantidadPersonas;
-              r.paquete ? (
+              return r.paquete ? (
                 <TableRow key={index}>
                   <TableCell>{r.paquete.cerro}</TableCell>
                   <TableCell>{r.paquete.tipo}</TableCell>

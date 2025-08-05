@@ -112,7 +112,9 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
             const paquetes = resultados[clave];
             return (
               <div key={clave} className="p-4 sm:p-6 md:p-8">
-                <h3 className="text-lg font-bold mb-2 capitalize">{clave === "idayvuelta" ? "Ida y Vuelta" : clave}</h3>
+                <h3 className="text-lg font-bold mb-2 capitalize">
+                  {clave === "idayvuelta" ? "Ida y Vuelta" : clave}
+                </h3>
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow>

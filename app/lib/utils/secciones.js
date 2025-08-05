@@ -130,7 +130,7 @@ export const handleFormularios = (
 export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama) => {
   let rentalsFiltradas = rentals;
   const fechaFin = sumarDias(new Date(startDate), dias - 1);
-  console.log(rentalsFiltradas)
+  console.log(rentalsFiltradas);
 
   if (cerro) {
     rentalsFiltradas = rentalsFiltradas.filter(
@@ -372,7 +372,7 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, tipo) => {
         const paseInicio = parseDate(pase.fechaInicio);
         const paseFinal = parseDate(pase.fechaFinal);
 
-        console.log(startDate, fechaFin)
+        console.log(startDate, fechaFin);
 
         if (cerro === "Las Leñas") {
           return paseInicio <= startDate && startDate <= paseFinal;
@@ -380,7 +380,6 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, tipo) => {
           return paseInicio <= startDate && startDate <= paseFinal;
         }
       });
-
     }
     console.log(pasesFiltrados, "final");
     // Bariloche y Las Leñas funcionan como hasta ahora
