@@ -1,5 +1,6 @@
 import { XIcon } from "./svg/svg";
 import { formatNumberWithDots, formatReglas, formatNumberPercentage } from "@/app/lib/utils/extras";
+import { Button } from "./ui/button";
 
 const BudgetItems = ({
   paquetesSeleccionados,
@@ -7,98 +8,118 @@ const BudgetItems = ({
   updateItemEditing,
   updateObservationEditing,
 }) => {
+  const getSectionEmoji = (seccion) => {
+    const emojis = {
+      alojamiento: "🏨",
+      pases: "🚡",
+      equipos: "🎿",
+      clases: "👨‍🏫",
+      transporte: "🚌",
+      item: "📌",
+      observacion: "📝",
+    };
+    return emojis[seccion] || "📦";
+  };
+
   return (
-    <div className="pb-2">
-      <div id="pdf-content">
+    <div className="space-y-3">
+      <div id="pdf-content" className="space-y-3">
         {paquetesSeleccionados.map((paquete, index) => (
-          <div key={index} className="flex items-center justify-between py-1">
-            {paquete.seccion === "clases" ||
-            paquete.seccion === "equipos" ||
-            paquete.seccion === "pases" ||
-            paquete.seccion === "item" ? (
-              <span>
-                {paquete.name} {paquete.count && `x ${paquete.count} personas`}
-              </span>
-            ) : (
-              <div className="flex flex-col w-4/5">
-                <span className={`${paquete.promo ? "text-gray-500" : null}`}>{paquete.name}</span>
+          <div
+            key={index}
+            className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+          >
+            {/* Header with section and name */}
+            <div className="flex items-start justify-between mb-2">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-lg">{getSectionEmoji(paquete.seccion)}</span>
+                  <span className="font-semibold text-gray-800">{paquete.name}</span>
+                  {paquete.count && paquete.seccion !== "alojamiento" && (
+                    <span className="text-sm text-gray-500">x {paquete.count} personas</span>
+                  )}
+                </div>
+
+                {/* Details based on section */}
                 {paquete.seccion === "transporte" && (
-                  <span className="text-gray-500 text-xs w-[80%] text-pretty pl-1">
+                  <p className="text-xs text-gray-600 ml-6">
                     {paquete.clave
                       ? paquete.clave === "ida"
-                        ? paquete.fechaInicio
-                        : paquete.fechaFin
-                      : paquete.fechaInicio + "-" + paquete.fechaFin}
-                  </span>
+                        ? `Ida: ${paquete.fechaInicio}`
+                        : `Vuelta: ${paquete.fechaFin}`
+                      : `${paquete.fechaInicio} a ${paquete.fechaFin}`}
+                  </p>
                 )}
                 {paquete.seccion === "alojamiento" && (
-                  <span
-                    className="text-gray-500 text-xs w-[80%] text-pretty pl-1"
-                    style={{ whiteSpace: "pre-wrap" }}
-                  >
+                  <p className="text-xs text-gray-600 ml-6 whitespace-pre-wrap">
                     {formatReglas(paquete.reglas)}
-                  </span>
+                  </p>
                 )}
               </div>
-            )}
-            <div className="flex flex-col items-center">
-              <div className="flex items-center justify-end gap-3">
+
+              {/* Price and actions */}
+              <div className="flex flex-col items-end gap-2 ml-4">
                 {paquete.seccion !== "observacion" && (
-                  <span className="flex gap-1">
-                    <span>{paquete.moneda === "USD" ? "USD " : "$ "}</span>
+                  <span className="text-lg font-bold text-blue-600">
+                    {paquete.moneda === "USD" ? "USD " : "$ "}
                     {paquete.discount > 0
                       ? formatNumberWithDots(paquete.price - paquete.discount)
                       : formatNumberWithDots(paquete.price)}
                   </span>
                 )}
-                {paquete.seccion === "item" && (
-                  <button
-                    onClick={() => {
-                      updateItemEditing({
-                        isOpen: true,
-                        index,
-                        item: {
-                          name: paquete.name,
-                          price: paquete.price / paquete.count,
-                          count: paquete.count,
-                        },
-                      });
-                    }}
-                    className="text-black hover:text-blue-600 focus:outline-none"
-                    aria-label="Editar paquete"
-                  >
-                    ✏️
-                  </button>
-                )}
-                {paquete.seccion === "observacion" && (
-                  <button
-                    className="text-sm text-blue-600 hover:underline"
-                    onClick={() => {
-                      updateObservationEditing({
-                        isOpen: true,
-                        index,
-                        text: paquete.name,
-                      });
-                    }}
-                  >
-                    ✏️
-                  </button>
-                )}
-                <button
-                  onClick={() => eliminarPaquete(index)}
-                  className="text-black hover:text-red-700 focus:outline-none"
-                  aria-label="Eliminar paquete"
-                >
-                  <XIcon className="h-5 w-5" />
-                </button>
-              </div>
-              {paquete.seccion === "alojamiento" && paquete.discount !== 0 && (
-                <div className="text-gray-500 flex items-center justify-end w-full">
-                  <span className="flex gap-1 items-center text-xs">
-                    {formatNumberPercentage(paquete.discount, paquete.price)}% OFF ya aplicado
+
+                {/* Discount badge */}
+                {paquete.seccion === "alojamiento" && paquete.discount > 0 && (
+                  <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
+                    {formatNumberPercentage(paquete.discount, paquete.price)}% OFF
                   </span>
-                </div>
+                )}
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-100">
+              {paquete.seccion === "item" && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    updateItemEditing({
+                      isOpen: true,
+                      index,
+                      item: {
+                        name: paquete.name,
+                        price: paquete.price / paquete.count,
+                        count: paquete.count,
+                      },
+                    });
+                  }}
+                >
+                  ✏️ Editar
+                </Button>
               )}
+              {paquete.seccion === "observacion" && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    updateObservationEditing({
+                      isOpen: true,
+                      index,
+                      text: paquete.name,
+                    });
+                  }}
+                >
+                  ✏️ Editar
+                </Button>
+              )}
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={() => eliminarPaquete(index)}
+              >
+                🗑️ Eliminar
+              </Button>
             </div>
           </div>
         ))}

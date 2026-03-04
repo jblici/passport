@@ -4,6 +4,7 @@ import useBudgetState from "../lib/hooks/useBudgetState";
 import BudgetControls from "./BudgetControls";
 import BudgetItems from "./BudgetItems";
 import BudgetSummary from "./BudgetSummary";
+import { Button } from "./ui/button";
 import { useCotizador } from "@/app/context/CotizadorContext";
 
 const ResumenPresupuesto = () => {
@@ -23,6 +24,11 @@ const ResumenPresupuesto = () => {
     handleToggle,
     handleDiscount,
   } = useBudgetState(originales, paquetesSeleccionados, setPaquetesSeleccionados);
+
+  const eliminarPaquete = (index) => {
+    const nuevos = paquetesSeleccionados.filter((_, i) => i !== index);
+    setPaquetesSeleccionados(nuevos);
+  };
 
   return (
     <div className="bg-card rounded-lg shadow-lg h-fit mt-4">
@@ -100,7 +106,8 @@ const ResumenPresupuesto = () => {
             </div>
 
             <div className="flex justify-end gap-2">
-              <button
+              <Button
+                variant="primary"
                 onClick={() =>
                   generatePDF(
                     paquetesSeleccionados,
@@ -112,16 +119,15 @@ const ResumenPresupuesto = () => {
                     budget.shouldHidePrices,
                   )
                 }
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
               >
                 Aceptar
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="secondary"
                 onClick={() => updateBudget({ isModalOpen: false })}
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition"
               >
                 Cancelar
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -139,8 +145,9 @@ const ResumenPresupuesto = () => {
               rows={4}
               className="w-full p-2 mb-4 border rounded resize-none"
             />
-            <div className="flex justify-end">
-              <button
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="primary"
                 onClick={() => {
                   const nuevos = [...paquetesSeleccionados];
                   nuevos[observationEditing.index] = {
@@ -150,16 +157,15 @@ const ResumenPresupuesto = () => {
                   setPaquetesSeleccionados(nuevos);
                   updateObservationEditing({ isOpen: false, index: null, text: "" });
                 }}
-                className="mr-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
                 Guardar
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="secondary"
                 onClick={() => updateObservationEditing({ isOpen: false, index: null, text: "" })}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
               >
                 Cancelar
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -214,7 +220,8 @@ const ResumenPresupuesto = () => {
             </div>
 
             <div className="flex justify-end gap-2 pt-4">
-              <button
+              <Button
+                variant="primary"
                 onClick={() => {
                   const nuevos = [...paquetesSeleccionados];
                   nuevos[itemEditing.index] = {
@@ -230,11 +237,11 @@ const ResumenPresupuesto = () => {
                     item: { name: "", price: 0, count: 1 },
                   });
                 }}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
               >
                 Guardar
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="secondary"
                 onClick={() =>
                   updateItemEditing({
                     isOpen: false,
@@ -242,10 +249,9 @@ const ResumenPresupuesto = () => {
                     item: { name: "", price: 0, count: 1 },
                   })
                 }
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition"
               >
                 Cancelar
-              </button>
+              </Button>
             </div>
           </div>
         </div>

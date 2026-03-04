@@ -16,7 +16,7 @@ const useBudgetState = (originales, paquetesSeleccionados, setPaquetesSelecciona
   const [familyPlan, setFamilyPlan] = useState({
     isActive: false,
     isVerified: false,
-    isChecked: null,
+    isChecked: false,
     shouldVerify: true,
   });
 
@@ -75,7 +75,9 @@ const useBudgetState = (originales, paquetesSeleccionados, setPaquetesSelecciona
         (value) => setFamilyPlan((prev) => ({ ...prev, isChecked: value })),
       );
     }
+  }, [familyPlan.shouldVerify, paquetesSeleccionados]);
 
+  useEffect(() => {
     if (familyPlan.isVerified && familyPlan.isActive) {
       const nuevosPaquetes = JSON.parse(JSON.stringify(originales));
       setPaquetesSeleccionados(nuevosPaquetes);
@@ -85,7 +87,7 @@ const useBudgetState = (originales, paquetesSeleccionados, setPaquetesSelecciona
         shouldVerify: false,
       }));
     }
-  }, [paquetesSeleccionados, familyPlan, setPaquetesSeleccionados, originales]);
+  }, [familyPlan.isVerified, familyPlan.isActive, originales, setPaquetesSeleccionados]);
 
   useEffect(() => {
     const { totalPesos, totalDolares } = paquetesSeleccionados.reduce(

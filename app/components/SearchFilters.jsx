@@ -1,6 +1,13 @@
-import { Button } from "@/app/components/ui/button";
 import { handleFormularios } from "@/app/lib/utils/secciones";
 import { useCotizador } from "@/app/context/CotizadorContext";
+
+const CATEGORIES = [
+  { name: "Alojamientos", icon: "🏨" },
+  { name: "Medios de Elevación", icon: "🚡" },
+  { name: "Equipos", icon: "🎿" },
+  { name: "Clases", icon: "👨‍🏫" },
+  { name: "Transporte", icon: "🚌" },
+];
 
 const SearchFilters = ({ paquetes, rentals, clases, pases, traslados }) => {
   const {
@@ -17,18 +24,28 @@ const SearchFilters = ({ paquetes, rentals, clases, pases, traslados }) => {
   } = useCotizador();
 
   const { category, cerro, busqueda, startDate } = searchState;
+
   return (
     <div className="bg-card rounded-lg shadow-lg h-fit w-full">
-      <div className="flex justify-center px-4 pt-4 sm:px-6 md:px-8">
-        <div className="space-y-2">
-          {["Alojamientos", "Medios de Elevación", "Equipos", "Clases", "Transporte"].map((cat) => (
-            <Button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className={`mx-2 ${category === cat ? "bg-blue-500" : "bg-black"}`}
+      <div className="flex justify-center px-4 pt-6 sm:px-6 md:px-8 pb-4">
+        <div className="flex flex-wrap gap-3 justify-center">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat.name}
+              onClick={() => setCategory(cat.name)}
+              className={`
+                px-4 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 ease-in-out
+                flex items-center gap-2 whitespace-nowrap
+                ${
+                  category === cat.name
+                    ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg scale-105"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-md"
+                }
+              `}
             >
-              {cat}
-            </Button>
+              <span className="text-base">{cat.icon}</span>
+              {cat.name}
+            </button>
           ))}
         </div>
       </div>

@@ -1,19 +1,20 @@
 import { useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { TableCell, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
 import { formatNumberWithDots } from "@/app/lib/utils/extras";
+import DataTable from "../ui/DataTable";
+import EmptyState from "../EmptyState";
 
 const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
 
-  if (!resultados) return null;
-  if (Object.keys(resultados).length === 0) {
+  if (!resultados || resultados.length === 0) {
     return (
-      <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
-        <div className="p-4 sm:p-6 md:p-8 border-b">
-          <h2 className="text-xl font-bold mb-2">No hay Equipos disponibles...</h2>
-        </div>
-      </div>
+      <EmptyState
+        title="No hay Equipos disponibles"
+        description="No se encontraron rentals para tu búsqueda. Intenta con otros filtros."
+        icon="🎿"
+      />
     );
   }
 
@@ -24,114 +25,64 @@ const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
     }));
   };
 
+  const handleAddEquipo = (equipo, index) => {
+    const eData = equipo.paquete || equipo;
+    const count = selectedCounts[index] || 1;
+
+    agregarPaquete({
+      seccion: "equipos",
+      noches: eData.dias,
+      count: Number(count),
+      name: `${eData.articulo} - ${eData.edad} - ${eData.gama} - ${eData.dias} días`,
+      price: equipo.precio * count,
+    });
+  };
+
+  const renderEquipoRow = (equipo, index) => {
+    const eData = equipo.paquete || equipo;
+
+    return (
+      <TableRow key={index}>
+        <TableCell>{eData.cerro}</TableCell>
+        <TableCell>{eData.gama.toLowerCase()}</TableCell>
+        <TableCell>{eData.articulo.toLowerCase()}</TableCell>
+        <TableCell>{eData.edad.toLowerCase()}</TableCell>
+        <TableCell>{eData.dias}</TableCell>
+        <TableCell>$ {formatNumberWithDots(equipo.precio)}</TableCell>
+        <TableCell>
+          <div className="flex gap-2">
+            <select
+              value={selectedCounts[index] || 1}
+              onChange={(e) => handleCountChange(index, e.target.value)}
+              className="px-2 py-1 border rounded"
+            >
+              {[...Array(5).keys()].map((num) => (
+                <option key={num + 1} value={num + 1}>
+                  {num + 1}
+                </option>
+              ))}
+            </select>
+            <Button
+              className="bg-blue-500 text-white hover:bg-blue-600"
+              onClick={() => handleAddEquipo(equipo, index)}
+            >
+              Agregar
+            </Button>
+          </div>
+        </TableCell>
+      </TableRow>
+    );
+  };
+
+  const headers = ["Cerro", "Gama", "Artículo", "Edad", "Días", "Precio", "Acción"];
+
   return (
-    <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
-      <div className="p-4 sm:p-6 md:p-8 border-b">
-        <h2 className="text-xl font-bold mb-2">Rentals</h2>
-      </div>
-      <div className="p-4 sm:p-6 md:p-8">
-        <Table className="w-full">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Cerro</TableHead>
-              <TableHead>Gama</TableHead>
-              <TableHead>Articulo</TableHead>
-              <TableHead>Edad</TableHead>
-              <TableHead>Dias</TableHead>
-              <TableHead>Precio</TableHead>
-              <TableHead>Agregar</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {resultados?.map((r, index) =>
-              r.paquete ? (
-                <TableRow key={index}>
-                  <TableCell>{r.paquete.cerro}</TableCell>
-                  <TableCell>{r.paquete.gama.toLowerCase()}</TableCell>
-                  <TableCell className="text-sm">{r.paquete.articulo.toLowerCase()}</TableCell>
-                  <TableCell>{r.paquete.edad.toLowerCase()}</TableCell>
-                  <TableCell>{r.paquete.dias}</TableCell>
-                  <TableCell>{`$ ${formatNumberWithDots(r.precio)}`}</TableCell>
-                  <TableCell>
-                    <div className="flex">
-                      <select
-                        value={selectedCounts[index] || 1} // Valor por defecto
-                        onChange={(e) => handleCountChange(index, e.target.value)}
-                        className="mr-2"
-                      >
-                        {[...Array(5).keys()].map((num) => (
-                          <option key={num + 1} value={num + 1}>
-                            {num + 1}
-                          </option>
-                        ))}
-                      </select>
-                      <Button
-                        variant="outline"
-                        className="w-full bg-blue-500 text-white hover:bg-blue-600"
-                        onClick={() => {
-                          const count = selectedCounts[index] || 1; // Usar el valor seleccionado o 2 por defecto
-
-                          agregarPaquete({
-                            seccion: "equipos",
-                            noches: r.paquete.dias,
-                            count: Number(count),
-                            name: `${r.paquete.articulo} - ${r.paquete.edad} - ${r.paquete.gama} - ${r.paquete.dias} días`,
-                            price: r.precio * count,
-                          });
-                        }}
-                      >
-                        Agregar
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                <TableRow key={index}>
-                  <TableCell>{r.cerro}</TableCell>
-                  <TableCell>{r.gama.toLowerCase()}</TableCell>
-                  <TableCell className="text-sm">{r.articulo.toLowerCase()}</TableCell>
-                  <TableCell>{r.edad.toLowerCase()}</TableCell>
-                  <TableCell>{r.dias}</TableCell>
-                  <TableCell>{`$ ${formatNumberWithDots(r.precio)}`}</TableCell>
-                  <TableCell>
-                    <div className="flex">
-                      <select
-                        value={selectedCounts[index] || 1} // Valor por defecto
-                        onChange={(e) => handleCountChange(index, e.target.value)}
-                        className="mr-2"
-                      >
-                        {[...Array(5).keys()].map((num) => (
-                          <option key={num + 1} value={num + 1}>
-                            {num + 1}
-                          </option>
-                        ))}
-                      </select>
-                      <Button
-                        variant="outline"
-                        className="w-full bg-blue-500 text-white hover:bg-blue-600"
-                        onClick={() => {
-                          const count = selectedCounts[index] || 1; // Usar el valor seleccionado o 2 por defecto
-
-                          agregarPaquete({
-                            seccion: "equipos",
-                            noches: r.dias,
-                            count: Number(count),
-                            name: `${r.articulo} - ${r.edad} - ${r.gama} - ${r.dias} días`,
-                            price: r.precio * count,
-                          });
-                        }}
-                      >
-                        Agregar
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ),
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </div>
+    <DataTable
+      headers={headers}
+      rows={resultados}
+      renderRow={renderEquipoRow}
+      title="🎿 Alquiler de Equipos"
+    />
   );
 };
 

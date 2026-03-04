@@ -1,19 +1,20 @@
 import { useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { TableCell, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
 import { formatNumberWithDots } from "@/app/lib/utils/extras";
+import DataTable from "../ui/DataTable";
+import EmptyState from "../EmptyState";
 
 const PaquetesPases = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
 
-  if (!resultados) return null;
-  if (Object.keys(resultados).length === 0) {
+  if (!resultados || resultados.length === 0) {
     return (
-      <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
-        <div className="p-4 sm:p-6 md:p-8 border-b">
-          <h2 className="text-xl font-bold mb-2">No hay Pases disponibles...</h2>
-        </div>
-      </div>
+      <EmptyState
+        title="No hay Medios de Elevación disponibles"
+        description="No se encontraron opciones para tu búsqueda. Intenta con otros filtros."
+        icon="🚡"
+      />
     );
   }
 
@@ -24,114 +25,64 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
     }));
   };
 
+  const handleAddPass = (pass, index) => {
+    const pData = pass.paquete || pass;
+    const count = selectedCounts[index] || 1;
+
+    agregarPaquete({
+      seccion: "pases",
+      noches: pData.dias,
+      count: Number(count),
+      name: `Medios de Elevación: ${pData.tipo} - ${pData.edad} - ${pData.dias} días`,
+      price: pass.precio * count,
+    });
+  };
+
+  const renderPassRow = (pass, index) => {
+    const pData = pass.paquete || pass;
+
+    return (
+      <TableRow key={`pase-${index}`}>
+        <TableCell>{pData.cerro}</TableCell>
+        <TableCell>{pData.dias}</TableCell>
+        <TableCell>{pData.edad}</TableCell>
+        <TableCell>{pData.tipo}</TableCell>
+        <TableCell>{pData.pack}</TableCell>
+        <TableCell>$ {formatNumberWithDots(pass.precio)}</TableCell>
+        <TableCell>
+          <div className="flex gap-2">
+            <select
+              value={selectedCounts[index] || 1}
+              onChange={(e) => handleCountChange(index, e.target.value)}
+              className="px-2 py-1 border rounded"
+            >
+              {[...Array(5).keys()].map((num) => (
+                <option key={num + 1} value={num + 1}>
+                  {num + 1}
+                </option>
+              ))}
+            </select>
+            <Button
+              className="bg-blue-500 text-white hover:bg-blue-600"
+              onClick={() => handleAddPass(pass, index)}
+            >
+              Agregar
+            </Button>
+          </div>
+        </TableCell>
+      </TableRow>
+    );
+  };
+
+  const headers = ["Cerro", "Días", "Edad", "Tipo", "Pack", "Precio", "Acción"];
+
   return (
-    <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
-      <div className="p-4 sm:p-6 md:p-8 border-b">
-        <h2 className="text-xl font-bold mb-2">Medios de Elevación:</h2>
-      </div>
-      <div className="p-4 sm:p-6 md:p-8">
-        <Table className="w-full">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Cerro</TableHead>
-              <TableHead>Días</TableHead>
-              <TableHead>Edad</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead>Pack</TableHead>
-              <TableHead>Precio</TableHead>
-              <TableHead>Agregar</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {resultados?.map((r, index) =>
-              r.paquete ? (
-                <TableRow key={`pase-${index}`}>
-                  <TableCell>{r.paquete.cerro}</TableCell>
-                  <TableCell>{r.paquete.dias}</TableCell>
-                  <TableCell>{r.paquete.edad}</TableCell>
-                  <TableCell>{r.paquete.tipo}</TableCell>
-                  <TableCell>{r.paquete.pack}</TableCell>
-                  <TableCell>{`$ ${formatNumberWithDots(r.precio)}`}</TableCell>
-                  <TableCell>
-                    <div className="flex">
-                      <select
-                        value={selectedCounts[index] || 1} // Valor por defecto
-                        onChange={(e) => handleCountChange(index, e.target.value)}
-                        className="mr-2"
-                      >
-                        {[...Array(5).keys()].map((num) => (
-                          <option key={num + 1} value={num + 1}>
-                            {num + 1}
-                          </option>
-                        ))}
-                      </select>
-                      <Button
-                        variant="outline"
-                        className="w-full bg-blue-500 text-white hover:bg-blue-600"
-                        onClick={() => {
-                          const count = selectedCounts[index] || 1; // Usar el valor seleccionado o 2 por defecto
-
-                          agregarPaquete({
-                            seccion: "pases",
-                            noches: r.paquete.dias,
-                            count: Number(count),
-                            name: `Medios de Elevación: ${r.paquete.tipo} - ${r.paquete.edad} - ${r.paquete.dias} días`,
-                            price: r.precio * count,
-                          });
-                        }}
-                      >
-                        Agregar
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                <TableRow key={`pase-${index}`}>
-                  <TableCell>{r.cerro}</TableCell>
-                  <TableCell>{r.dias}</TableCell>
-                  <TableCell>{r.edad}</TableCell>
-                  <TableCell>{r.tipo}</TableCell>
-                  <TableCell className="text-sm">{r.pack}</TableCell>
-                  <TableCell>{`$ ${formatNumberWithDots(r.precio)}`}</TableCell>
-                  <TableCell>
-                    <div className="flex">
-                      <select
-                        value={selectedCounts[index] || 1} // Valor por defecto
-                        onChange={(e) => handleCountChange(index, e.target.value)}
-                        className="mr-2"
-                      >
-                        {[...Array(5).keys()].map((num) => (
-                          <option key={num + 1} value={num + 1}>
-                            {num + 1}
-                          </option>
-                        ))}
-                      </select>
-                      <Button
-                        variant="outline"
-                        className="w-full bg-blue-500 text-white hover:bg-blue-600"
-                        onClick={() => {
-                          const count = selectedCounts[index] || 1; // Usar el valor seleccionado o 2 por defecto
-
-                          agregarPaquete({
-                            seccion: "pases",
-                            noches: r.dias,
-                            count: Number(count),
-                            name: `Medios de Elevación: ${r.tipo} - ${r.edad} - ${r.dias} días`,
-                            price: r.precio * count,
-                          });
-                        }}
-                      >
-                        Agregar
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ),
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </div>
+    <DataTable
+      headers={headers}
+      rows={resultados}
+      renderRow={renderPassRow}
+      title="🚡 Medios de Elevación"
+    />
   );
 };
 

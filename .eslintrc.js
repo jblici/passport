@@ -1,0 +1,7 @@
+module.exports = {
+  extends: ['next'],
+  rules: {
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
+  },
+};
