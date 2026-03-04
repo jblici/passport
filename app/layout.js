@@ -1,5 +1,6 @@
 import { Inter, Roboto } from 'next/font/google'
 import { cn } from '@/app/components/svg/svg';
+import ErrorBoundary from '@/app/components/ErrorBoundary';
 import './globals.css'
 
 const fontHeading = Roboto({
@@ -19,14 +20,16 @@ const fontBody = Roboto({
 export default function Layout({ children }) {
   return (
     <html lang="en">
-      <body 
+      <body
         className={cn(
           'antialiased',
           fontHeading.variable,
           fontBody.variable
         )}
       >
-        {children}
+        <ErrorBoundary>
+          {children}
+        </ErrorBoundary>
       </body>
     </html>
   )

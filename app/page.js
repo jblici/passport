@@ -11,8 +11,8 @@ import useAlojamientos from "./lib/hooks/paquetes";
 import useGroupedSpreadsheets from "./lib/hooks/spreadsheet";
 
 export default function Cotizador() {
-  const { paquetes, reglas } = useAlojamientos(null);
-  const { rentals, pases, clases, traslados } = useGroupedSpreadsheets(paquetes ? null : "delay");
+  const { paquetes, reglas, error: alojamientosError, loading: alojamientosLoading } = useAlojamientos();
+  const { rentals, pases, clases, traslados, error: spreadsheetError, loading: spreadsheetLoading } = useGroupedSpreadsheets();
   const [startDate, setStartDate] = useState(null);
   const [busqueda, setBusqueda] = useState("");
   const [cerro, setCerro] = useState("");
@@ -26,7 +26,10 @@ export default function Cotizador() {
   const [totalCompra, setTotalCompra] = useState(0);
   const [category, setCategory] = useState("Alojamientos");
 
-  useEffect(() => {}, [rentals]);
+  // Combined loading and error states
+  const isLoading = alojamientosLoading || spreadsheetLoading;
+  const hasError = alojamientosError || spreadsheetError;
+  const errorMessage = alojamientosError || spreadsheetError;
 
   const handleCategorySelect = (cat) => {
     setCategory(cat);
@@ -45,7 +48,24 @@ export default function Cotizador() {
     setTotalCompra((prev) => prev - paqueteEliminado.price);
   };
 
-  if (!paquetes) return <Spinner />;
+  if (isLoading) return <Spinner />;
+
+  if (hasError) {
+    return (
+      <div className="flex flex-col">
+        <Navbar />
+        <div className="w-full p-4 sm:p-6 md:p-8">
+          <div className="bg-card rounded-lg shadow-lg p-8 border-l-4 border-red-500">
+            <h2 className="text-2xl font-bold text-red-600 mb-2">Error loading data</h2>
+            <p className="text-muted-foreground mb-4">{errorMessage}</p>
+            <Button onClick={() => window.location.reload()}>
+              Retry
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col">

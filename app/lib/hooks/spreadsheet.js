@@ -6,19 +6,56 @@ const useGroupedSpreadsheets = () => {
   const [clases, setClases] = useState(null);
   const [rentals, setRentals] = useState(null);
   const [traslados, setTraslados] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchCSV = async (url) => {
-    const response = await fetch(url, { redirect: "follow" });
-    return response.text();
+    try {
+      const response = await fetch(url, { redirect: "follow" });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: Failed to fetch ${url}`);
+      }
+      const text = await response.text();
+
+      if (!text || text.trim().length === 0) {
+        throw new Error("CSV file is empty");
+      }
+
+      return text;
+    } catch (err) {
+      console.error("Error fetching CSV:", err);
+      throw err;
+    }
   };
 
   const parseCSV = (csv, mapper) => {
-    return csv.split("\n").slice(1).map(mapper);
+    try {
+      return csv
+        .split("\n")
+        .slice(1)
+        .filter(row => row.trim())
+        .map((row, index) => {
+          try {
+            return mapper(row);
+          } catch (err) {
+            console.warn(`Error parsing row ${index + 1}:`, err);
+            return null;
+          }
+        })
+        .filter(row => row !== null);
+    } catch (err) {
+      console.error("Error in parseCSV:", err);
+      throw err;
+    }
   };
 
   const obtenerDatos = async () => {
-    // URLs de los distintos archivos
-    const urls = {
+    try {
+      setError(null);
+      setLoading(true);
+
+      // URLs de los distintos archivos
+      const urls = {
       pases: [
         "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=371646853&output=csv",
         "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1775784558&output=csv",
@@ -51,48 +88,58 @@ const useGroupedSpreadsheets = () => {
     // Mapeo de cada tipo de datos
     const mappers = {
       pases: (row) => {
-        const [cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio, pack] =
-          row.split(",");
+        const cols = row.split(",");
+        if (cols.length < 9) {
+          throw new Error(`Pases row has insufficient columns (${cols.length}/9)`);
+        }
+        const [cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio, pack] = cols;
         return {
-          cerro,
-          temporada,
-          edad,
-          tipo,
-          fechaInicio,
-          fechaFinal,
-          dias,
-          precio: Number(precio),
-          pack,
+          cerro: cerro?.trim() || "",
+          temporada: temporada?.trim() || "",
+          edad: edad?.trim() || "",
+          tipo: tipo?.trim() || "",
+          fechaInicio: fechaInicio?.trim() || "",
+          fechaFinal: fechaFinal?.trim() || "",
+          dias: Number(dias) || 0,
+          precio: Number(precio) || 0,
+          pack: pack?.trim() || "",
         };
       },
       clases: (row) => {
+        const cols = row.split(",");
+        if (cols.length < 11) {
+          throw new Error(`Clases row has insufficient columns (${cols.length}/11)`);
+        }
         const [
           cerro,
           temporada,
           tipo,
           edad,
-          edad2,
           fechaInicio,
           fechaFinal,
           pack,
           dias,
           precio,
           descripcion,
-        ] = row.split(",");
+        ] = cols;
         return {
-          cerro,
-          temporada,
-          tipo,
-          edad,
-          fechaInicio,
-          fechaFinal,
-          pack,
-          dias: Number(dias),
-          precio: Number(precio),
-          descripcion,
+          cerro: cerro?.trim() || "",
+          temporada: temporada?.trim() || "",
+          tipo: tipo?.trim() || "",
+          edad: edad?.trim() || "",
+          fechaInicio: fechaInicio?.trim() || "",
+          fechaFinal: fechaFinal?.trim() || "",
+          pack: pack?.trim() || "",
+          dias: Number(dias) || 0,
+          precio: Number(precio) || 0,
+          descripcion: descripcion?.trim() || "",
         };
       },
       rentals: (row) => {
+        const cols = row.split(",");
+        if (cols.length < 10) {
+          throw new Error(`Rentals row has insufficient columns (${cols.length}/10)`);
+        }
         const [
           cerro,
           local,
@@ -104,21 +151,25 @@ const useGroupedSpreadsheets = () => {
           fechaFinal,
           dias,
           precio,
-        ] = row.split(",");
+        ] = cols;
         return {
-          cerro,
-          local,
-          temporada,
-          edad,
-          gama,
-          articulo,
-          fechaInicio,
-          fechaFinal,
-          dias: Number(dias),
-          precio: Number(precio),
+          cerro: cerro?.trim() || "",
+          local: local?.trim() || "",
+          temporada: temporada?.trim() || "",
+          edad: edad?.trim() || "",
+          gama: gama?.trim() || "",
+          articulo: articulo?.trim() || "",
+          fechaInicio: fechaInicio?.trim() || "",
+          fechaFinal: fechaFinal?.trim() || "",
+          dias: Number(dias) || 0,
+          precio: Number(precio) || 0,
         };
       },
       traslados: (row) => {
+        const cols = row.split(",");
+        if (cols.length < 11) {
+          throw new Error(`Traslados row has insufficient columns (${cols.length}/11)`);
+        }
         const [
           cerro,
           recorrido,
@@ -131,19 +182,19 @@ const useGroupedSpreadsheets = () => {
           fechaFinal,
           precio,
           personas,
-        ] = row.split(",");
+        ] = cols;
         return {
-          cerro,
-          recorrido,
-          origen,
-          destino,
-          servicio,
-          descripcion,
-          tramo,
-          fechaInicio,
-          fechaFinal,
-          precio: Number(precio),
-          personas: Number(personas),
+          cerro: cerro?.trim() || "",
+          recorrido: recorrido?.trim() || "",
+          origen: origen?.trim() || "",
+          destino: destino?.trim() || "",
+          servicio: servicio?.trim() || "",
+          descripcion: descripcion?.trim() || "",
+          tramo: tramo?.trim() || "",
+          fechaInicio: fechaInicio?.trim() || "",
+          fechaFinal: fechaFinal?.trim() || "",
+          precio: Number(precio) || 0,
+          personas: Number(personas) || 0,
         };
       },
     };
@@ -155,10 +206,21 @@ const useGroupedSpreadsheets = () => {
       data[section] = csvData.flatMap((csv) => parseCSV(csv, mappers[section]));
     }
 
-    setPases(data.pases);
-    setClases(data.clases);
-    setRentals(data.rentals);
-    setTraslados(data.traslados);
+      setPases(data.pases);
+      setClases(data.clases);
+      setRentals(data.rentals);
+      setTraslados(data.traslados);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Unknown error loading spreadsheet data";
+      console.error("Error in obtenerDatos:", errorMessage);
+      setError(errorMessage);
+      setPases(null);
+      setClases(null);
+      setRentals(null);
+      setTraslados(null);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -170,6 +232,8 @@ const useGroupedSpreadsheets = () => {
     pases,
     clases,
     traslados,
+    error,
+    loading,
   };
 };
 
