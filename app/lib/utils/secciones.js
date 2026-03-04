@@ -13,31 +13,31 @@ import { parseDate } from "./hoteles";
 
 export const handleBusqueda = (
   category,
-  resHoteles,
-  resPases,
-  resClases,
-  resTraslado,
-  resEquipos,
+  hotelSearchResults,
+  passSearchResults,
+  classSearchResults,
+  transferSearchResults,
+  equipmentSearchResults,
   agregarPaquete,
   reglas
 ) => {
   // Lógica para manejar la búsqueda basada en la categoría
   if (category === "Equipos") {
-    if (!resEquipos) return null;
-    return <PaquetesEquipos resultados={resEquipos} agregarPaquete={agregarPaquete} />;
+    if (!equipmentSearchResults) return null;
+    return <PaquetesEquipos resultados={equipmentSearchResults} agregarPaquete={agregarPaquete} />;
   } else if (category === "Clases") {
-    if (!resClases) return null;
-    return <PaquetesClases resultados={resClases} agregarPaquete={agregarPaquete} />;
+    if (!classSearchResults) return null;
+    return <PaquetesClases resultados={classSearchResults} agregarPaquete={agregarPaquete} />;
   } else if (category === "Medios de Elevación") {
-    if (!resPases) return null;
-    return <PaquetesPases resultados={resPases} agregarPaquete={agregarPaquete} />;
+    if (!passSearchResults) return null;
+    return <PaquetesPases resultados={passSearchResults} agregarPaquete={agregarPaquete} />;
   } else if (category === "Transporte") {
-    if (!resTraslado) return null;
-    return <PaquetesTransporte resultados={resTraslado} agregarPaquete={agregarPaquete} />;
+    if (!transferSearchResults) return null;
+    return <PaquetesTransporte resultados={transferSearchResults} agregarPaquete={agregarPaquete} />;
   } else if (category === "Alojamientos") {
-    if (!resHoteles) return null;
+    if (!hotelSearchResults) return null;
     return (
-      <PaquetesHoteles resultados={resHoteles} agregarPaquete={agregarPaquete} reglas={reglas} />
+      <PaquetesHoteles resultados={hotelSearchResults} agregarPaquete={agregarPaquete} reglas={reglas} />
     );
   }
 };
@@ -49,11 +49,11 @@ export const handleFormularios = (
   clases,
   pases,
   traslado,
-  setHoteles,
-  setEquipos,
-  setPases,
-  setClases,
-  setTraslado,
+  setHotelSearchResults,
+  setEquipmentSearchResults,
+  setPassSearchResults,
+  setClassSearchResults,
+  setTransferSearchResults,
   cerro,
   setCerro,
   setBusqueda,
@@ -66,7 +66,7 @@ export const handleFormularios = (
       <Equipos
         category={category}
         equipos={rentals}
-        setEquipos={setEquipos}
+        setEquipos={setEquipmentSearchResults}
         cerro={cerro}
         setCerro={setCerro}
         startDate={startDate}
@@ -78,7 +78,7 @@ export const handleFormularios = (
       <Clases
         category={category}
         clases={clases}
-        setClases={setClases}
+        setClases={setClassSearchResults}
         cerro={cerro}
         setCerro={setCerro}
         startDate={startDate}
@@ -90,7 +90,7 @@ export const handleFormularios = (
       <Pases
         category={category}
         pases={pases}
-        setPases={setPases}
+        setPases={setPassSearchResults}
         cerro={cerro}
         setCerro={setCerro}
         startDate={startDate}
@@ -102,7 +102,7 @@ export const handleFormularios = (
       <Transporte
         category={category}
         traslado={traslado}
-        setTraslado={setTraslado}
+        setTraslado={setTransferSearchResults}
         cerro={cerro}
         setCerro={setCerro}
         startDate={startDate}
@@ -114,7 +114,7 @@ export const handleFormularios = (
       <Hoteles
         category={category}
         paquetes={paquetes}
-        setHoteles={setHoteles}
+        setHoteles={setHotelSearchResults}
         cerro={cerro}
         setCerro={setCerro}
         setBusqueda={setBusqueda}

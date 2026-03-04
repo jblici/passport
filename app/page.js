@@ -16,11 +16,11 @@ export default function Cotizador() {
   const [startDate, setStartDate] = useState(null);
   const [busqueda, setBusqueda] = useState("");
   const [cerro, setCerro] = useState("");
-  const [resHoteles, setHoteles] = useState(null);
-  const [resPases, setPases] = useState(null);
-  const [resClases, setClases] = useState(null);
-  const [resTraslados, setTraslados] = useState(null);
-  const [resEquipos, setEquipos] = useState(null);
+  const [hotelSearchResults, setHotelSearchResults] = useState(null);
+  const [passSearchResults, setPassSearchResults] = useState(null);
+  const [classSearchResults, setClassSearchResults] = useState(null);
+  const [transferSearchResults, setTransferSearchResults] = useState(null);
+  const [equipmentSearchResults, setEquipmentSearchResults] = useState(null);
   const [paquetesSeleccionados, setPaquetesSeleccionados] = useState([]);
   const [originales, setOriginales] = useState([]);
   const [totalCompra, setTotalCompra] = useState(0);
@@ -104,11 +104,11 @@ export default function Cotizador() {
                   clases,
                   pases,
                   traslados,
-                  setHoteles,
-                  setEquipos,
-                  setPases,
-                  setClases,
-                  setTraslados,
+                  setHotelSearchResults,
+                  setEquipmentSearchResults,
+                  setPassSearchResults,
+                  setClassSearchResults,
+                  setTransferSearchResults,
                   cerro,
                   setCerro,
                   setBusqueda,
@@ -121,11 +121,11 @@ export default function Cotizador() {
         <div id="busqueda" className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {handleBusqueda(
             category,
-            resHoteles,
-            resPases,
-            resClases,
-            resTraslados,
-            resEquipos,
+            hotelSearchResults,
+            passSearchResults,
+            classSearchResults,
+            transferSearchResults,
+            equipmentSearchResults,
             agregarPaquete,
             reglas
           )}

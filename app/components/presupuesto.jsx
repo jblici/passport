@@ -26,22 +26,22 @@ const ResumenPresupuesto = ({
   const [clientName, setClientName] = useState("");
   const [total, setTotal] = useState({ pesos: 0, dolares: 0 });
   const [familyPlan, setFamilyPlan] = useState(false);
-  const [fpActivado, setFpActivado] = useState(false);
+  const [isFamilyPlanActive, setIsFamilyPlanActive] = useState(false);
   const [isChecked, setIsChecked] = useState(null);
-  const [flag, setFlag] = useState(true);
+  const [shouldVerifyFamilyPlan, setShouldVerifyFamilyPlan] = useState(true);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editItem, setEditItem] = useState({ name: "", price: 0, count: 1 });
-  const [editOb, setEditOb] = useState("");
-  const [ocultarPrecios, setOcultarPrecios] = useState(false);
+  const [editingObservation, setEditingObservation] = useState("");
+  const [shouldHidePrices, setShouldHidePrices] = useState(false);
 
   const [editObservacionIndex, setEditObservacionIndex] = useState(null);
 
   const handleToggle = () => {
     setIsChecked((prevState) => !prevState);
     if (isChecked === true) {
-      setFpActivado(true);
+      setIsFamilyPlanActive(true);
     } else {
-      setFlag(true);
+      setShouldVerifyFamilyPlan(true);
     }
   };
 
@@ -60,30 +60,30 @@ const ResumenPresupuesto = ({
 
   useEffect(() => {
     const paquetesTemp = [...paquetesSeleccionados];
-    if (flag) {
+    if (shouldVerifyFamilyPlan) {
       verificarFamilyPlan(
         paquetesTemp,
         isChecked,
         setFamilyPlan,
         setPaquetesSeleccionados,
-        setFlag,
+        setShouldVerifyFamilyPlan,
         setIsChecked
       );
     }
 
-    if (familyPlan && fpActivado) {
+    if (familyPlan && isFamilyPlanActive) {
       const nuevosPaquetes = JSON.parse(JSON.stringify(originales));
       setPaquetesSeleccionados(nuevosPaquetes);
-      setFpActivado(false);
-      setFlag(false);
+      setIsFamilyPlanActive(false);
+      setShouldVerifyFamilyPlan(false);
     }
   }, [
     paquetesSeleccionados,
     familyPlan,
     setPaquetesSeleccionados,
-    flag,
+    shouldVerifyFamilyPlan,
     isChecked,
-    fpActivado,
+    isFamilyPlanActive,
     originales,
   ]);
 
@@ -206,7 +206,7 @@ const ResumenPresupuesto = ({
                         className="text-sm text-blue-600 hover:underline"
                         onClick={() => {
                           setEditObservacionIndex(index);
-                          setEditOb(paquete.name);
+                          setEditingObservation(paquete.name);
                         }}
                       >
                         ✏️
@@ -274,23 +274,23 @@ const ResumenPresupuesto = ({
                   <div className="mb-6 flex items-center gap-3">
                     <input
                       type="checkbox"
-                      id="ocultarPrecios"
-                      checked={ocultarPrecios}
-                      onChange={() => setOcultarPrecios((prev) => !prev)}
+                      id="shouldHidePrices"
+                      checked={shouldHidePrices}
+                      onChange={() => setShouldHidePrices((prev) => !prev)}
                       className="peer hidden"
                     />
                     <label
-                      htmlFor="ocultarPrecios"
+                      htmlFor="shouldHidePrices"
                       className="flex items-center cursor-pointer text-sm text-gray-700"
                     >
                       <div
                         className={`w-5 h-5 mr-2 border border-gray-400 rounded-sm flex items-center justify-center ${
-                          ocultarPrecios ? "bg-blue-500" : "bg-white"
+                          shouldHidePrices ? "bg-blue-500" : "bg-white"
                         }`}
                       >
-                        {ocultarPrecios && <span className="text-white text-sm font-bold">✓</span>}
+                        {shouldHidePrices && <span className="text-white text-sm font-bold">✓</span>}
                       </div>
-                      <span className={ocultarPrecios ? "font-semibold" : ""}>
+                      <span className={shouldHidePrices ? "font-semibold" : ""}>
                         Ocultar precios en PDF
                       </span>
                     </label>
@@ -306,7 +306,7 @@ const ResumenPresupuesto = ({
                           busqueda,
                           Passport,
                           clientName,
-                          ocultarPrecios
+                          shouldHidePrices
                         )
                       }
                       className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
@@ -333,8 +333,8 @@ const ResumenPresupuesto = ({
               Editar observación
             </h2>
             <textarea
-              value={editOb}
-              onChange={(e) => setEditOb(e.target.value)}
+              value={editingObservation}
+              onChange={(e) => setEditingObservation(e.target.value)}
               placeholder="Observación (esto aparecerá en el PDF)"
               rows={4}
               className="w-full p-2 mb-4 border rounded resize-none"
@@ -345,7 +345,7 @@ const ResumenPresupuesto = ({
                   const nuevos = [...paquetesSeleccionados];
                   nuevos[editObservacionIndex] = {
                     ...nuevos[editObservacionIndex],
-                    name: editOb,
+                    name: editingObservation,
                   };
                   setPaquetesSeleccionados(nuevos);
                   setEditObservacionIndex(null);
