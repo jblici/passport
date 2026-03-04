@@ -75,10 +75,12 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                             className="w-full bg-blue-500 text-white hover:bg-blue-600"
                             onClick={() => {
                               const reglasEncontradas = reglas.find(
-                                (result) => result.hotel === r.paquetesUtilizados.hotel
+                                (result) => result.hotel === r.paquetesUtilizados.hotel,
                               );
                               if (!reglasEncontradas) {
-                                console.warn(`No rules found for hotel: ${r.paquetesUtilizados.hotel}`);
+                                console.warn(
+                                  `No rules found for hotel: ${r.paquetesUtilizados.hotel}`,
+                                );
                               }
                               agregarPaquete({
                                 seccion: "alojamiento",
@@ -136,11 +138,12 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                             className="w-full bg-blue-500 text-white hover:bg-blue-600"
                             onClick={() => {
                               const reglasEncontradas = reglas.find(
-                                (result) =>
-                                  result.hotel === r.paquetesUtilizados.paquetes[0].hotel
+                                (result) => result.hotel === r.paquetesUtilizados.paquetes[0].hotel,
                               );
                               if (!reglasEncontradas) {
-                                console.warn(`No rules found for hotel: ${r.paquetesUtilizados.paquetes[0].hotel}`);
+                                console.warn(
+                                  `No rules found for hotel: ${r.paquetesUtilizados.paquetes[0].hotel}`,
+                                );
                               }
                               agregarPaquete({
                                 seccion: "alojamiento",
@@ -165,7 +168,7 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                           </Button>
                         </TableCell>
                       </TableRow>
-                    )
+                    ),
                   )}
                 </TableBody>
               </Table>

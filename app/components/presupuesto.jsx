@@ -4,17 +4,13 @@ import useBudgetState from "../lib/hooks/useBudgetState";
 import BudgetControls from "./BudgetControls";
 import BudgetItems from "./BudgetItems";
 import BudgetSummary from "./BudgetSummary";
+import { useCotizador } from "@/app/context/CotizadorContext";
 
-const ResumenPresupuesto = ({
-  paquetesSeleccionados,
-  setPaquetesSeleccionados,
-  totalCompra,
-  agregarPaquete,
-  eliminarPaquete,
-  busqueda,
-  originales,
-  cerro,
-}) => {
+const ResumenPresupuesto = () => {
+  const { searchState, cartState, setPaquetesSeleccionados } = useCotizador();
+  const { busqueda, cerro } = searchState;
+  const { paquetesSeleccionados, originales, totalCompra } = cartState;
+
   const {
     budget,
     updateBudget,
@@ -36,7 +32,6 @@ const ResumenPresupuesto = ({
       <BudgetControls
         discount={budget.discount}
         handleDiscount={handleDiscount}
-        agregarPaquete={agregarPaquete}
         paquetesSeleccionados={paquetesSeleccionados}
         setPaquetesSeleccionados={setPaquetesSeleccionados}
         familyPlan={familyPlan}
@@ -64,10 +59,7 @@ const ResumenPresupuesto = ({
             </h2>
 
             <div className="mb-4">
-              <label
-                htmlFor="clientName"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="clientName" className="block text-sm font-medium text-gray-700 mb-1">
                 Nombre del cliente
               </label>
               <input
@@ -97,7 +89,9 @@ const ResumenPresupuesto = ({
                     budget.shouldHidePrices ? "bg-blue-500" : "bg-white"
                   }`}
                 >
-                  {budget.shouldHidePrices && <span className="text-white text-sm font-bold">✓</span>}
+                  {budget.shouldHidePrices && (
+                    <span className="text-white text-sm font-bold">✓</span>
+                  )}
                 </div>
                 <span className={budget.shouldHidePrices ? "font-semibold" : ""}>
                   Ocultar precios en PDF
@@ -115,7 +109,7 @@ const ResumenPresupuesto = ({
                     busqueda,
                     Passport,
                     budget.clientName,
-                    budget.shouldHidePrices
+                    budget.shouldHidePrices,
                   )
                 }
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
@@ -180,7 +174,9 @@ const ResumenPresupuesto = ({
               <input
                 type="text"
                 value={itemEditing.item.name}
-                onChange={(e) => updateItemEditing({ item: { ...itemEditing.item, name: e.target.value } })}
+                onChange={(e) =>
+                  updateItemEditing({ item: { ...itemEditing.item, name: e.target.value } })
+                }
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Nombre del ítem"
               />
@@ -191,7 +187,11 @@ const ResumenPresupuesto = ({
                 type="number"
                 min={0}
                 value={itemEditing.item.price}
-                onChange={(e) => updateItemEditing({ item: { ...itemEditing.item, price: Number(e.target.value) } })}
+                onChange={(e) =>
+                  updateItemEditing({
+                    item: { ...itemEditing.item, price: Number(e.target.value) },
+                  })
+                }
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Precio"
               />
@@ -203,7 +203,11 @@ const ResumenPresupuesto = ({
                 type="number"
                 min={1}
                 value={itemEditing.item.count}
-                onChange={(e) => updateItemEditing({ item: { ...itemEditing.item, count: Number(e.target.value) } })}
+                onChange={(e) =>
+                  updateItemEditing({
+                    item: { ...itemEditing.item, count: Number(e.target.value) },
+                  })
+                }
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Cantidad"
               />
@@ -220,14 +224,24 @@ const ResumenPresupuesto = ({
                     price: itemEditing.item.price * itemEditing.item.count,
                   };
                   setPaquetesSeleccionados(nuevos);
-                  updateItemEditing({ isOpen: false, index: null, item: { name: "", price: 0, count: 1 } });
+                  updateItemEditing({
+                    isOpen: false,
+                    index: null,
+                    item: { name: "", price: 0, count: 1 },
+                  });
                 }}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
               >
                 Guardar
               </button>
               <button
-                onClick={() => updateItemEditing({ isOpen: false, index: null, item: { name: "", price: 0, count: 1 } })}
+                onClick={() =>
+                  updateItemEditing({
+                    isOpen: false,
+                    index: null,
+                    item: { name: "", price: 0, count: 1 },
+                  })
+                }
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition"
               >
                 Cancelar

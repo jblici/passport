@@ -48,7 +48,7 @@ export default function Transporte({
       endDate,
       tipoTransporte,
       claseTransporte,
-      personas
+      personas,
     );
   };
 

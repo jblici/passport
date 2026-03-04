@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 function InputModal({ isOpen, onClose, onSubmit, title, placeholder }) {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState("");
 
   const handleSubmit = () => {
     onSubmit(value);
-    setValue(''); // Reset input
+    setValue(""); // Reset input
     onClose();
   };
 

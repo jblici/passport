@@ -8,13 +8,10 @@ const BudgetSummary = ({ total, onSaveClick }) => {
         {total.dolares === 0
           ? `Total: $ ${formatNumberWithDots(total.pesos)}`
           : `Total: ARS $ ${formatNumberWithDots(
-              total.pesos
+              total.pesos,
             )} | USD $ ${formatNumberWithDots(total.dolares)}`}{" "}
       </span>
-      <Button
-        onClick={onSaveClick}
-        className="w-auto bg-blue-500 text-white hover:bg-blue-600"
-      >
+      <Button onClick={onSaveClick} className="w-auto bg-blue-500 text-white hover:bg-blue-600">
         Guardar Presupuesto
       </Button>
     </div>

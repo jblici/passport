@@ -58,8 +58,8 @@ const useBudgetState = (originales, paquetesSeleccionados, setPaquetesSelecciona
       prev.map((paquete) =>
         paquete.seccion === "alojamiento"
           ? { ...paquete, discount: (paquete.price * descuento) / 100 }
-          : paquete
-      )
+          : paquete,
+      ),
     );
   };
 
@@ -72,7 +72,7 @@ const useBudgetState = (originales, paquetesSeleccionados, setPaquetesSelecciona
         (value) => setFamilyPlan((prev) => ({ ...prev, isVerified: value })),
         setPaquetesSeleccionados,
         (value) => setFamilyPlan((prev) => ({ ...prev, shouldVerify: value })),
-        (value) => setFamilyPlan((prev) => ({ ...prev, isChecked: value }))
+        (value) => setFamilyPlan((prev) => ({ ...prev, isChecked: value })),
       );
     }
 
@@ -85,12 +85,7 @@ const useBudgetState = (originales, paquetesSeleccionados, setPaquetesSelecciona
         shouldVerify: false,
       }));
     }
-  }, [
-    paquetesSeleccionados,
-    familyPlan,
-    setPaquetesSeleccionados,
-    originales,
-  ]);
+  }, [paquetesSeleccionados, familyPlan, setPaquetesSeleccionados, originales]);
 
   useEffect(() => {
     const { totalPesos, totalDolares } = paquetesSeleccionados.reduce(
@@ -105,7 +100,7 @@ const useBudgetState = (originales, paquetesSeleccionados, setPaquetesSelecciona
 
         return acumulador;
       },
-      { totalPesos: 0, totalDolares: 0 }
+      { totalPesos: 0, totalDolares: 0 },
     );
 
     setBudget((prev) => ({

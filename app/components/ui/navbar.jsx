@@ -13,11 +13,7 @@ const Navbar = () => {
     <div className="flex flex-col w-screen text-xl">
       <header className="bg-blue-500 text-primary-foreground p-6 px-8 flex items-center justify-between">
         <div className="flex flex-col">
-          <Link
-            href="/"
-            className="text-2xl font-bold py-2"
-            prefetch={false}
-          >
+          <Link href="/" className="text-2xl font-bold py-2" prefetch={false}>
             Passport
           </Link>
         </div>

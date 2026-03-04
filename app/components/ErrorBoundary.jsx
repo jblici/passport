@@ -31,9 +31,7 @@ class ErrorBoundary extends Component {
         <div className="min-h-screen flex items-center justify-center bg-background p-4">
           <div className="max-w-md w-full">
             <div className="bg-card rounded-lg shadow-lg p-6 border-l-4 border-red-500">
-              <h1 className="text-2xl font-bold text-red-600 mb-2">
-                Something went wrong
-              </h1>
+              <h1 className="text-2xl font-bold text-red-600 mb-2">Something went wrong</h1>
               <p className="text-muted-foreground mb-4">
                 An unexpected error occurred. Please try refreshing the page.
               </p>
@@ -57,7 +55,7 @@ class ErrorBoundary extends Component {
                   Try again
                 </Button>
                 <Button
-                  onClick={() => window.location.href = "/"}
+                  onClick={() => (window.location.href = "/")}
                   className="w-full bg-gray-700 hover:bg-gray-800"
                 >
                   Go home

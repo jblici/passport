@@ -1,5 +1,5 @@
 function ClientNameModal({ isOpen, onClose, onSubmit }) {
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
 
   const handleSubmit = () => {
     onSubmit(name);

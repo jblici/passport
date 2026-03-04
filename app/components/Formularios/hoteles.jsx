@@ -76,7 +76,7 @@ export default function Hoteles({
     // Inicializa o ajusta el array de detalles de habitaciones
     const nuevosDetalles = Array.from(
       { length: value },
-      (_, i) => detalleHabitaciones[i] || { mayores: 0, menores: 0 }
+      (_, i) => detalleHabitaciones[i] || { mayores: 0, menores: 0 },
     );
     setDetalleHabitaciones(nuevosDetalles);
   };
@@ -129,7 +129,7 @@ export default function Hoteles({
       cerro,
       paquetes,
       setHoteles,
-      detalleHabitaciones
+      detalleHabitaciones,
     );
     const busqueda = {
       detalleHabitaciones,

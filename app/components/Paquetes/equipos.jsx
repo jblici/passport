@@ -126,7 +126,7 @@ const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
                     </div>
                   </TableCell>
                 </TableRow>
-              )
+              ),
             )}
           </TableBody>
         </Table>

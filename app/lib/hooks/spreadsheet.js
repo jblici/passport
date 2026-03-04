@@ -1,6 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
-import { fetchCSV, parseCSV, validateColumns, trimColumns, toNumber } from "@/app/lib/utils/csvParser";
+import {
+  fetchCSV,
+  parseCSV,
+  validateColumns,
+  trimColumns,
+  toNumber,
+} from "@/app/lib/utils/csvParser";
 import { SPREADSHEET_URLS } from "@/app/lib/config/spreadsheetConfig";
 
 const useGroupedSpreadsheets = () => {
@@ -15,7 +21,8 @@ const useGroupedSpreadsheets = () => {
     pases: (row) => {
       const cols = row.split(",");
       validateColumns(cols, 9, "Pases row");
-      const [cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio, pack] = trimColumns(cols);
+      const [cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio, pack] =
+        trimColumns(cols);
       return {
         cerro,
         temporada,
@@ -31,7 +38,18 @@ const useGroupedSpreadsheets = () => {
     clases: (row) => {
       const cols = row.split(",");
       validateColumns(cols, 10, "Clases row");
-      const [cerro, temporada, tipo, edad, fechaInicio, fechaFinal, pack, dias, precio, descripcion] = trimColumns(cols);
+      const [
+        cerro,
+        temporada,
+        tipo,
+        edad,
+        fechaInicio,
+        fechaFinal,
+        pack,
+        dias,
+        precio,
+        descripcion,
+      ] = trimColumns(cols);
       return {
         cerro,
         temporada,
@@ -48,7 +66,8 @@ const useGroupedSpreadsheets = () => {
     rentals: (row) => {
       const cols = row.split(",");
       validateColumns(cols, 10, "Rentals row");
-      const [cerro, local, temporada, edad, gama, articulo, fechaInicio, fechaFinal, dias, precio] = trimColumns(cols);
+      const [cerro, local, temporada, edad, gama, articulo, fechaInicio, fechaFinal, dias, precio] =
+        trimColumns(cols);
       return {
         cerro,
         local,
@@ -65,7 +84,19 @@ const useGroupedSpreadsheets = () => {
     traslados: (row) => {
       const cols = row.split(",");
       validateColumns(cols, 11, "Traslados row");
-      const [cerro, recorrido, origen, destino, servicio, descripcion, tramo, fechaInicio, fechaFinal, precio, personas] = trimColumns(cols);
+      const [
+        cerro,
+        recorrido,
+        origen,
+        destino,
+        servicio,
+        descripcion,
+        tramo,
+        fechaInicio,
+        fechaFinal,
+        precio,
+        personas,
+      ] = trimColumns(cols);
       return {
         cerro,
         recorrido,
@@ -98,7 +129,8 @@ const useGroupedSpreadsheets = () => {
       setRentals(data.rentals);
       setTraslados(data.traslados);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Unknown error loading spreadsheet data";
+      const errorMessage =
+        err instanceof Error ? err.message : "Unknown error loading spreadsheet data";
       console.error("Error in obtenerDatos:", errorMessage);
       setError(errorMessage);
       setPases(null);

@@ -81,8 +81,8 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                               r.personas > 1
                                 ? ` - ${r.personas} PAX ${count > 1 ? `x ${count}` : ""}`
                                 : count > 1
-                                ? `x ${count}`
-                                : ""
+                                  ? `x ${count}`
+                                  : ""
                             }`,
                             price: r.precio * count,
                           });
@@ -163,8 +163,8 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                                     r.personas > 1
                                       ? ` - ${r.personas} PAX${count > 1 ? ` x ${count}` : ""}`
                                       : count > 1
-                                      ? ` x ${count}`
-                                      : ""
+                                        ? ` x ${count}`
+                                        : ""
                                   }`,
                                   price: r.precio * count,
                                 });

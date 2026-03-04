@@ -1,6 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
-import { fetchCSV, parseCSV, validateColumns, trimColumns, toNumber } from "@/app/lib/utils/csvParser";
+import {
+  fetchCSV,
+  parseCSV,
+  validateColumns,
+  trimColumns,
+  toNumber,
+} from "@/app/lib/utils/csvParser";
 import { getAllPaqueteConfigs } from "@/app/lib/config/spreadsheetConfig";
 
 const useAlojamientos = () => {
@@ -80,13 +86,13 @@ const useAlojamientos = () => {
           centros.map(async ({ paquetesUrl }) => {
             const csv = await fetchCSV(paquetesUrl);
             return parseCSV(csv, paquetesMapper, 17);
-          })
+          }),
         ),
         Promise.all(
           centros.map(async ({ reglasUrl }) => {
             const csv = await fetchCSV(reglasUrl);
             return parseCSV(csv, reglasMapper, 2);
-          })
+          }),
         ),
       ]);
 
@@ -100,7 +106,8 @@ const useAlojamientos = () => {
       setReglas(datosReglas.flat());
       setError(null);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Unknown error loading accommodations";
+      const errorMessage =
+        err instanceof Error ? err.message : "Unknown error loading accommodations";
       console.error("Error in obtenerAlojamientos:", errorMessage);
       setError(errorMessage);
       setPaquetes([]);

@@ -76,7 +76,7 @@ export default function Equipos({
 
   useEffect(() => {
     if (equipos) {
-      setLoading(true)
+      setLoading(true);
       const gamasPorCerro = {};
 
       equipos.forEach((equipo) => {

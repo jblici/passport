@@ -126,7 +126,7 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
                     </div>
                   </TableCell>
                 </TableRow>
-              )
+              ),
             )}
           </TableBody>
         </Table>

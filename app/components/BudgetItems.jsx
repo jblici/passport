@@ -21,9 +21,7 @@ const BudgetItems = ({
               </span>
             ) : (
               <div className="flex flex-col w-4/5">
-                <span className={`${paquete.promo ? "text-gray-500" : null}`}>
-                  {paquete.name}
-                </span>
+                <span className={`${paquete.promo ? "text-gray-500" : null}`}>{paquete.name}</span>
                 {paquete.seccion === "transporte" && (
                   <span className="text-gray-500 text-xs w-[80%] text-pretty pl-1">
                     {paquete.clave
