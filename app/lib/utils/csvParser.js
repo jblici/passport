@@ -31,22 +31,44 @@ export const fetchCSV = async (url) => {
  * @param {function} mapper - Function that transforms a CSV row into an object
  * @param {number} minColumns - Minimum expected columns (for validation)
  * @returns {Array} Parsed rows
+ * @throws {Error} If parsing fails with details about which rows failed
  */
 export const parseCSV = (csv, mapper, minColumns) => {
   try {
-    return csv
-      .split("\n")
-      .slice(1) // Skip header row
-      .filter((row) => row.trim())
-      .map((row, index) => {
-        try {
-          return mapper(row);
-        } catch (err) {
-          console.warn(`Error parsing row ${index + 1}:`, err);
-          return null;
-        }
-      })
-      .filter((row) => row !== null);
+    const rows = csv.split("\n");
+    const header = rows[0]; // Keep header for reference
+    const dataRows = rows.slice(1).filter((row) => row.trim());
+
+    const parsed = [];
+    const errors = [];
+
+    dataRows.forEach((row, index) => {
+      try {
+        const result = mapper(row);
+        parsed.push(result);
+      } catch (err) {
+        errors.push({
+          rowNumber: index + 2, // +2 because we skip header and 0-indexed
+          rowContent: row.substring(0, 50), // First 50 chars for context
+          error: err.message,
+        });
+      }
+    });
+
+    // Report errors if any rows failed to parse
+    if (errors.length > 0) {
+      const errorSummary = errors
+        .slice(0, 3) // Show first 3 errors
+        .map((e) => `Row ${e.rowNumber}: ${e.error}`)
+        .join("; ");
+      const totalMessage = errors.length > 3
+        ? `${errorSummary}... (${errors.length - 3} more errors)`
+        : errorSummary;
+
+      console.warn(`CSV parsing: ${parsed.length} rows parsed, ${errors.length} rows skipped due to errors: ${totalMessage}`);
+    }
+
+    return parsed;
   } catch (err) {
     console.error("Error in parseCSV:", err);
     throw err;

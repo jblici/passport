@@ -66,9 +66,9 @@ export default function Hoteles({
   const [detalleHabitaciones, setDetalleHabitaciones] = useState([{ mayores: "0", menores: "0" }]);
   const currentYear = new Date().getFullYear();
 
-  // Define los límites de fecha
-  const minDate = new Date(currentYear, 5, 1); // Junio (mes 5 porque es basado en 0)
-  const maxDate = new Date(currentYear, 9, 31); // Octubre
+  // Define los límites de fecha (permite 2025 y 2026, junio a octubre)
+  const minDate = new Date(2025, 5, 1); // Junio 2025
+  const maxDate = new Date(currentYear, 9, 31); // Octubre del año actual
 
   const handleHabitacionesChange = (value) => {
     setHabitaciones(value);

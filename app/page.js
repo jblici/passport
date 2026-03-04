@@ -2,13 +2,14 @@
 import { useEffect, useState } from "react";
 import Navbar from "@/app/components/ui/navbar";
 import Presupuesto from "./components/presupuesto";
-import { handleBusqueda, handleFormularios } from "./lib/utils/secciones";
 import { Button } from "./components/ui/button";
 import Passport from "/public/Passport.png";
 import Image from "next/image";
 import Spinner from "./components/ui/Spinner";
 import useAlojamientos from "./lib/hooks/paquetes";
 import useGroupedSpreadsheets from "./lib/hooks/spreadsheet";
+import SearchFilters from "./components/SearchFilters";
+import SearchResults from "./components/SearchResults";
 
 export default function Cotizador() {
   const { paquetes, reglas, error: alojamientosError, loading: alojamientosLoading } = useAlojamientos();
@@ -80,56 +81,37 @@ export default function Cotizador() {
               </div>
               <Image src={Passport} alt="Passport" className="w-22 h-22" />
             </div>
-            <div className="flex justify-center px-4 pt-4 sm:px-6 md:px-8">
-              <div className="space-y-2">
-                {["Alojamientos", "Medios de Elevación", "Equipos", "Clases", "Transporte"].map(
-                  (cat) => (
-                    <Button
-                      key={cat}
-                      onClick={() => handleCategorySelect(cat)}
-                      className={`mx-2 ${category === cat ? "bg-blue-500" : "bg-black"}`}
-                    >
-                      {cat}
-                    </Button>
-                  )
-                )}
-              </div>
-            </div>
-            <div className="p-4 sm:p-6 md:p-8">
-              {category &&
-                handleFormularios(
-                  category,
-                  paquetes,
-                  rentals,
-                  clases,
-                  pases,
-                  traslados,
-                  setHotelSearchResults,
-                  setEquipmentSearchResults,
-                  setPassSearchResults,
-                  setClassSearchResults,
-                  setTransferSearchResults,
-                  cerro,
-                  setCerro,
-                  setBusqueda,
-                  startDate,
-                  setStartDate
-                )}
-            </div>
+            <SearchFilters
+              category={category}
+              onCategoryChange={handleCategorySelect}
+              paquetes={paquetes}
+              rentals={rentals}
+              clases={clases}
+              pases={pases}
+              traslados={traslados}
+              setHotelSearchResults={setHotelSearchResults}
+              setEquipmentSearchResults={setEquipmentSearchResults}
+              setPassSearchResults={setPassSearchResults}
+              setClassSearchResults={setClassSearchResults}
+              setTransferSearchResults={setTransferSearchResults}
+              cerro={cerro}
+              setCerro={setCerro}
+              setBusqueda={setBusqueda}
+              startDate={startDate}
+              setStartDate={setStartDate}
+            />
           </div>
         </div>
-        <div id="busqueda" className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {handleBusqueda(
-            category,
-            hotelSearchResults,
-            passSearchResults,
-            classSearchResults,
-            transferSearchResults,
-            equipmentSearchResults,
-            agregarPaquete,
-            reglas
-          )}
-        </div>
+        <SearchResults
+          category={category}
+          hotelSearchResults={hotelSearchResults}
+          passSearchResults={passSearchResults}
+          classSearchResults={classSearchResults}
+          transferSearchResults={transferSearchResults}
+          equipmentSearchResults={equipmentSearchResults}
+          agregarPaquete={agregarPaquete}
+          reglas={reglas}
+        />
         <div className="grid gap-8">
           {paquetesSeleccionados.length > 0 && (
             <Presupuesto

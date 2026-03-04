@@ -60,6 +60,7 @@ function calcularHoteles(
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(startDate);
     fechaFin.setDate(fechaInicio.getDate() + noches); // Calculamos la fecha final
+
     paquetesFiltrados = paquetesFiltrados.filter(
       (paquete) => paquete.week.toLowerCase() === producto.toLowerCase()
     );
@@ -69,11 +70,13 @@ function calcularHoteles(
     });
 
     // Filtrar paquetes que contengan la fecha de inicio
+    const startDateNormalized = normalizeDateToUTC(startDate);
+
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
       const fechaInicio = parseDate(paquete.fechaInicio);
       const fechaFinal = parseDate(paquete.fechaFinal);
-      const startDateNormalized = startDate instanceof Date ? startDate : new Date(startDate);
-      return startDateNormalized >= fechaInicio && startDateNormalized <= fechaFinal;
+      const match = startDateNormalized >= fechaInicio && startDateNormalized <= fechaFinal;
+      return match;
     });
 
     totalPersonas.habitaciones.forEach((habitacion, index) => {
@@ -282,7 +285,8 @@ function calcularHoteles(
     throw new Error("No se encontraron paquetes continuos que cubran las fechas seleccionadas.");
   }
 
-  return ordenarResultadoPorMonedaYPrecio(resultados);
+  const ordenado = ordenarResultadoPorMonedaYPrecio(resultados);
+  return ordenado;
 }
 
 //CALCULAR HABITACIONES
@@ -338,7 +342,16 @@ export function parseDate(dateString) {
   const day = parseInt(parts[0], 10);
   const month = parseInt(parts[1], 10) - 1; // Los meses en JavaScript son 0-indexados
   const year = parseInt(parts[2], 10);
-  return new Date(year, month, day);
+  // Create date at UTC to avoid timezone issues
+  const date = new Date(Date.UTC(year, month, day));
+  return date;
+}
+
+// Normalize a date to UTC midnight for comparison (ignores time)
+export function normalizeDateToUTC(date) {
+  if (!date) return null;
+  const d = new Date(date);
+  return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
 }
 
 //CALCULO DE NOCHES ENTRE LAS DOS FECHAS SELECCIONADAS
