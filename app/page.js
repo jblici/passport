@@ -36,7 +36,6 @@ export default function Cotizador() {
     setPaquetesSeleccionados((prev) => [...prev, paquete]);
     setOriginales((prev) => [...prev, paquete]);
     setTotalCompra((prev) => prev + paquete.price);
-    //console.log("agregarPaquete");
   };
 
   const eliminarPaquete = (index) => {
@@ -44,7 +43,6 @@ export default function Cotizador() {
     setPaquetesSeleccionados((prev) => prev.filter((_, i) => i !== index));
     setOriginales((prev) => prev.filter((_, i) => i !== index));
     setTotalCompra((prev) => prev - paqueteEliminado.price);
-    //console.log("eliminarPaquete");
   };
 
   if (!paquetes) return <Spinner />;

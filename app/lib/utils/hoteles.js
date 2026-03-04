@@ -21,7 +21,6 @@ export const handleHoteles = (
       producto,
       totalPersonas
     );
-    console.log(busquedaHoteles);
     setHoteles(busquedaHoteles);
   } catch (error) {
     console.error(error);
@@ -39,8 +38,9 @@ function calcularHoteles(
   producto,
   totalPersonas
 ) {
-  const inicio = startDate;
-  const fin = endDate;
+  // Normalize dates to ensure consistent type for comparisons
+  const inicio = startDate instanceof Date ? startDate : new Date(startDate);
+  const fin = endDate instanceof Date ? endDate : new Date(endDate);
   let resultados = {};
   let paquetesFiltrados = paquetes;
 
@@ -72,8 +72,8 @@ function calcularHoteles(
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
       const fechaInicio = parseDate(paquete.fechaInicio);
       const fechaFinal = parseDate(paquete.fechaFinal);
-      return startDate >= fechaInicio && startDate <= fechaFinal;
-      //return startDate >= fechaInicio;
+      const startDateNormalized = startDate instanceof Date ? startDate : new Date(startDate);
+      return startDateNormalized >= fechaInicio && startDateNormalized <= fechaFinal;
     });
 
     totalPersonas.habitaciones.forEach((habitacion, index) => {
@@ -89,14 +89,14 @@ function calcularHoteles(
         let precioHabitacion;
 
         if (paquete.personas === total - 1 && paquete.camaExtra === "Si") {
-          // Si necesita usar la cama extra
+          // Si necesita usar la cama extra (un adulto usa la cama extra)
           if (menores > 0) {
             precioHabitacion =
               paquete.extraMenor * 1 +
               (paquete.precioMenor
                 ? paquete.precioMenor * (menores - 1)
                 : paquete.precio * (menores - 1)) +
-              paquete.precio * mayores;
+              paquete.precio * (mayores - 1);
           } else {
             precioHabitacion = paquete.extraMayor * 1 + paquete.precio * (mayores - 1);
           }
@@ -127,13 +127,11 @@ function calcularHoteles(
     });
   } else {
     // Agrupar paquetes por hotel, habitación y personas
-    //console.log(paquetesFiltrados)
     totalPersonas.habitaciones.forEach((habitacion, index) => {
       const { mayores, menores, total } = habitacion;
       const paquetesPorHabitacion = {};
 
       const cantidadNoches = calcularDiferenciaDias(inicio, fin);
-      //console.log(cantidadNoches);
       paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
         return paquete.minNoches <= cantidadNoches;
       });
@@ -143,7 +141,6 @@ function calcularHoteles(
           paquete.personas === total ||
           (paquete.personas === total - 1 && paquete.camaExtra === "Si")
       );
-      //console.log(paquetesFiltrados)
 
       const habitacionKey = `Habitacion ${index + 1}`;
       if (!resultados[habitacionKey]) {
@@ -159,7 +156,6 @@ function calcularHoteles(
         }
         paquetesPorHabitacion[clave].push(paquete);
       });
-      //console.log(paquetesPorHabitacion);
 
       // Verificar paquetes que cubren completamente las fechas seleccionadas y combinaciones continuas
       for (const clave in paquetesPorHabitacion) {
@@ -211,21 +207,18 @@ function calcularHoteles(
                 );
               }
 
-              //console.log(noches);
-
               if (cerro === "Castor" || cerro === "Caviahue") {
                 let precioHabitacion;
 
                 if (paquete.personas === total - 1 && paquete.camaExtra === "Si") {
-                  console.log('entre cama extra')
-                  // Si necesita usar la cama extra
+                  // Si necesita usar la cama extra (un adulto usa la cama extra)
                   if (menores > 0) {
                     precioHabitacion =
                       paquete.extraMenor * 1 +
                       (paquete.precioMenor
                         ? paquete.precioMenor * (menores - 1)
                         : paquete.precio * (menores - 1)) +
-                      paquete.precio * mayores;
+                      paquete.precio * (mayores - 1);
                   } else {
                     precioHabitacion = paquete.extraMayor * 1 + paquete.precio * (mayores - 1);
                   }
@@ -237,8 +230,6 @@ function calcularHoteles(
                       ? paquete.precioMenor * menores
                       : paquete.precio * menores);
                 }
-                console.log('entre no cama extra', precioHabitacion, noches)
-                console.log('menores y precio', menores, paquete.precioMenor)
 
                 totalPrecio += noches * precioHabitacion;
                 totalNoches += noches;
@@ -260,8 +251,6 @@ function calcularHoteles(
                 combinacionActual[combinacionActual.length - 1].fechaFinal
               );
 
-              //console.log("entra", combinacionActual);
-              //console.log(combinacionInicio <= inicio, combinacionFin >= fin);
               if (combinacionInicio <= inicio && combinacionFin >= fin) {
                 resultados[habitacionKey].push({
                   id: i + j + 1,

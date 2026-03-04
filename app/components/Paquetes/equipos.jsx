@@ -6,7 +6,6 @@ import { formatNumberWithDots } from "@/app/lib/utils/extras";
 const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
 
-  //console.log(resultados)
   if (!resultados) return null;
   if (Object.keys(resultados).length === 0) {
     return (
@@ -24,7 +23,6 @@ const PaquetesEquipos = ({ resultados, agregarPaquete }) => {
       [index]: value,
     }));
   };
-  console.log(resultados);
 
   return (
     <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">

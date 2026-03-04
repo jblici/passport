@@ -60,7 +60,6 @@ const ResumenPresupuesto = ({
 
   useEffect(() => {
     const paquetesTemp = [...paquetesSeleccionados];
-    //console.log(paquetesTemp);
     if (flag) {
       verificarFamilyPlan(
         paquetesTemp,
@@ -91,9 +90,7 @@ const ResumenPresupuesto = ({
   useEffect(() => {
     const { totalPesos, totalDolares } = paquetesSeleccionados.reduce(
       (acumulador, paquete) => {
-        console.log(paquete);
         const precioFinal = paquete.price - (paquete.discount ? paquete.discount : 0);
-        console.log(precioFinal);
 
         if (paquete.seccion === "alojamiento" && paquete.moneda === "USD") {
           acumulador.totalDolares += precioFinal;

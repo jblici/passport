@@ -91,12 +91,10 @@ export const generatePDF = (
 
       // Texto a la derecha (alineado desde la derecha hacia la izquierda)
       const textWidth = ocultarPrecios ? 20 : doc.getTextWidth(rightText);
-      console.log(textWidth);
       doc.setFont("helvetica", "bold");
       if (textLines.length > 1) {
         doc.text(rightText, pageWidth - margin - textWidth, y - 12);
         if (discount) {
-          console.log('entre con length')
           doc.setFontSize(8);
           doc.setFont("helvetica", "italic");
           doc.setTextColor(150); // Gris
@@ -105,7 +103,6 @@ export const generatePDF = (
           doc.setFontSize(fontSize);
         }
       } else {
-        console.log('entre sin length')
         doc.text(rightText, pageWidth - margin - textWidth, y - 6);
         if (discount) {
           doc.setFontSize(8);
@@ -159,8 +156,6 @@ export const generatePDF = (
       );
       currentY += 5;
     }
-
-    //console.log(paquetesSeleccionados);
     paquetesSeleccionados.forEach((paquete) => {
       if (paquete.seccion === "alojamiento") {
         currentY = addRow(
@@ -234,8 +229,6 @@ export const generatePDF = (
       doc.setFontSize(10);
 
       let obsY = pageHeight - 40; // Espacio vertical antes del total
-
-      console.log(observaciones, "Observaciones?");
 
       observaciones.forEach((obs) => {
         const obsLines = doc.splitTextToSize(`Observacion: ${obs.name}`, 120); // Ajuste de ancho

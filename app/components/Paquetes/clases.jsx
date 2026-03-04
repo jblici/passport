@@ -8,7 +8,6 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
 
   if (!resultados) return null;
-  //console.log(resultados);
   if (Object.keys(resultados).length === 0) {
     return (
       <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">

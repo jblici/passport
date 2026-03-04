@@ -51,7 +51,6 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
       setError(true);
       return;
     }
-    console.log("agregue observacion");
 
     agregarPaquete({
       seccion: `observacion`,
@@ -77,7 +76,7 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
       <Button
         onClick={toggleDropdown}
         variant="default"
-        className={`flex items-center gap-2 ${isOpen & "bg-blue-500"}`}
+        className={`flex items-center gap-2 ${isOpen && "bg-blue-500"}`}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >

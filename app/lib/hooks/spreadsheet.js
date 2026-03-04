@@ -8,7 +8,7 @@ const useGroupedSpreadsheets = () => {
   const [traslados, setTraslados] = useState(null);
 
   const fetchCSV = async (url) => {
-    const response = await fetch(url);
+    const response = await fetch(url, { redirect: "follow" });
     return response.text();
   };
 
@@ -20,59 +20,139 @@ const useGroupedSpreadsheets = () => {
     // URLs de los distintos archivos
     const urls = {
       pases: [
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=371646853&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1775784558&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrgSNgmR8oRvUSBWiPH7971xx2p37mw1w958m0T0PwR6yNiEO3c1PaDWTSjkaAgyz4sJfYfwM8_i5v/pub?gid=1775784558&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv5Ek5FqxuWJf8cu6C1BBMp8EIpuFKZy8yIv--8JKkhcbiB-rGEPiw2YfgJF9CvF3PSKla1JXSygPu/pub?gid=1775784558&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vRxALEm1jwR3vFdfnJc-0XaURWP3lOlfRLsSkrbFnMuH-WpLrOdu0QrgLF5FrZ9kXzad1yHPsSUSJTQ/pub?gid=438579692&single=true&output=csv"
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=371646853&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1775784558&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrgSNgmR8oRvUSBWiPH7971xx2p37mw1w958m0T0PwR6yNiEO3c1PaDWTSjkaAgyz4sJfYfwM8_i5v/pub?gid=1775784558&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv5Ek5FqxuWJf8cu6C1BBMp8EIpuFKZy8yIv--8JKkhcbiB-rGEPiw2YfgJF9CvF3PSKla1JXSygPu/pub?gid=1775784558&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vRxALEm1jwR3vFdfnJc-0XaURWP3lOlfRLsSkrbFnMuH-WpLrOdu0QrgLF5FrZ9kXzad1yHPsSUSJTQ/pub?gid=438579692&output=csv",
       ],
       clases: [
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1901056977&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1969468282&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrgSNgmR8oRvUSBWiPH7971xx2p37mw1w958m0T0PwR6yNiEO3c1PaDWTSjkaAgyz4sJfYfwM8_i5v/pub?gid=1969468282&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv5Ek5FqxuWJf8cu6C1BBMp8EIpuFKZy8yIv--8JKkhcbiB-rGEPiw2YfgJF9CvF3PSKla1JXSygPu/pub?gid=1969468282&single=true&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1901056977&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1969468282&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrgSNgmR8oRvUSBWiPH7971xx2p37mw1w958m0T0PwR6yNiEO3c1PaDWTSjkaAgyz4sJfYfwM8_i5v/pub?gid=1969468282&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv5Ek5FqxuWJf8cu6C1BBMp8EIpuFKZy8yIv--8JKkhcbiB-rGEPiw2YfgJF9CvF3PSKla1JXSygPu/pub?gid=1969468282&output=csv",
       ],
       rentals: [
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1647426432&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1939040620&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrgSNgmR8oRvUSBWiPH7971xx2p37mw1w958m0T0PwR6yNiEO3c1PaDWTSjkaAgyz4sJfYfwM8_i5v/pub?gid=1939040620&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv5Ek5FqxuWJf8cu6C1BBMp8EIpuFKZy8yIv--8JKkhcbiB-rGEPiw2YfgJF9CvF3PSKla1JXSygPu/pub?gid=1939040620&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vRxALEm1jwR3vFdfnJc-0XaURWP3lOlfRLsSkrbFnMuH-WpLrOdu0QrgLF5FrZ9kXzad1yHPsSUSJTQ/pub?gid=1693469524&single=true&output=csv"
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1647426432&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1939040620&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrgSNgmR8oRvUSBWiPH7971xx2p37mw1w958m0T0PwR6yNiEO3c1PaDWTSjkaAgyz4sJfYfwM8_i5v/pub?gid=1939040620&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv5Ek5FqxuWJf8cu6C1BBMp8EIpuFKZy8yIv--8JKkhcbiB-rGEPiw2YfgJF9CvF3PSKla1JXSygPu/pub?gid=1939040620&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vRxALEm1jwR3vFdfnJc-0XaURWP3lOlfRLsSkrbFnMuH-WpLrOdu0QrgLF5FrZ9kXzad1yHPsSUSJTQ/pub?gid=1693469524&output=csv",
       ],
       traslados: [
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1978072612&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1194478962&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrgSNgmR8oRvUSBWiPH7971xx2p37mw1w958m0T0PwR6yNiEO3c1PaDWTSjkaAgyz4sJfYfwM8_i5v/pub?gid=1194478962&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv5Ek5FqxuWJf8cu6C1BBMp8EIpuFKZy8yIv--8JKkhcbiB-rGEPiw2YfgJF9CvF3PSKla1JXSygPu/pub?gid=1194478962&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vRxALEm1jwR3vFdfnJc-0XaURWP3lOlfRLsSkrbFnMuH-WpLrOdu0QrgLF5FrZ9kXzad1yHPsSUSJTQ/pub?gid=324871885&single=true&output=csv"
-      ]
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1978072612&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1194478962&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrgSNgmR8oRvUSBWiPH7971xx2p37mw1w958m0T0PwR6yNiEO3c1PaDWTSjkaAgyz4sJfYfwM8_i5v/pub?gid=1194478962&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv5Ek5FqxuWJf8cu6C1BBMp8EIpuFKZy8yIv--8JKkhcbiB-rGEPiw2YfgJF9CvF3PSKla1JXSygPu/pub?gid=1194478962&output=csv",
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vRxALEm1jwR3vFdfnJc-0XaURWP3lOlfRLsSkrbFnMuH-WpLrOdu0QrgLF5FrZ9kXzad1yHPsSUSJTQ/pub?gid=324871885&output=csv",
+      ],
     };
 
     // Mapeo de cada tipo de datos
     const mappers = {
       pases: (row) => {
-        const [cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio, pack] = row.split(",");
-        return { cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio: Number(precio), pack };
+        const [cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio, pack] =
+          row.split(",");
+        return {
+          cerro,
+          temporada,
+          edad,
+          tipo,
+          fechaInicio,
+          fechaFinal,
+          dias,
+          precio: Number(precio),
+          pack,
+        };
       },
       clases: (row) => {
-        const [cerro,	temporada,	tipo,	edad,	edad2,	fechaInicio,	fechaFinal,	pack,	dias,	precio,	descripcion] = row.split(",");
-        return { cerro, temporada, tipo, edad, fechaInicio, fechaFinal, pack, dias: Number(dias), precio: Number(precio), descripcion };
+        const [
+          cerro,
+          temporada,
+          tipo,
+          edad,
+          edad2,
+          fechaInicio,
+          fechaFinal,
+          pack,
+          dias,
+          precio,
+          descripcion,
+        ] = row.split(",");
+        return {
+          cerro,
+          temporada,
+          tipo,
+          edad,
+          fechaInicio,
+          fechaFinal,
+          pack,
+          dias: Number(dias),
+          precio: Number(precio),
+          descripcion,
+        };
       },
       rentals: (row) => {
-        const [cerro, local, temporada, edad, gama, articulo, fechaInicio, fechaFinal, dias, precio] = row.split(",");
-        return { cerro, local, temporada, edad, gama, articulo, fechaInicio, fechaFinal, dias: Number(dias), precio: Number(precio) };
+        const [
+          cerro,
+          local,
+          temporada,
+          edad,
+          gama,
+          articulo,
+          fechaInicio,
+          fechaFinal,
+          dias,
+          precio,
+        ] = row.split(",");
+        return {
+          cerro,
+          local,
+          temporada,
+          edad,
+          gama,
+          articulo,
+          fechaInicio,
+          fechaFinal,
+          dias: Number(dias),
+          precio: Number(precio),
+        };
       },
       traslados: (row) => {
-        const [cerro, recorrido, origen, destino, servicio, descripcion, tramo, fechaInicio, fechaFinal, precio, personas] = row.split(",");
-        return { cerro, recorrido, origen, destino, servicio, descripcion, tramo, fechaInicio, fechaFinal, precio: Number(precio), personas: Number(personas) };
-      }
+        const [
+          cerro,
+          recorrido,
+          origen,
+          destino,
+          servicio,
+          descripcion,
+          tramo,
+          fechaInicio,
+          fechaFinal,
+          precio,
+          personas,
+        ] = row.split(",");
+        return {
+          cerro,
+          recorrido,
+          origen,
+          destino,
+          servicio,
+          descripcion,
+          tramo,
+          fechaInicio,
+          fechaFinal,
+          precio: Number(precio),
+          personas: Number(personas),
+        };
+      },
     };
 
     // Cargar datos de cada sección
     const data = {};
     for (const section in urls) {
       const csvData = await Promise.all(urls[section].map(fetchCSV));
-      data[section] = csvData.flatMap(csv => parseCSV(csv, mappers[section]));
+      data[section] = csvData.flatMap((csv) => parseCSV(csv, mappers[section]));
     }
 
     setPases(data.pases);

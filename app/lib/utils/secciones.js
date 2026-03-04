@@ -130,7 +130,6 @@ export const handleFormularios = (
 export const handleEquipos = (cerro, rentals, setEquipos, startDate, dias, gama) => {
   let rentalsFiltradas = rentals;
   const fechaFin = sumarDias(new Date(startDate), dias - 1);
-  console.log(rentalsFiltradas);
 
   if (cerro) {
     rentalsFiltradas = rentalsFiltradas.filter(
@@ -372,8 +371,6 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, tipo) => {
         const paseInicio = parseDate(pase.fechaInicio);
         const paseFinal = parseDate(pase.fechaFinal);
 
-        console.log(startDate, fechaFin);
-
         if (cerro === "Las Leñas") {
           return paseInicio <= startDate && startDate <= paseFinal;
         } else {
@@ -381,7 +378,6 @@ export const handlePases = (cerro, pases, setPases, startDate, dias, tipo) => {
         }
       });
     }
-    console.log(pasesFiltrados, "final");
     // Bariloche y Las Leñas funcionan como hasta ahora
     setPases(pasesFiltrados.sort((a, b) => a.precio - b.precio));
   }
@@ -404,7 +400,6 @@ export const handleTransporte = (
   const inicio = new Date(startDate).toLocaleDateString("es-AR");
   const fin = new Date(endDate).toLocaleDateString("es-AR");
 
-  // 1. Filtrar por cerro, origen y destino
   if (cerro) {
     transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.cerro === cerro);
   }
@@ -420,7 +415,6 @@ export const handleTransporte = (
 
   // 2. Separar por tipo de transporte
   if (tipoTransporte === "Pasaje") {
-    // Solo incluir paquetes que sean de servicio "Pasaje"
     transporteFiltrado = transporteFiltrado.filter((paquete) => paquete.servicio === "Pasaje");
 
     transporteFiltrado = transporteFiltrado.map((paquete) => ({
@@ -468,8 +462,6 @@ export const handleTransporte = (
       inicio,
       fin,
     }));
-
-    console.log(transporteFiltrado);
 
     // Dividir en secciones de ida y vuelta
     ida = transporteFiltrado

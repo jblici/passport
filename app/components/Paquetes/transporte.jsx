@@ -5,8 +5,6 @@ import { useState } from "react";
 const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
 
-  //console.log(resultados);
-
   if (!resultados) return null;
   if (Object.keys(resultados).length === 0) {
     return (
@@ -48,7 +46,7 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
             </TableHeader>
             <TableBody>
               {resultados?.map((r, index) => (
-                <TableRow key={Math.floor(Math.random() * 1000000)}>
+                <TableRow key={`transporte-${index}`}>
                   <TableCell>{r.cerro}</TableCell>
                   <TableCell>{r.servicio}</TableCell>
                   <TableCell>{r.origen}</TableCell>
@@ -130,7 +128,7 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
                   </TableHeader>
                   <TableBody>
                     {paquetes?.map((r, index) => (
-                      <TableRow key={Math.floor(Math.random() * 1000000)}>
+                      <TableRow key={`transporte-${index}`}>
                         <TableCell>{r.cerro}</TableCell>
                         <TableCell>{r.servicio}</TableCell>
                         <TableCell>{r.origen}</TableCell>

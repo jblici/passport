@@ -73,12 +73,16 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                           <Button
                             variant="outline"
                             className="w-full bg-blue-500 text-white hover:bg-blue-600"
-                            onClick={() =>
+                            onClick={() => {
+                              const reglasEncontradas = reglas.find(
+                                (result) => result.hotel === r.paquetesUtilizados.hotel
+                              );
+                              if (!reglasEncontradas) {
+                                console.warn(`No rules found for hotel: ${r.paquetesUtilizados.hotel}`);
+                              }
                               agregarPaquete({
                                 seccion: "alojamiento",
-                                reglas: reglas.find(
-                                  (result) => result.hotel === r.paquetesUtilizados.hotel
-                                ).traduccion,
+                                reglas: reglasEncontradas?.traduccion || "",
                                 name: `${r.paquetesUtilizados.hotel} - ${
                                   r.paquetesUtilizados.habitacion
                                 } - ${r.noches} noches - ${
@@ -92,8 +96,8 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                                 moneda: r.paquetesUtilizados.moneda,
                                 menores: r.menores,
                                 mayores: r.mayores,
-                              })
-                            }
+                              });
+                            }}
                           >
                             Agregar
                           </Button>
@@ -130,13 +134,17 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                           <Button
                             variant="outline"
                             className="w-full bg-blue-500 text-white hover:bg-blue-600"
-                            onClick={() =>
+                            onClick={() => {
+                              const reglasEncontradas = reglas.find(
+                                (result) =>
+                                  result.hotel === r.paquetesUtilizados.paquetes[0].hotel
+                              );
+                              if (!reglasEncontradas) {
+                                console.warn(`No rules found for hotel: ${r.paquetesUtilizados.paquetes[0].hotel}`);
+                              }
                               agregarPaquete({
                                 seccion: "alojamiento",
-                                reglas: reglas.find(
-                                  (result) =>
-                                    result.hotel === r.paquetesUtilizados.paquetes[0].hotel
-                                ).traduccion,
+                                reglas: reglasEncontradas?.traduccion || "",
                                 name: `${r.paquetesUtilizados.paquetes[0].hotel} - ${
                                   r.paquetesUtilizados.paquetes[0].habitacion
                                 } - ${r.noches} noches - ${
@@ -150,8 +158,8 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
                                 moneda: r.paquetesUtilizados.paquetes[0].moneda,
                                 menores: r.menores,
                                 mayores: r.mayores,
-                              })
-                            }
+                              });
+                            }}
                           >
                             Agregar
                           </Button>

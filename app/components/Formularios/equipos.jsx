@@ -96,8 +96,6 @@ export default function Equipos({
         resultado[cerro] = Array.from(gamasPorCerro[cerro]);
       });
 
-      console.log(resultado);
-
       setCerrosGamas(resultado);
       setLoading(false);
     }

@@ -6,7 +6,6 @@ import { formatNumberWithDots } from "@/app/lib/utils/extras";
 const PaquetesPases = ({ resultados, agregarPaquete }) => {
   const [selectedCounts, setSelectedCounts] = useState({});
 
-  //console.log(resultados)
   if (!resultados) return null;
   if (Object.keys(resultados).length === 0) {
     return (
@@ -46,7 +45,7 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
           <TableBody>
             {resultados?.map((r, index) =>
               r.paquete ? (
-                <TableRow key={Math.floor(Math.random() * 1000000)}>
+                <TableRow key={`pase-${index}`}>
                   <TableCell>{r.paquete.cerro}</TableCell>
                   <TableCell>{r.paquete.dias}</TableCell>
                   <TableCell>{r.paquete.edad}</TableCell>
@@ -87,7 +86,7 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
                   </TableCell>
                 </TableRow>
               ) : (
-                <TableRow key={Math.floor(Math.random() * 1000000)}>
+                <TableRow key={`pase-${index}`}>
                   <TableCell>{r.cerro}</TableCell>
                   <TableCell>{r.dias}</TableCell>
                   <TableCell>{r.edad}</TableCell>

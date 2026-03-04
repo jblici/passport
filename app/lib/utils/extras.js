@@ -14,7 +14,6 @@ export function formatNumberWithDots(number) {
 
 export function formatNumberPercentage(number, total) {
   if (!number || !total) return 0;
-  console.log(number, total);
   return Math.round((number * 100) / total);
 }
 
@@ -75,18 +74,15 @@ export const verificarFamilyPlan = (
   setFlag,
   setIsChecked
 ) => {
-  //console.log('verificarFamilyPlan')
   const secciones = ["pases", "equipos", "clases"];
   let activarFamilyPlan = false;
   const nuevosPaquetes = JSON.parse(JSON.stringify(paquetesTemp));
 
-  //console.log("entre a verificar family plan");
 
   secciones.forEach((seccion) => {
     const paquetesPorSeccion = nuevosPaquetes.filter((paquete) => {
       const esSeccionClases = seccion === "clases";
       const minDias = esSeccionClases ? 6 : 8;
-      //console.log('nuevosPaquetes', nuevosPaquetes)
 
       return (
         paquete.seccion === seccion && // Coincide con la sección
@@ -97,9 +93,7 @@ export const verificarFamilyPlan = (
 
     const totalCount = paquetesPorSeccion.reduce((sum, paquete) => sum + paquete.count, 0);
 
-    //console.log('paquetes', paquetesPorSeccion)
 
-    //console.log('totalCount', totalCount)
 
     if (totalCount >= 4) {
       // Activar Family Plan si se cumplen las condiciones
@@ -107,7 +101,6 @@ export const verificarFamilyPlan = (
       activarFamilyPlan = true;
 
       let restante = totalCount >= 4 && totalCount < 6 ? 1 : 2; // Determina cuántos paquetes necesitamos procesar
-      //console.log("Restante", restante);
 
       if (isChecked) {
         while (restante > 0) {
