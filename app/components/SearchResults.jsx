@@ -1,4 +1,4 @@
-import { handleBusqueda } from "@/app/lib/utils/secciones";
+import { handleBusqueda } from "@/app/lib/utils/secciones.jsx";
 import { useCotizador } from "@/app/context/CotizadorContext";
 
 const SearchResults = ({ reglas }) => {

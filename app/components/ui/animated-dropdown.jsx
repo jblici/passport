@@ -5,14 +5,8 @@ import { ChevronRight, ChevronDown } from "lucide-react";
 import { formatNumberWithDots } from "@/app/lib/utils/extras";
 
 const dropdownVariants = {
-  desktop: {
-    open: { height: "auto", opacity: 1, y: 0 },
-    closed: { height: 0, opacity: 0, y: -20 },
-  },
-  mobile: {
-    open: { height: "auto", opacity: 1, y: 0 },
-    closed: { height: 0, opacity: 0, y: -20 },
-  },
+  open: { height: "auto", opacity: 1, y: 0 },
+  closed: { height: 0, opacity: 0, y: -20 },
 };
 
 export default function AnimatedDropdown({ discount, handleDiscount, agregarPaquete }) {
@@ -33,8 +27,8 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
     }
 
     agregarPaquete({
-      seccion: `item`,
-      name: `${name}`,
+      seccion: "item",
+      name,
       price: price * count,
       count,
     });
@@ -53,7 +47,7 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
     }
 
     agregarPaquete({
-      seccion: `observacion`,
+      seccion: "observacion",
       name: observacion,
       price: 0,
       count: 0,
@@ -64,7 +58,7 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
     setError(false);
   };
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
+  const toggleDropdown = () => setIsOpen((prev) => !prev);
 
   const handleModal = () => {
     setIsModalOpen(false);
@@ -89,7 +83,7 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
           <React.Fragment>
             {/* Desktop version - animates downward */}
             <motion.div
-              variants={dropdownVariants.desktop}
+              variants={dropdownVariants}
               initial="closed"
               animate="open"
               exit="closed"

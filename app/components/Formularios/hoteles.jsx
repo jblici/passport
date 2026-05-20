@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
@@ -13,7 +13,11 @@ import { handleHoteles } from "@/app/lib/utils/hoteles";
 import { scrollToSection } from "@/app/lib/utils/extras";
 import { cerros } from "../ui/cerros";
 import { cerrosInfoHoteles } from "@/app/lib/config/cerrosInfo";
+import { SEASON_MIN_DATE, SEASON_MAX_DATE } from "@/app/lib/config/spreadsheetConfig";
 import { Search } from "lucide-react";
+
+const isSaturday = (date) => date.getUTCDay() === 6;
+const isMonday = (date) => date.getUTCDay() === 1;
 
 export default function Hoteles({
   category,
@@ -25,16 +29,11 @@ export default function Hoteles({
   startDate,
   setStartDate,
 }) {
-  const [cerrosHoteles, setCerrosHoteles] = useState({});
   const [endDate, setEndDate] = useState(null);
   const [selectedHoteles, setSelectedHoteles] = useState([]);
   const [producto, setProducto] = useState(null);
   const [habitaciones, setHabitaciones] = useState("1");
   const [detalleHabitaciones, setDetalleHabitaciones] = useState([{ mayores: "0", menores: "0" }]);
-  const currentYear = new Date().getFullYear();
-
-  const minDate = new Date(2025, 5, 1);
-  const maxDate = new Date(currentYear, 9, 31);
 
   const handleHabitacionesChange = (value) => {
     setHabitaciones(value);
@@ -47,33 +46,25 @@ export default function Hoteles({
 
   const handleDetalleChange = (index, type, value) => {
     const nuevosDetalles = [...detalleHabitaciones];
-    nuevosDetalles[index][type] = value;
+    nuevosDetalles[index] = { ...nuevosDetalles[index], [type]: value };
     setDetalleHabitaciones(nuevosDetalles);
   };
 
-  useEffect(() => {
-    if (paquetes) {
-      const hotelesPorCerro = {};
-      paquetes.forEach((paquete) => {
-        if (!hotelesPorCerro[paquete.cerro]) {
-          hotelesPorCerro[paquete.cerro] = new Set();
-        }
-        hotelesPorCerro[paquete.cerro].add(paquete.hotel);
-      });
-
-      const resultado = {};
-      Object.keys(hotelesPorCerro).forEach((cerro) => {
-        resultado[cerro] = Array.from(hotelesPorCerro[cerro]);
-      });
-      setCerrosHoteles(resultado);
-    }
+  const cerrosHoteles = useMemo(() => {
+    if (!paquetes) return {};
+    const hotelesPorCerro = {};
+    paquetes.forEach((paquete) => {
+      if (!hotelesPorCerro[paquete.cerro]) hotelesPorCerro[paquete.cerro] = new Set();
+      hotelesPorCerro[paquete.cerro].add(paquete.hotel);
+    });
+    return Object.fromEntries(
+      Object.entries(hotelesPorCerro).map(([c, s]) => [c, Array.from(s)])
+    );
   }, [paquetes]);
-
-  const isSaturday = (date) => date.getDay() === 6;
-  const isMonday = (date) => date.getDay() === 1;
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!startDate) return;
     const hoteles = selectedHoteles.map((h) => h.value);
     handleHoteles(
       startDate,
@@ -91,21 +82,38 @@ export default function Hoteles({
   const handleCerro = (value) => {
     setCerro(value);
     setSelectedHoteles([]);
+    setStartDate(null);
     if (value !== "Las Leñas") setProducto(null);
     if (value === "Las Leñas") setEndDate(null);
   };
 
-  if (!cerrosHoteles) return <Spinner />;
+  if (!paquetes) return <Spinner />;
 
   return (
-    <div className="h-fit w-full">
+    <div className="relative h-fit w-full mb-4">
       <h1 className="text-center text-3xl font-bold mb-2">{category}</h1>
-      <p className="text-center text-gray-600 mb-8">Completa los detalles para buscar alojamientos</p>
-      <div className="max-w-4xl mx-auto p-6">
+      <p className="text-center text-gray-600 mb-4">
+        Completa los detalles para buscar alojamientos
+      </p>
+      {/* Info */}
+      {cerrosInfoHoteles[cerro] && (
+        <div className="absolute top-0 right-5 sm:block hidden">
+          <InfoAlert title={cerrosInfoHoteles[cerro].titulo}>
+            {cerrosInfoHoteles[cerro].detalles.map((detalle, i) => (
+              <div key={i}>{detalle}</div>
+            ))}
+          </InfoAlert>
+        </div>
+      )}
+      <div className="max-w-4xl mx-auto p-4">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Row 1: Destino y Alojamiento + Paquete */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormCard icon="🏔️" title="Destino y Alojamiento" subtitle="Selecciona el centro de esquí y hoteles">
+            <FormCard
+              icon="🏔️"
+              title="Destino y Alojamiento"
+              subtitle="Selecciona el centro de esquí y hoteles"
+            >
               <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="centro" className="font-semibold">
@@ -137,7 +145,11 @@ export default function Hoteles({
 
             {/* Paquete Las Leñas */}
             {cerro === "Las Leñas" && (
-              <FormCard icon="📦" title="Paquete Especial" subtitle="Disponible solo para Las Leñas">
+              <FormCard
+                icon="📦"
+                title="Paquete Especial"
+                subtitle="Disponible solo para Las Leñas"
+              >
                 <div className="space-y-2">
                   <Label htmlFor="paquete" className="font-semibold">
                     Seleccionar Paquete
@@ -152,7 +164,7 @@ export default function Hoteles({
                     <SelectContent>
                       <SelectItem value="none">Ninguno</SelectItem>
                       <SelectItem value="MiniWeek">MiniWeek (2 noches)</SelectItem>
-                      <SelectItem value="MaxiWeek">MaxiWeek (5 noches)</SelectItem>
+                      <SelectItem value="ExtraWeek">ExtraWeek (5 noches)</SelectItem>
                       <SelectItem value="SkiWeek">SkiWeek (7 noches)</SelectItem>
                     </SelectContent>
                   </Select>
@@ -162,34 +174,48 @@ export default function Hoteles({
           </div>
 
           {/* Habitaciones */}
-          <FormCard icon="🏠" title="Configurar Habitaciones" subtitle="Define adultos y menores por habitación">
+          <FormCard
+            icon="🏠"
+            title="Configurar Habitaciones"
+            subtitle="Define adultos y menores por habitación"
+          >
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="habitaciones" className="font-semibold">
-                  Cantidad de Habitaciones <RequiredBadge />
-                </Label>
-                <Select value={habitaciones} onValueChange={handleHabitacionesChange}>
-                  <SelectTrigger id="habitaciones">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {["1", "2", "3", "4", "5"].map((num) => (
-                      <SelectItem key={num} value={num}>
-                        {num} {num === "1" ? "habitación" : "habitaciones"}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center">
+                  <Label htmlFor="habitaciones" className="font-semibold w-1/2">
+                    Cantidad de Habitaciones <RequiredBadge />
+                  </Label>
+                  <Select value={habitaciones} onValueChange={handleHabitacionesChange}>
+                    <SelectTrigger id="habitaciones">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {["1", "2", "3", "4", "5"].map((num) => (
+                        <SelectItem key={num} value={num}>
+                          {num} {num === "1" ? "habitación" : "habitaciones"}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               {/* Detalle por habitación */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                 {detalleHabitaciones.map((detalle, index) => (
-                  <div key={index} className="border border-gray-200 rounded-lg p-4 bg-gradient-to-br from-blue-50 to-white">
-                    <h4 className="font-semibold text-sm mb-4 text-gray-800">Habitación {index + 1}</h4>
+                  <div
+                    key={index}
+                    className="border border-gray-200 rounded-lg p-4 bg-gradient-to-br from-blue-50 to-white"
+                  >
+                    <h4 className="font-semibold text-sm mb-4 text-gray-800">
+                      Habitación {index + 1}
+                    </h4>
                     <div className="space-y-3">
-                      <div>
-                        <Label htmlFor={`mayores-${index}`} className="text-sm font-medium text-gray-700">
+                      <div className="flex items-center">
+                        <Label
+                          htmlFor={`mayores-${index}`}
+                          className="text-sm w-1/2 font-medium text-gray-700 "
+                        >
                           👥 Adultos
                         </Label>
                         <Select
@@ -208,8 +234,11 @@ export default function Hoteles({
                           </SelectContent>
                         </Select>
                       </div>
-                      <div>
-                        <Label htmlFor={`menores-${index}`} className="text-sm font-medium text-gray-700">
+                      <div className="flex items-center">
+                        <Label
+                          htmlFor={`menores-${index}`}
+                          className="text-sm w-1/2 font-medium text-gray-700"
+                        >
                           👶 Menores
                         </Label>
                         <Select
@@ -236,26 +265,36 @@ export default function Hoteles({
           </FormCard>
 
           {/* Fechas */}
-          <FormCard icon="📅" title="Fechas del Viaje" subtitle="Selecciona las fechas de inicio y fin">
+          <FormCard
+            icon="📅"
+            title="Fechas del Viaje"
+            subtitle="Selecciona las fechas de inicio y fin"
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <DateField
                 id="start-date"
                 label="Fecha de Inicio"
                 value={startDate}
                 onChange={setStartDate}
-                minDate={minDate}
-                maxDate={maxDate}
+                minDate={SEASON_MIN_DATE}
+                maxDate={SEASON_MAX_DATE}
                 required
                 disabled={cerro === "Las Leñas" && !producto}
-                filterDate={cerro === "Las Leñas" && producto === "MaxiWeek" ? isMonday : isSaturday}
+                filterDate={
+                  cerro === "Las Leñas"
+                    ? producto === "ExtraWeek"
+                      ? isMonday
+                      : isSaturday
+                    : undefined
+                }
               />
               <DateField
                 id="end-date"
                 label="Fecha de Finalización"
                 value={endDate}
                 onChange={setEndDate}
-                minDate={minDate}
-                maxDate={maxDate}
+                minDate={SEASON_MIN_DATE}
+                maxDate={SEASON_MAX_DATE}
                 disabled={!!producto}
               />
             </div>
@@ -272,17 +311,6 @@ export default function Hoteles({
             Buscar Alojamientos
           </Button>
         </form>
-
-        {/* Info */}
-        {cerrosInfoHoteles[cerro] && (
-          <div className="mt-8">
-            <InfoAlert title={cerrosInfoHoteles[cerro].titulo}>
-              {cerrosInfoHoteles[cerro].detalles.map((detalle, i) => (
-                <div key={i}>{detalle}</div>
-              ))}
-            </InfoAlert>
-          </div>
-        )}
       </div>
     </div>
   );

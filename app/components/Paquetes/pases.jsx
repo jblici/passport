@@ -1,12 +1,13 @@
-import { useState } from "react";
 import { TableCell, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
 import { formatNumberWithDots } from "@/app/lib/utils/extras";
 import DataTable from "../ui/DataTable";
+import CountSelect from "../ui/CountSelect";
+import useSelectedCounts from "@/app/lib/hooks/useSelectedCounts";
 import EmptyState from "../EmptyState";
 
 const PaquetesPases = ({ resultados, agregarPaquete }) => {
-  const [selectedCounts, setSelectedCounts] = useState({});
+  const { selectedCounts, handleCountChange } = useSelectedCounts();
 
   if (!resultados || resultados.length === 0) {
     return (
@@ -18,13 +19,6 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
     );
   }
 
-  const handleCountChange = (index, value) => {
-    setSelectedCounts((prev) => ({
-      ...prev,
-      [index]: value,
-    }));
-  };
-
   const handleAddPass = (pass, index) => {
     const pData = pass.paquete || pass;
     const count = selectedCounts[index] || 1;
@@ -33,7 +27,7 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
       seccion: "pases",
       noches: pData.dias,
       count: Number(count),
-      name: `Medios de Elevación: ${pData.tipo} - ${pData.edad} - ${pData.dias} días`,
+      name: `${pData.tipo} - ${pData.edad} - ${pData.dias} días`,
       price: pass.precio * count,
     });
   };
@@ -49,19 +43,13 @@ const PaquetesPases = ({ resultados, agregarPaquete }) => {
         <TableCell>{pData.tipo}</TableCell>
         <TableCell>{pData.pack}</TableCell>
         <TableCell>$ {formatNumberWithDots(pass.precio)}</TableCell>
-        <TableCell>
-          <div className="flex gap-2">
-            <select
+        <TableCell className="w-px whitespace-nowrap">
+          <div className="flex gap-2 items-center justify-end">
+            <CountSelect
+              index={index}
               value={selectedCounts[index] || 1}
-              onChange={(e) => handleCountChange(index, e.target.value)}
-              className="px-2 py-1 border rounded"
-            >
-              {[...Array(5).keys()].map((num) => (
-                <option key={num + 1} value={num + 1}>
-                  {num + 1}
-                </option>
-              ))}
-            </select>
+              onChange={handleCountChange}
+            />
             <Button
               className="bg-blue-500 text-white hover:bg-blue-600"
               onClick={() => handleAddPass(pass, index)}

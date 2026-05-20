@@ -6,20 +6,13 @@ import {
   validateColumns,
   trimColumns,
   toNumber,
+  splitCSVRow,
 } from "@/app/lib/utils/csvParser";
 import { SPREADSHEET_URLS } from "@/app/lib/config/spreadsheetConfig";
 
-const useGroupedSpreadsheets = () => {
-  const [pases, setPases] = useState(null);
-  const [clases, setClases] = useState(null);
-  const [rentals, setRentals] = useState(null);
-  const [traslados, setTraslados] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  const mappers = {
+const mappers = {
     pases: (row) => {
-      const cols = row.split(",");
+      const cols = splitCSVRow(row);
       validateColumns(cols, 9, "Pases row");
       const [cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio, pack] =
         trimColumns(cols);
@@ -36,13 +29,14 @@ const useGroupedSpreadsheets = () => {
       };
     },
     clases: (row) => {
-      const cols = row.split(",");
-      validateColumns(cols, 10, "Clases row");
+      const cols = splitCSVRow(row);
+      validateColumns(cols, 11, "Clases row");
       const [
         cerro,
         temporada,
         tipo,
         edad,
+        , // edad2 — present in sheet but not used
         fechaInicio,
         fechaFinal,
         pack,
@@ -64,7 +58,7 @@ const useGroupedSpreadsheets = () => {
       };
     },
     rentals: (row) => {
-      const cols = row.split(",");
+      const cols = splitCSVRow(row);
       validateColumns(cols, 10, "Rentals row");
       const [cerro, local, temporada, edad, gama, articulo, fechaInicio, fechaFinal, dias, precio] =
         trimColumns(cols);
@@ -82,7 +76,7 @@ const useGroupedSpreadsheets = () => {
       };
     },
     traslados: (row) => {
-      const cols = row.split(",");
+      const cols = splitCSVRow(row);
       validateColumns(cols, 11, "Traslados row");
       const [
         cerro,
@@ -111,18 +105,28 @@ const useGroupedSpreadsheets = () => {
         personas: toNumber(personas),
       };
     },
-  };
+};
+
+const useGroupedSpreadsheets = () => {
+  const [pases, setPases] = useState(null);
+  const [clases, setClases] = useState(null);
+  const [rentals, setRentals] = useState(null);
+  const [traslados, setTraslados] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const obtenerDatos = async () => {
     try {
       setError(null);
       setLoading(true);
 
-      const data = {};
-      for (const section in SPREADSHEET_URLS) {
-        const csvData = await Promise.all(SPREADSHEET_URLS[section].map(fetchCSV));
-        data[section] = csvData.flatMap((csv) => parseCSV(csv, mappers[section]));
-      }
+      const entries = await Promise.all(
+        Object.entries(SPREADSHEET_URLS).map(async ([section, urls]) => {
+          const csvData = await Promise.all(urls.map(fetchCSV));
+          return [section, csvData.flatMap((csv) => parseCSV(csv, mappers[section]))];
+        }),
+      );
+      const data = Object.fromEntries(entries);
 
       setPases(data.pases);
       setClases(data.clases);

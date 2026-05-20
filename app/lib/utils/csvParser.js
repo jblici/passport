@@ -8,7 +8,8 @@
  */
 export const fetchCSV = async (url) => {
   try {
-    const response = await fetch(url, { redirect: "follow" });
+    const cacheBustUrl = `${url}&_t=${Date.now()}`;
+    const response = await fetch(cacheBustUrl, { redirect: "follow", cache: "no-store" });
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: Failed to fetch ${url}`);
     }
@@ -26,18 +27,68 @@ export const fetchCSV = async (url) => {
 };
 
 /**
- * Parse CSV text into objects using a mapper function
- * @param {string} csv - Raw CSV text
- * @param {function} mapper - Function that transforms a CSV row into an object
- * @param {number} minColumns - Minimum expected columns (for validation)
- * @returns {Array} Parsed rows
- * @throws {Error} If parsing fails with details about which rows failed
+ * Split CSV text into rows respecting quoted fields (RFC 4180).
+ * Handles cells that contain newlines or commas inside double quotes.
  */
-export const parseCSV = (csv, mapper, minColumns) => {
+export const splitCSVRows = (csv) => {
+  const lines = [];
+  let current = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < csv.length; i++) {
+    const ch = csv[i];
+    if (ch === '"') {
+      inQuotes = !inQuotes;
+      current += ch;
+    } else if (ch === "\r") {
+      // skip carriage returns
+    } else if (ch === "\n" && !inQuotes) {
+      if (current.trim()) lines.push(current);
+      current = "";
+    } else {
+      current += ch;
+    }
+  }
+  if (current.trim()) lines.push(current);
+  return lines;
+};
+
+/**
+ * Split a single CSV row into columns respecting quoted fields.
+ * Handles commas and embedded newlines inside double quotes.
+ * Replaces row.split(",") in all mappers.
+ */
+export const splitCSVRow = (row) => {
+  const cols = [];
+  let current = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < row.length; i++) {
+    const ch = row[i];
+    if (ch === '"') {
+      inQuotes = !inQuotes;
+      // Strip surrounding quotes from value (don't add the quote char itself)
+    } else if (ch === "," && !inQuotes) {
+      cols.push(current);
+      current = "";
+    } else if ((ch === "\n" || ch === "\r") && inQuotes) {
+      // Strip embedded newlines inside quoted fields
+    } else {
+      current += ch;
+    }
+  }
+  cols.push(current);
+  return cols;
+};
+
+/**
+ * Parse CSV text into objects using a mapper function.
+ * Uses RFC 4180-compliant row and column splitting.
+ */
+export const parseCSV = (csv, mapper) => {
   try {
-    const rows = csv.split("\n");
-    const header = rows[0]; // Keep header for reference
-    const dataRows = rows.slice(1).filter((row) => row.trim());
+    const rows = splitCSVRows(csv);
+    const dataRows = rows.slice(1); // skip header
 
     const parsed = [];
     const errors = [];
@@ -45,27 +96,29 @@ export const parseCSV = (csv, mapper, minColumns) => {
     dataRows.forEach((row, index) => {
       try {
         const result = mapper(row);
-        parsed.push(result);
+        if (result !== null && result !== undefined) parsed.push(result);
       } catch (err) {
         errors.push({
-          rowNumber: index + 2, // +2 because we skip header and 0-indexed
-          rowContent: row.substring(0, 50), // First 50 chars for context
+          rowNumber: index + 2,
+          rowContent: row.substring(0, 50),
           error: err.message,
         });
       }
     });
 
-    // Report errors if any rows failed to parse
     if (errors.length > 0) {
       const errorSummary = errors
-        .slice(0, 3) // Show first 3 errors
+        .slice(0, 3)
         .map((e) => `Row ${e.rowNumber}: ${e.error}`)
         .join("; ");
-      const totalMessage = errors.length > 3
-        ? `${errorSummary}... (${errors.length - 3} more errors)`
-        : errorSummary;
+      const totalMessage =
+        errors.length > 3
+          ? `${errorSummary}... (${errors.length - 3} more errors)`
+          : errorSummary;
 
-      console.warn(`CSV parsing: ${parsed.length} rows parsed, ${errors.length} rows skipped due to errors: ${totalMessage}`);
+      console.warn(
+        `CSV parsing: ${parsed.length} rows parsed, ${errors.length} rows skipped due to errors: ${totalMessage}`
+      );
     }
 
     return parsed;
@@ -98,4 +151,11 @@ export const trimColumns = (columns) => {
  */
 export const toNumber = (value) => {
   return Number(value) || 0;
+};
+
+/**
+ * Helper to safely convert a value to a rounded integer (for prices)
+ */
+export const toRoundedNumber = (value) => {
+  return Math.round(Number(value)) || 0;
 };

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { verificarFamilyPlan } from "@/app/lib/utils/extras";
+import { checkFamilyPlanEligibility, applyFamilyPlanDiscount } from "@/app/lib/utils/extras";
 
 const useBudgetState = (originales, paquetesSeleccionados, setPaquetesSeleccionados) => {
   // Budget info
@@ -12,12 +12,10 @@ const useBudgetState = (originales, paquetesSeleccionados, setPaquetesSelecciona
     isModalOpen: false,
   });
 
-  // Family plan related state
+  // Family plan: isEligible (condiciones cumplidas), isChecked (activado por el usuario)
   const [familyPlan, setFamilyPlan] = useState({
-    isActive: false,
-    isVerified: false,
+    isEligible: false,
     isChecked: false,
-    shouldVerify: true,
   });
 
   // Item editing state
@@ -35,15 +33,7 @@ const useBudgetState = (originales, paquetesSeleccionados, setPaquetesSelecciona
   });
 
   const handleToggle = () => {
-    setFamilyPlan((prevState) => {
-      const newIsChecked = !prevState.isChecked;
-      return {
-        ...prevState,
-        isChecked: newIsChecked,
-        isActive: newIsChecked === true ? true : prevState.isActive,
-        shouldVerify: newIsChecked === false ? true : prevState.shouldVerify,
-      };
-    });
+    setFamilyPlan((prev) => ({ ...prev, isChecked: !prev.isChecked }));
   };
 
   const handleDiscount = (e) => {
@@ -63,31 +53,27 @@ const useBudgetState = (originales, paquetesSeleccionados, setPaquetesSelecciona
     );
   };
 
+  // Recalcular elegibilidad cada vez que cambia la lista base de paquetes
   useEffect(() => {
-    const paquetesTemp = [...paquetesSeleccionados];
-    if (familyPlan.shouldVerify) {
-      verificarFamilyPlan(
-        paquetesTemp,
-        familyPlan.isChecked,
-        (value) => setFamilyPlan((prev) => ({ ...prev, isVerified: value })),
-        setPaquetesSeleccionados,
-        (value) => setFamilyPlan((prev) => ({ ...prev, shouldVerify: value })),
-        (value) => setFamilyPlan((prev) => ({ ...prev, isChecked: value })),
-      );
-    }
-  }, [familyPlan.shouldVerify, paquetesSeleccionados]);
+    const eligible = checkFamilyPlanEligibility(originales);
+    setFamilyPlan((prev) => ({
+      ...prev,
+      isEligible: eligible,
+      isChecked: eligible ? prev.isChecked : false, // auto-desactivar si ya no califica
+    }));
+  }, [originales]);
 
+  // Aplicar o remover descuento cuando cambia el toggle o la elegibilidad.
+  // setPaquetesSeleccionados se omite de las deps intencionalmente: es un dispatch wrapper
+  // estable (useCallback en useCotizadorState) y no cambia su comportamiento entre renders.
   useEffect(() => {
-    if (familyPlan.isVerified && familyPlan.isActive) {
-      const nuevosPaquetes = JSON.parse(JSON.stringify(originales));
-      setPaquetesSeleccionados(nuevosPaquetes);
-      setFamilyPlan((prev) => ({
-        ...prev,
-        isActive: false,
-        shouldVerify: false,
-      }));
+    if (familyPlan.isChecked && familyPlan.isEligible) {
+      setPaquetesSeleccionados(applyFamilyPlanDiscount(originales));
+    } else {
+      setPaquetesSeleccionados(originales);
     }
-  }, [familyPlan.isVerified, familyPlan.isActive, originales, setPaquetesSeleccionados]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [familyPlan.isChecked, familyPlan.isEligible, originales]);
 
   useEffect(() => {
     const { totalPesos, totalDolares } = paquetesSeleccionados.reduce(
@@ -105,10 +91,10 @@ const useBudgetState = (originales, paquetesSeleccionados, setPaquetesSelecciona
       { totalPesos: 0, totalDolares: 0 },
     );
 
-    setBudget((prev) => ({
-      ...prev,
-      total: { pesos: totalPesos, dolares: totalDolares },
-    }));
+    setBudget((prev) => {
+      if (prev.total.pesos === totalPesos && prev.total.dolares === totalDolares) return prev;
+      return { ...prev, total: { pesos: totalPesos, dolares: totalDolares } };
+    });
   }, [paquetesSeleccionados]);
 
   // Helper setters for easier state updates
@@ -119,27 +105,14 @@ const useBudgetState = (originales, paquetesSeleccionados, setPaquetesSelecciona
     setObservationEditing((prev) => ({ ...prev, ...updates }));
 
   return {
-    // Budget state and setters
     budget,
     updateBudget,
-    setBudget,
-
-    // Family plan state and setters
     familyPlan,
     updateFamilyPlan,
-    setFamilyPlan,
-
-    // Item editing state and setters
     itemEditing,
     updateItemEditing,
-    setItemEditing,
-
-    // Observation editing state and setters
     observationEditing,
     updateObservationEditing,
-    setObservationEditing,
-
-    // Handlers
     handleToggle,
     handleDiscount,
   };

@@ -1,14 +1,11 @@
 export const formatReglas = (text) => {
   return text
-    .replace(/;/g, ",") // Reemplaza ; por ,
-    .replace(/\. /g, ".\n"); // Agrega un salto de línea después de cada punto
+    .replace(/;/g, ",")
+    .replace(/\. /g, ".\n");
 };
 
 export function formatNumberWithDots(number) {
-  // Redondear al entero más cercano
   const roundedNumber = Math.round(Number(number));
-
-  // Formatear con puntos como separadores de miles
   return roundedNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
@@ -19,140 +16,95 @@ export function formatNumberPercentage(number, total) {
 
 export const formatDate = (date, dias) => {
   const fecha = new Date(date);
-
-  // Formatear fecha inicial
-  const dia = ("0" + fecha.getDate()).slice(-2); // Asegura que el día tenga 2 dígitos
-  const mes = ("0" + (fecha.getMonth() + 1)).slice(-2); // Meses son 0-indexados, por eso se suma 1
-  const anio = fecha.getFullYear();
-
-  const fechaInicial = `${dia}/${mes}/${anio}`;
-
-  // Sumar días a la fecha inicial
+  const fechaInicial = stringDate(fecha);
   fecha.setDate(fecha.getDate() + dias);
-
-  // Formatear la fecha final después de sumar los días
-  const diaFinal = ("0" + fecha.getDate()).slice(-2); // Asegura que el día tenga 2 dígitos
-  const mesFinal = ("0" + (fecha.getMonth() + 1)).slice(-2); // Meses son 0-indexados, por eso se suma 1
-  const anioFinal = fecha.getFullYear();
-
-  const fechaFinal = `${diaFinal}/${mesFinal}/${anioFinal}`;
-
+  const fechaFinal = stringDate(fecha);
   return { fechaInicial, fechaFinal };
 };
 
 export const stringDate = (dateString) => {
   const date = new Date(dateString);
-
-  if (isNaN(date)) return "Fecha inválida"; // Verifica si la fecha es válida
-
+  if (isNaN(date)) return "Fecha inválida";
   const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth() devuelve 0-11, por eso sumamos 1
+  const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = date.getFullYear();
-
   return `${day}/${month}/${year}`;
 };
 
 export function sumarDias(fecha, dias) {
-  // Asegúrate de que fecha sea un objeto Date
   const fechaObj = new Date(fecha);
-
-  // Sumar los días
   fechaObj.setDate(fechaObj.getDate() + dias);
-
-  return fechaObj; // Devuelve la nueva fecha
+  return fechaObj;
 }
 
 export const scrollToSection = () => {
   document.getElementById("busqueda").scrollIntoView({ behavior: "smooth" });
 };
 
-export const verificarFamilyPlan = (
-  paquetesTemp,
-  isChecked,
-  setFamilyPlan,
-  setPaquetesSeleccionados,
-  setFlag,
-  setIsChecked
-) => {
+// Devuelve true si alguna sección tiene 4+ personas que califican para el Family Plan
+export const checkFamilyPlanEligibility = (packages) => {
   const secciones = ["pases", "equipos", "clases"];
-  let activarFamilyPlan = false;
-  const nuevosPaquetes = JSON.parse(JSON.stringify(paquetesTemp));
+  return secciones.some((seccion) => {
+    const minDias = seccion === "clases" ? 6 : 8;
+    const qualifying = packages.filter(
+      (p) => p.seccion === seccion && !p.promo && Number(p.noches) >= minDias
+    );
+    const totalPersonas = qualifying.reduce((sum, p) => sum + p.count, 0);
+    return totalPersonas >= 4;
+  });
+};
 
+// Aplica el descuento Family Plan: la persona más barata (por precio unitario) queda gratis.
+// 4-5 personas → 1 gratis. 6+ personas → 2 gratis. Se aplica por sección de forma independiente.
+export const applyFamilyPlanDiscount = (packages) => {
+  const result = JSON.parse(JSON.stringify(packages));
+  const secciones = ["pases", "equipos", "clases"];
 
   secciones.forEach((seccion) => {
-    const paquetesPorSeccion = nuevosPaquetes.filter((paquete) => {
-      const esSeccionClases = seccion === "clases";
-      const minDias = esSeccionClases ? 6 : 8;
+    const minDias = seccion === "clases" ? 6 : 8;
 
-      return (
-        paquete.seccion === seccion && // Coincide con la sección
-        !paquete.promo && // No es promo
-        Number(paquete.noches) >= minDias // Cumple con el mínimo de días según la sección
-      );
-    });
+    // Track original index to avoid fragile reference-equality lookups after deep clone
+    const qualifying = result
+      .map((p, i) => ({ p, i }))
+      .filter(({ p }) => p.seccion === seccion && !p.promo && Number(p.noches) >= minDias);
 
-    const totalCount = paquetesPorSeccion.reduce((sum, paquete) => sum + paquete.count, 0);
+    const totalPersonas = qualifying.reduce((sum, { p }) => sum + p.count, 0);
+    if (totalPersonas < 4) return;
 
+    const gratuitos = totalPersonas >= 6 ? 2 : 1;
 
+    // Sort ascending by price-per-person → cheapest gets free slot first
+    const sorted = [...qualifying].sort(
+      ({ p: a }, { p: b }) => a.price / a.count - b.price / b.count
+    );
 
-    if (totalCount >= 4) {
-      // Activar Family Plan si se cumplen las condiciones
-      setFamilyPlan(true);
-      activarFamilyPlan = true;
+    let remaining = gratuitos;
 
-      let restante = totalCount >= 4 && totalCount < 6 ? 1 : 2; // Determina cuántos paquetes necesitamos procesar
+    for (const { p: pkg, i: idx } of sorted) {
+      if (remaining <= 0) break;
 
-      if (isChecked) {
-        while (restante > 0) {
-          // Buscar el paquete más barato que no tenga promo
-          const paqueteMasBarato = paquetesPorSeccion.reduce((min, paquete) =>
-            paquete.price < min.price ? paquete : min
-          );
+      const pricePerPerson = pkg.price / pkg.count;
+      const freeCount = Math.min(remaining, pkg.count);
 
-          if (paqueteMasBarato.count > 1) {
-            // Si el paquete tiene más de 1, reducimos su count y creamos uno con promo
-            paqueteMasBarato.count -= 1;
-            paqueteMasBarato.price =
-              (paqueteMasBarato.price / (paqueteMasBarato.count + 1)) * paqueteMasBarato.count;
-            nuevosPaquetes.push({
-              ...paqueteMasBarato,
-              count: 1,
-              oldPrice: paqueteMasBarato.price / 4,
-              price: 0, // Precio 0 para paquetes con promo
-              promo: true,
-            });
-
-            restante--;
-          } else {
-            // Si el paquete tiene count === 1, lo marcamos como promo
-            const index = nuevosPaquetes.findIndex((paquete) => paquete === paqueteMasBarato);
-            nuevosPaquetes[index] = {
-              ...paqueteMasBarato,
-              price: 0, // Precio 0 para paquetes con promo
-              promo: true,
-            };
-
-            // Remover de paquetesPorSeccion para no procesarlo nuevamente
-            const seccionIndex = paquetesPorSeccion.findIndex(
-              (paquete) => paquete === paqueteMasBarato
-            );
-            paquetesPorSeccion.splice(seccionIndex, 1);
-            restante--;
-          }
-        }
+      if (pkg.count > freeCount) {
+        // Only some in the group are free → split the item
+        const payingCount = pkg.count - freeCount;
+        result[idx] = { ...pkg, count: payingCount, price: pricePerPerson * payingCount };
+        result.push({
+          ...pkg,
+          count: freeCount,
+          price: 0,
+          promo: true,
+          originalPrice: pricePerPerson * freeCount,
+        });
+      } else {
+        // Entire item is free
+        result[idx] = { ...pkg, price: 0, promo: true, originalPrice: pkg.price };
       }
+
+      remaining -= freeCount;
     }
   });
 
-  // Actualiza el estado solo si es necesario
-  if (activarFamilyPlan) {
-    setFamilyPlan(true);
-    if (isChecked) {
-      setPaquetesSeleccionados(nuevosPaquetes);
-      setFlag(false);
-    }
-  } else {
-    setFamilyPlan(false);
-    setIsChecked(false);
-  }
+  return result;
 };

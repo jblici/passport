@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -7,10 +7,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import FormCard from "../ui/FormCard";
 import RequiredBadge from "../ui/RequiredBadge";
 import ToggleYesNo from "../ui/ToggleYesNo";
-import { handleTransporte } from "@/app/lib/utils/secciones";
+import { handleTransporte } from "@/app/lib/utils/secciones.jsx";
 import { scrollToSection } from "@/app/lib/utils/extras";
 import { cerros } from "../ui/cerros";
 import DateField from "../ui/DateField";
+import { SEASON_MIN_DATE, SEASON_MAX_DATE } from "@/app/lib/config/spreadsheetConfig";
 import { Search } from "lucide-react";
 
 export default function Transporte({
@@ -22,21 +23,12 @@ export default function Transporte({
   startDate,
   setStartDate,
 }) {
-  const [endDate, setEndDate] = useState(startDate);
+  const [endDate, setEndDate] = useState(null);
   const [personas, setPersonas] = useState(null);
   const [tipoTransporte, setTipoTransporte] = useState("Pasaje");
   const [claseTransporte, setClaseTransporte] = useState("Regular");
-  const [disable, setDisable] = useState(true);
-  const currentYear = new Date().getFullYear();
 
-  const minDate = new Date(currentYear, 5, 1);
-  const maxDate = new Date(currentYear, 9, 31);
-
-  useEffect(() => {
-    if (cerro && startDate && endDate) {
-      setDisable(false);
-    }
-  }, [cerro, endDate, startDate, traslado]);
+  const disable = !(cerro && startDate && endDate);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -52,18 +44,6 @@ export default function Transporte({
     );
   };
 
-  const handleCerro = (value) => {
-    setCerro(value);
-  };
-
-  const handleTipoTransporte = (value) => {
-    setTipoTransporte(value);
-  };
-
-  const handleClaseTransporte = (value) => {
-    setClaseTransporte(value);
-  };
-
   return (
     <div className="h-fit w-full">
       <h1 className="text-center text-3xl font-bold mb-2">{category}</h1>
@@ -72,20 +52,20 @@ export default function Transporte({
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Tipo de Transporte Section */}
           <FormCard icon="🚌" title="Tipo de Transporte" subtitle="Elige el tipo de traslado que prefieres">
-            <div className="space-y-4">
-              <div>
+            <div className="flex space-x-4">
+              <div className="w-1/2">
                 <Label className="font-semibold mb-3 block">Transporte</Label>
                 <ToggleYesNo
-                  onValueChange={handleTipoTransporte}
+                  onValueChange={setTipoTransporte}
                   options={[{ label: "Pasaje" }, { label: "Transfer" }]}
                 />
               </div>
 
               {tipoTransporte === "Transfer" && (
-                <div className="border-t pt-4">
+                <div className="w-1/2">
                   <Label className="font-semibold mb-3 block">Clase de Transfer</Label>
                   <ToggleYesNo
-                    onValueChange={handleClaseTransporte}
+                    onValueChange={setClaseTransporte}
                     options={[{ label: "Regular" }, { label: "Privado" }]}
                   />
                 </div>
@@ -101,7 +81,7 @@ export default function Transporte({
                   <Label htmlFor="centro" className="font-semibold">
                     Centro <RequiredBadge />
                   </Label>
-                  <Select id="centro" onValueChange={handleCerro} value={cerro}>
+                  <Select id="centro" onValueChange={setCerro} value={cerro}>
                     <SelectTrigger>
                       <SelectValue placeholder="Seleccionar Centro" />
                     </SelectTrigger>
@@ -134,8 +114,8 @@ export default function Transporte({
                   label="Fecha de Ida"
                   value={startDate}
                   onChange={setStartDate}
-                  minDate={minDate}
-                  maxDate={maxDate}
+                  minDate={SEASON_MIN_DATE}
+                  maxDate={SEASON_MAX_DATE}
                   required
                 />
                 <DateField
@@ -143,8 +123,8 @@ export default function Transporte({
                   label="Fecha de Vuelta"
                   value={endDate}
                   onChange={setEndDate}
-                  minDate={minDate}
-                  maxDate={maxDate}
+                  minDate={SEASON_MIN_DATE}
+                  maxDate={SEASON_MAX_DATE}
                   required
                 />
               </div>

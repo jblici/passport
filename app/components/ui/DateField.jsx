@@ -25,7 +25,11 @@ const DateField = ({
       <DatePicker
         id={id}
         selected={value}
-        onChange={onChange}
+        onChange={(date) => {
+          if (!date) return onChange(null);
+          // Normalizar a medianoche local para evitar el off-by-one de UTC-3
+          onChange(new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+        }}
         minDate={minDate}
         maxDate={maxDate}
         dateFormat="dd/MM/yyyy"

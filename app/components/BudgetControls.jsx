@@ -9,7 +9,6 @@ const BudgetControls = ({
   setPaquetesSeleccionados,
   familyPlan,
   cerro,
-  isChecked,
   handleToggle,
 }) => {
   return (
@@ -27,7 +26,7 @@ const BudgetControls = ({
         </div>
 
         {/* Family Plan Section */}
-        {familyPlan && cerro === "Las Leñas" && (
+        {familyPlan.isEligible && cerro === "Las Leñas" && (
           <div className="flex items-center gap-4 border-l-2 border-gray-300 pl-6">
             <div className="flex items-center gap-3">
               <div className="flex flex-col gap-1">
@@ -44,7 +43,7 @@ const BudgetControls = ({
                   </span>
                 </label>
                 <span className="text-xs text-gray-500">
-                  {isChecked ? "✓ Activado" : "Desactivado"}
+                  {familyPlan.isChecked ? "✓ Activado" : "Desactivado"}
                 </span>
               </div>
 
@@ -56,7 +55,7 @@ const BudgetControls = ({
                   type="checkbox"
                   id="familyPlanToggle"
                   className="peer sr-only"
-                  checked={isChecked}
+                  checked={familyPlan.isChecked}
                   onChange={handleToggle}
                 />
 

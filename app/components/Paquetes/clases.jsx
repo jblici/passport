@@ -1,13 +1,14 @@
 "use client";
-import { useState } from "react";
 import { TableCell, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
 import { formatNumberWithDots } from "@/app/lib/utils/extras";
+import CountSelect from "../ui/CountSelect";
+import useSelectedCounts from "@/app/lib/hooks/useSelectedCounts";
 import DataTable from "../ui/DataTable";
 import EmptyState from "../EmptyState";
 
 const PaquetesClases = ({ resultados, agregarPaquete }) => {
-  const [selectedCounts, setSelectedCounts] = useState({});
+  const { selectedCounts, handleCountChange } = useSelectedCounts();
 
   if (!resultados || resultados.length === 0) {
     return (
@@ -18,13 +19,6 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
       />
     );
   }
-
-  const handleCountChange = (index, value) => {
-    setSelectedCounts((prev) => ({
-      ...prev,
-      [index]: value,
-    }));
-  };
 
   const calculatePrice = (clase) => {
     let precioBase = clase.precio;
@@ -67,19 +61,13 @@ const PaquetesClases = ({ resultados, agregarPaquete }) => {
         <TableCell>{cData.dias}</TableCell>
         <TableCell>{cData.edad}</TableCell>
         <TableCell>$ {formatNumberWithDots(precioFinal)}</TableCell>
-        <TableCell>
-          <div className="flex gap-2">
-            <select
+        <TableCell className="w-px whitespace-nowrap">
+          <div className="flex gap-2 items-center justify-end">
+            <CountSelect
+              index={index}
               value={selectedCounts[index] || 1}
-              onChange={(e) => handleCountChange(index, e.target.value)}
-              className="px-2 py-1 border rounded"
-            >
-              {[...Array(5).keys()].map((num) => (
-                <option key={num + 1} value={num + 1}>
-                  {num + 1}
-                </option>
-              ))}
-            </select>
+              onChange={handleCountChange}
+            />
             <Button
               className="bg-blue-500 text-white hover:bg-blue-600"
               onClick={() => handleAddClase(clase, index)}

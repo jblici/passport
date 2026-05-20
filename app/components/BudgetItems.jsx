@@ -2,31 +2,30 @@ import { XIcon } from "./svg/svg";
 import { formatNumberWithDots, formatReglas, formatNumberPercentage } from "@/app/lib/utils/extras";
 import { Button } from "./ui/button";
 
+const SECTION_EMOJIS = {
+  alojamiento: "🏨",
+  pases: "🚡",
+  equipos: "🎿",
+  clases: "👨‍🏫",
+  transporte: "🚌",
+  item: "📌",
+  observacion: "📝",
+};
+
+const getSectionEmoji = (seccion) => SECTION_EMOJIS[seccion] || "📦";
+
 const BudgetItems = ({
   paquetesSeleccionados,
   eliminarPaquete,
   updateItemEditing,
   updateObservationEditing,
 }) => {
-  const getSectionEmoji = (seccion) => {
-    const emojis = {
-      alojamiento: "🏨",
-      pases: "🚡",
-      equipos: "🎿",
-      clases: "👨‍🏫",
-      transporte: "🚌",
-      item: "📌",
-      observacion: "📝",
-    };
-    return emojis[seccion] || "📦";
-  };
 
   return (
-    <div className="space-y-3">
-      <div id="pdf-content" className="space-y-3">
-        {paquetesSeleccionados.map((paquete, index) => (
+    <div id="pdf-content" className="space-y-3">
+      {paquetesSeleccionados.map((paquete, index) => (
           <div
-            key={index}
+            key={paquete._key}
             className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
           >
             {/* Header with section and name */}
@@ -122,8 +121,7 @@ const BudgetItems = ({
               </Button>
             </div>
           </div>
-        ))}
-      </div>
+      ))}
     </div>
   );
 };

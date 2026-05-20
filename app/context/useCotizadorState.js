@@ -1,5 +1,5 @@
 "use client";
-import { useReducer } from "react";
+import { useReducer, useCallback } from "react";
 
 // Search state reducer - maneja filtros de búsqueda
 const searchReducer = (state, action) => {
@@ -46,22 +46,20 @@ const resultsReducer = (state, action) => {
 // Cart state reducer - maneja paquetes seleccionados
 const cartReducer = (state, action) => {
   switch (action.type) {
-    case "ADD_PAQUETE":
+    case "ADD_PAQUETE": {
+      const withKey = { ...action.payload, _key: crypto.randomUUID() };
       return {
         ...state,
-        paquetesSeleccionados: [...state.paquetesSeleccionados, action.payload],
-        originales: [...state.originales, action.payload],
-        totalCompra: state.totalCompra + action.payload.price,
+        paquetesSeleccionados: [...state.paquetesSeleccionados, withKey],
+        originales: [...state.originales, withKey],
       };
-    case "REMOVE_PAQUETE": {
-      const paqueteEliminado = state.paquetesSeleccionados[action.payload];
+    }
+    case "REMOVE_PAQUETE":
       return {
         ...state,
         paquetesSeleccionados: state.paquetesSeleccionados.filter((_, i) => i !== action.payload),
         originales: state.originales.filter((_, i) => i !== action.payload),
-        totalCompra: state.totalCompra - paqueteEliminado.price,
       };
-    }
     case "SET_PAQUETES_SELECCIONADOS":
       return { ...state, paquetesSeleccionados: action.payload };
     case "SET_ORIGINALES":
@@ -90,7 +88,6 @@ const initialResultsState = {
 const initialCartState = {
   paquetesSeleccionados: [],
   originales: [],
-  totalCompra: 0,
 };
 
 // Custom hook
@@ -100,29 +97,64 @@ export const useCotizadorState = () => {
   const [cartState, dispatchCart] = useReducer(cartReducer, initialCartState);
 
   // Action creators for search state
-  const setStartDate = (date) => dispatchSearch({ type: "SET_START_DATE", payload: date });
-  const setBusqueda = (search) => dispatchSearch({ type: "SET_BUSQUEDA", payload: search });
-  const setCerro = (centro) => dispatchSearch({ type: "SET_CERRO", payload: centro });
-  const setCategory = (cat) => dispatchSearch({ type: "SET_CATEGORY", payload: cat });
+  // useCallback gives stable references — safe to use as useEffect deps in children
+  const setStartDate = useCallback(
+    (date) => dispatchSearch({ type: "SET_START_DATE", payload: date }),
+    [dispatchSearch],
+  );
+  const setBusqueda = useCallback(
+    (search) => dispatchSearch({ type: "SET_BUSQUEDA", payload: search }),
+    [dispatchSearch],
+  );
+  const setCerro = useCallback(
+    (centro) => dispatchSearch({ type: "SET_CERRO", payload: centro }),
+    [dispatchSearch],
+  );
+  const setCategory = useCallback(
+    (cat) => dispatchSearch({ type: "SET_CATEGORY", payload: cat }),
+    [dispatchSearch],
+  );
 
   // Action creators for results state
-  const setHotelSearchResults = (results) =>
-    dispatchResults({ type: "SET_HOTEL_RESULTS", payload: results });
-  const setPassSearchResults = (results) =>
-    dispatchResults({ type: "SET_PASS_RESULTS", payload: results });
-  const setClassSearchResults = (results) =>
-    dispatchResults({ type: "SET_CLASS_RESULTS", payload: results });
-  const setTransferSearchResults = (results) =>
-    dispatchResults({ type: "SET_TRANSFER_RESULTS", payload: results });
-  const setEquipmentSearchResults = (results) =>
-    dispatchResults({ type: "SET_EQUIPMENT_RESULTS", payload: results });
+  const setHotelSearchResults = useCallback(
+    (results) => dispatchResults({ type: "SET_HOTEL_RESULTS", payload: results }),
+    [dispatchResults],
+  );
+  const setPassSearchResults = useCallback(
+    (results) => dispatchResults({ type: "SET_PASS_RESULTS", payload: results }),
+    [dispatchResults],
+  );
+  const setClassSearchResults = useCallback(
+    (results) => dispatchResults({ type: "SET_CLASS_RESULTS", payload: results }),
+    [dispatchResults],
+  );
+  const setTransferSearchResults = useCallback(
+    (results) => dispatchResults({ type: "SET_TRANSFER_RESULTS", payload: results }),
+    [dispatchResults],
+  );
+  const setEquipmentSearchResults = useCallback(
+    (results) => dispatchResults({ type: "SET_EQUIPMENT_RESULTS", payload: results }),
+    [dispatchResults],
+  );
 
   // Action creators for cart state
-  const agregarPaquete = (paquete) => dispatchCart({ type: "ADD_PAQUETE", payload: paquete });
-  const eliminarPaquete = (index) => dispatchCart({ type: "REMOVE_PAQUETE", payload: index });
-  const setPaquetesSeleccionados = (paquetes) =>
-    dispatchCart({ type: "SET_PAQUETES_SELECCIONADOS", payload: paquetes });
-  const setOriginales = (paquetes) => dispatchCart({ type: "SET_ORIGINALES", payload: paquetes });
+  // useCallback garantiza referencias estables → evita loops en useEffects que las tengan como dep
+  const agregarPaquete = useCallback(
+    (paquete) => dispatchCart({ type: "ADD_PAQUETE", payload: paquete }),
+    [dispatchCart],
+  );
+  const eliminarPaquete = useCallback(
+    (index) => dispatchCart({ type: "REMOVE_PAQUETE", payload: index }),
+    [dispatchCart],
+  );
+  const setPaquetesSeleccionados = useCallback(
+    (paquetes) => dispatchCart({ type: "SET_PAQUETES_SELECCIONADOS", payload: paquetes }),
+    [dispatchCart],
+  );
+  const setOriginales = useCallback(
+    (paquetes) => dispatchCart({ type: "SET_ORIGINALES", payload: paquetes }),
+    [dispatchCart],
+  );
 
   return {
     // Search state and actions

@@ -1,16 +1,17 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import FormCard from "../ui/FormCard";
 import RequiredBadge from "../ui/RequiredBadge";
-import { handlePases } from "@/app/lib/utils/secciones";
+import { handlePases } from "@/app/lib/utils/secciones.jsx";
 import { scrollToSection } from "@/app/lib/utils/extras";
 import { cerros } from "../ui/cerros";
 import DateField from "../ui/DateField";
 import InfoAlert from "../ui/InfoAlert";
 import { cerrosInfoPases } from "@/app/lib/config/cerrosInfo";
+import { SEASON_MIN_DATE, SEASON_MAX_DATE } from "@/app/lib/config/spreadsheetConfig";
 import { Search } from "lucide-react";
 
 export default function Pases({
@@ -24,73 +25,33 @@ export default function Pases({
 }) {
   const [dias, setDias] = useState("1");
   const [tipo, setTipo] = useState(null);
-  const [disabled, setDisabled] = useState(true);
-  const currentYear = new Date().getFullYear();
-  const [cerrosDias, setCerrosDias] = useState({});
-  const [cerrosTipos, setCerrosTipos] = useState({});
 
-  const minDate = new Date(currentYear, 5, 1);
-  const maxDate = new Date(currentYear, 9, 31);
+  const disabled = !(cerro && dias && startDate);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     handlePases(cerro, pases, setPases, startDate, Number(dias), tipo);
   };
 
-  useEffect(() => {}, [pases]);
-
-  const handleCerro = (value) => {
-    setCerro(value);
-  };
-
-  const handleDias = (value) => {
-    setDias(value);
-  };
-
-  const handleTipo = (value) => {
-    setTipo(value);
-  };
-
-  useEffect(() => {
-    if (cerro && dias && startDate) {
-      setDisabled(false);
-    }
-  }, [cerro, dias, startDate, pases]);
-
-  useEffect(() => {
-    if (pases) {
-      const diasPorCerro = {};
-      const tiposPorCerro = {};
-
-      pases.forEach((pase) => {
-        const { cerro, dias, tipo } = pase;
-
-        if (dias) {
-          if (!diasPorCerro[cerro]) diasPorCerro[cerro] = new Set();
-          diasPorCerro[cerro].add(dias);
-        }
-
-        if (tipo) {
-          if (!tiposPorCerro[cerro]) tiposPorCerro[cerro] = new Set();
-          tiposPorCerro[cerro].add(tipo);
-        }
-      });
-
-      const resultadoDias = {};
-      const resultadoTipos = {};
-
-      Object.keys(diasPorCerro).forEach((cerro) => {
-        resultadoDias[cerro] = Array.from(diasPorCerro[cerro]).sort((a, b) => a - b);
-      });
-
-      Object.keys(tiposPorCerro).forEach((cerro) => {
-        resultadoTipos[cerro] = Array.from(tiposPorCerro[cerro]);
-      });
-
-      setCerrosDias(resultadoDias);
-      setCerrosTipos(resultadoTipos);
-    }
-  }, [pases, cerro]);
+  const { cerrosDias, cerrosTipos } = useMemo(() => {
+    if (!pases) return { cerrosDias: {}, cerrosTipos: {} };
+    const dias = {};
+    const tipos = {};
+    pases.forEach(({ cerro, dias: d, tipo }) => {
+      if (d) {
+        if (!dias[cerro]) dias[cerro] = new Set();
+        dias[cerro].add(d);
+      }
+      if (tipo) {
+        if (!tipos[cerro]) tipos[cerro] = new Set();
+        tipos[cerro].add(tipo);
+      }
+    });
+    return {
+      cerrosDias: Object.fromEntries(Object.entries(dias).map(([c, s]) => [c, Array.from(s).sort((a, b) => a - b)])),
+      cerrosTipos: Object.fromEntries(Object.entries(tipos).map(([c, s]) => [c, Array.from(s)])),
+    };
+  }, [pases]);
 
   return (
     <div className="h-fit w-full">
@@ -106,7 +67,7 @@ export default function Pases({
                   <Label htmlFor="centro" className="font-semibold">
                     Centro <RequiredBadge />
                   </Label>
-                  <Select id="centro" onValueChange={handleCerro} value={cerro}>
+                  <Select id="centro" onValueChange={setCerro} value={cerro}>
                     <SelectTrigger>
                       <SelectValue placeholder="Seleccionar Centro" />
                     </SelectTrigger>
@@ -118,7 +79,7 @@ export default function Pases({
                   <Label htmlFor="dias" className="font-semibold">
                     Cantidad de Días <RequiredBadge />
                   </Label>
-                  <Select id="dias" onValueChange={handleDias} value={dias}>
+                  <Select id="dias" onValueChange={setDias} value={dias}>
                     <SelectTrigger>
                       <SelectValue placeholder="Seleccionar Días" />
                     </SelectTrigger>
@@ -137,7 +98,7 @@ export default function Pases({
                     <Label htmlFor="tipo" className="font-semibold">
                       Tipo de Pase
                     </Label>
-                    <Select id="tipo" onValueChange={handleTipo} value={tipo || ""}>
+                    <Select id="tipo" onValueChange={setTipo} value={tipo || ""}>
                       <SelectTrigger>
                         <SelectValue placeholder="Seleccionar Pase" />
                       </SelectTrigger>
@@ -161,8 +122,8 @@ export default function Pases({
                 label="Fecha de Inicio"
                 value={startDate}
                 onChange={setStartDate}
-                minDate={minDate}
-                maxDate={maxDate}
+                minDate={SEASON_MIN_DATE}
+                maxDate={SEASON_MAX_DATE}
                 required
               />
             </FormCard>

@@ -8,9 +8,9 @@ import { Button } from "./ui/button";
 import { useCotizador } from "@/app/context/CotizadorContext";
 
 const ResumenPresupuesto = () => {
-  const { searchState, cartState, setPaquetesSeleccionados } = useCotizador();
+  const { searchState, cartState, setPaquetesSeleccionados, eliminarPaquete } = useCotizador();
   const { busqueda, cerro } = searchState;
-  const { paquetesSeleccionados, originales, totalCompra } = cartState;
+  const { paquetesSeleccionados, originales } = cartState;
 
   const {
     budget,
@@ -25,14 +25,9 @@ const ResumenPresupuesto = () => {
     handleDiscount,
   } = useBudgetState(originales, paquetesSeleccionados, setPaquetesSeleccionados);
 
-  const eliminarPaquete = (index) => {
-    const nuevos = paquetesSeleccionados.filter((_, i) => i !== index);
-    setPaquetesSeleccionados(nuevos);
-  };
-
   return (
     <div className="bg-card rounded-lg shadow-lg h-fit mt-4">
-      <div className="p-4 sm:p-6 md:p-8 border-b">
+      <div className="p-2 sm:p-4 border-b">
         <h2 className="text-xl font-bold mb-2">Presupuesto</h2>
       </div>
       <BudgetControls
@@ -42,10 +37,9 @@ const ResumenPresupuesto = () => {
         setPaquetesSeleccionados={setPaquetesSeleccionados}
         familyPlan={familyPlan}
         cerro={cerro}
-        isChecked={familyPlan.isChecked}
         handleToggle={handleToggle}
       />
-      <div className="p-4 sm:p-6 md:p-8 space-y-4">
+      <div className="p-2 sm:p-4 space-y-4">
         <BudgetItems
           paquetesSeleccionados={paquetesSeleccionados}
           eliminarPaquete={eliminarPaquete}

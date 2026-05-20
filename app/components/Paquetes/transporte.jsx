@@ -1,11 +1,13 @@
 import { TableCell, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
-import { useState } from "react";
 import DataTable from "../ui/DataTable";
 import EmptyState from "../EmptyState";
+import CountSelect from "../ui/CountSelect";
+import useSelectedCounts from "@/app/lib/hooks/useSelectedCounts";
+import { formatNumberWithDots } from "@/app/lib/utils/extras";
 
 const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
-  const [selectedCounts, setSelectedCounts] = useState({});
+  const { selectedCounts, handleCountChange } = useSelectedCounts();
 
   if (!resultados || Object.keys(resultados).length === 0) {
     return (
@@ -16,13 +18,6 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
       />
     );
   }
-
-  const handleCountChange = (index, value) => {
-    setSelectedCounts((prev) => ({
-      ...prev,
-      [index]: value,
-    }));
-  };
 
   const handleAddTransporte = (transporte, index, tipoTramo = null) => {
     const count = selectedCounts[index] || 1;
@@ -51,20 +46,14 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
       <TableCell>{transporte.destino}</TableCell>
       <TableCell>{transporte.descripcion.toLowerCase()}</TableCell>
       <TableCell>{transporte.personas}</TableCell>
-      <TableCell>$ {transporte.precio}</TableCell>
-      <TableCell>
-        <div className="flex gap-2">
-          <select
+      <TableCell>$ {formatNumberWithDots(transporte.precio)}</TableCell>
+      <TableCell className="w-px whitespace-nowrap">
+        <div className="flex gap-2 items-center justify-end">
+          <CountSelect
+            index={index}
             value={selectedCounts[index] || 1}
-            onChange={(e) => handleCountChange(index, e.target.value)}
-            className="px-2 py-1 border rounded"
-          >
-            {[...Array(5).keys()].map((num) => (
-              <option key={num + 1} value={num + 1}>
-                {num + 1}
-              </option>
-            ))}
-          </select>
+            onChange={handleCountChange}
+          />
           <Button
             className="bg-blue-500 text-white hover:bg-blue-600"
             onClick={() => handleAddTransporte(transporte, index, tipoTramo)}
@@ -103,24 +92,16 @@ const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
   return (
     <div className="space-y-6">
       {Object.keys(resultados).map((tipoTramo) => {
-        const tramoResults = resultados[tipoTramo];
-        const labelMap = {
-          ida: "🚌 Ida",
-          vuelta: "🚌 Vuelta",
-          idayvuelta: "🚌 Ida y Vuelta",
-        };
-        const label =
-          labelMap[tipoTramo] || `🚌 ${tipoTramo.charAt(0).toUpperCase() + tipoTramo.slice(1)}`;
-
+        const labelMap = { ida: "🚌 Ida", vuelta: "🚌 Vuelta", idayvuelta: "🚌 Ida y Vuelta" };
+        const label = labelMap[tipoTramo] || `🚌 ${tipoTramo.charAt(0).toUpperCase() + tipoTramo.slice(1)}`;
         return (
-          <div key={tipoTramo}>
-            <DataTable
-              headers={headers}
-              rows={tramoResults}
-              renderRow={(row, index) => renderTransporteRow(row, index, tipoTramo)}
-              title={label}
-            />
-          </div>
+          <DataTable
+            key={tipoTramo}
+            headers={headers}
+            rows={resultados[tipoTramo]}
+            renderRow={(row, index) => renderTransporteRow(row, index, tipoTramo)}
+            title={label}
+          />
         );
       })}
     </div>

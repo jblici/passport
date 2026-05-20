@@ -3,7 +3,9 @@ import { Button } from "./button";
 
 const DataTable = ({ headers, rows, renderRow, title, emptyMessage }) => {
   if (!rows || rows.length === 0) {
-    return null;
+    return emptyMessage ? (
+      <p className="text-muted-foreground p-4 text-center">{emptyMessage}</p>
+    ) : null;
   }
 
   return (
@@ -13,12 +15,19 @@ const DataTable = ({ headers, rows, renderRow, title, emptyMessage }) => {
           <h2 className="text-xl font-bold">{title}</h2>
         </div>
       )}
-      <div className="p-6">
+      <div>
         <Table className="w-full">
           <TableHeader>
             <TableRow className="bg-gray-50">
-              {headers.map((header) => (
-                <TableHead key={header} className="font-semibold text-gray-700">
+              {headers.map((header, idx) => (
+                <TableHead
+                  key={header}
+                  className={
+                    idx === headers.length - 1
+                      ? "font-semibold text-gray-700 text-right w-px whitespace-nowrap"
+                      : "font-semibold text-gray-700"
+                  }
+                >
                   {header}
                 </TableHead>
               ))}

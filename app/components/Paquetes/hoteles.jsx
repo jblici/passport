@@ -44,9 +44,7 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
       ? hotel.paquetesUtilizados
       : hotel.paquetesUtilizados.paquetes[0];
 
-    const rowKey = !hotel.paquetesUtilizados.paquetes
-      ? Number(hotel.id) + hotel.precioTotal + hData.habitacion + hData.hotel
-      : Number(hotel.id) + hotel.precioTotal + hData.habitacion + hData.hotel;
+    const rowKey = Number(hotel.id) + hotel.precioTotal + hData.habitacion + hData.hotel;
 
     return (
       <TableRow key={rowKey}>
@@ -58,9 +56,9 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
         <TableCell>
           {hData.moneda === "USD" ? "USD" : "$"} {formatNumberWithDots(hotel.precioTotal)}
         </TableCell>
-        <TableCell>
+        <TableCell className="w-px whitespace-nowrap text-right">
           <Button
-            className="bg-blue-500 text-white hover:bg-blue-600 w-full"
+            className="bg-blue-500 text-white hover:bg-blue-600"
             onClick={() => handleAddHotel(hotel, !!hotel.paquetesUtilizados.paquetes)}
           >
             Agregar
@@ -72,34 +70,19 @@ const PaquetesHoteles = ({ resultados, agregarPaquete, reglas }) => {
 
   const headers = ["Cerro", "Hotel", "Habitación", "Personas", "Cama Extra", "Precio", "Acción"];
 
-  const formatCategoryLabel = (clave) => {
-    const label = clave.replace("total_", "");
-    const labelMap = {
-      mayorista: "Tarifa Mayorista",
-      minorista: "Tarifa Minorista",
-      publico: "Tarifa Público",
-      especial: "Tarifa Especial",
-    };
-    return labelMap[label] || label.charAt(0).toUpperCase() + label.slice(1);
-  };
+  const formatCategoryLabel = (clave) => clave.charAt(0).toUpperCase() + clave.slice(1);
 
   return (
     <div className="space-y-6">
-      {Object.keys(resultados).map((clave) => {
-        const paquetes = resultados[clave];
-        const title = formatCategoryLabel(clave);
-
-        return (
-          <div key={clave}>
-            <DataTable
-              headers={headers}
-              rows={paquetes}
-              renderRow={renderHotelRow}
-              title={`🏨 ${title}`}
-            />
-          </div>
-        );
-      })}
+      {Object.keys(resultados).map((clave) => (
+        <DataTable
+          key={clave}
+          headers={headers}
+          rows={resultados[clave]}
+          renderRow={renderHotelRow}
+          title={`🏨 ${formatCategoryLabel(clave)}`}
+        />
+      ))}
     </div>
   );
 };

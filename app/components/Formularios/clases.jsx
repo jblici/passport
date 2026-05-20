@@ -1,16 +1,15 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import FormCard from "../ui/FormCard";
 import RequiredBadge from "../ui/RequiredBadge";
-import { handleClases } from "@/app/lib/utils/secciones";
+import { handleClases } from "@/app/lib/utils/secciones.jsx";
 import { scrollToSection } from "@/app/lib/utils/extras";
 import { cerros } from "../ui/cerros";
 import DateField from "../ui/DateField";
-import InfoAlert from "../ui/InfoAlert";
-import { cerrosInfoPases } from "@/app/lib/config/cerrosInfo";
+import { SEASON_MIN_DATE, SEASON_MAX_DATE } from "@/app/lib/config/spreadsheetConfig";
 import { Search } from "lucide-react";
 
 export default function Clases({
@@ -22,38 +21,14 @@ export default function Clases({
   startDate,
   setStartDate,
 }) {
-  const [disabled, setDisabled] = useState(true);
   const [dias, setDias] = useState("1");
-  const [tipo, setTipo] = useState(null);
-  const currentYear = new Date().getFullYear();
 
-  const minDate = new Date(currentYear, 5, 1);
-  const maxDate = new Date(currentYear, 9, 31);
-
-  useEffect(() => {}, [clases]);
+  const disabled = !(cerro && dias && startDate);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleClases(cerro, clases, setClases, startDate, Number(dias), tipo);
+    handleClases(cerro, clases, setClases, startDate, Number(dias), null);
   };
-
-  const handleTipo = (value) => {
-    setTipo(value);
-  };
-
-  const handleDias = (value) => {
-    setDias(value);
-  };
-
-  const handleCerro = (value) => {
-    setCerro(value);
-  };
-
-  useEffect(() => {
-    if (cerro && dias && startDate) {
-      setDisabled(false);
-    }
-  }, [cerro, dias, startDate]);
 
   return (
     <div className="h-fit w-full">
@@ -69,7 +44,7 @@ export default function Clases({
                   <Label htmlFor="centro" className="font-semibold">
                     Centro <RequiredBadge />
                   </Label>
-                  <Select id="centro" onValueChange={handleCerro} value={cerro}>
+                  <Select id="centro" onValueChange={setCerro} value={cerro}>
                     <SelectTrigger>
                       <SelectValue placeholder="Seleccionar Centro" />
                     </SelectTrigger>
@@ -81,19 +56,16 @@ export default function Clases({
                   <Label htmlFor="dias" className="font-semibold">
                     Cantidad de Días <RequiredBadge />
                   </Label>
-                  <Select id="dias" onValueChange={handleDias} value={dias}>
+                  <Select id="dias" onValueChange={setDias} value={dias}>
                     <SelectTrigger>
                       <SelectValue placeholder="Seleccionar Días" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1">1 día</SelectItem>
-                      <SelectItem value="2">2 días</SelectItem>
-                      <SelectItem value="3">3 días</SelectItem>
-                      <SelectItem value="4">4 días</SelectItem>
-                      <SelectItem value="5">5 días</SelectItem>
-                      <SelectItem value="6">6 días</SelectItem>
-                      <SelectItem value="7">7 días</SelectItem>
-                      <SelectItem value="8">8 días</SelectItem>
+                      {Array.from({ length: 8 }, (_, i) => i + 1).map((d) => (
+                        <SelectItem key={d} value={String(d)}>
+                          {d} día{d > 1 ? "s" : ""}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -107,21 +79,12 @@ export default function Clases({
                 label="Fecha de Inicio"
                 value={startDate}
                 onChange={setStartDate}
-                minDate={minDate}
-                maxDate={maxDate}
+                minDate={SEASON_MIN_DATE}
+                maxDate={SEASON_MAX_DATE}
                 required
               />
             </FormCard>
           </div>
-
-          {/* Centro Info */}
-          {cerrosInfoPases[cerro]?.detalles && (
-            <InfoAlert title={cerrosInfoPases[cerro]?.titulo || cerro}>
-              {cerrosInfoPases[cerro]?.detalles.map((detalle, idx) => (
-                <div key={idx}>{detalle}</div>
-              ))}
-            </InfoAlert>
-          )}
 
           {/* Botón */}
           <Button

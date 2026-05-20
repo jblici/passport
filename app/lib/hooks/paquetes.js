@@ -6,6 +6,8 @@ import {
   validateColumns,
   trimColumns,
   toNumber,
+  toRoundedNumber,
+  splitCSVRow,
 } from "@/app/lib/utils/csvParser";
 import { getAllPaqueteConfigs } from "@/app/lib/config/spreadsheetConfig";
 
@@ -16,7 +18,7 @@ const useAlojamientos = () => {
   const [loading, setLoading] = useState(true);
 
   const paquetesMapper = (row) => {
-    const cols = row.split(",");
+    const cols = splitCSVRow(row);
     validateColumns(cols, 17, "Paquetes row");
 
     const [
@@ -40,7 +42,6 @@ const useAlojamientos = () => {
     ] = trimColumns(cols);
 
     return {
-      id: 1, // Will be set by parseCSV
       cerro,
       hotel,
       week,
@@ -48,12 +49,12 @@ const useAlojamientos = () => {
       fechaInicio,
       fechaFinal,
       personas: toNumber(personas),
-      precio: Number(Math.round(precio)) || 0,
-      precioMenor: Number(Math.round(precioMenor)) || 0,
+      precio: toRoundedNumber(precio),
+      precioMenor: toRoundedNumber(precioMenor),
       moneda,
       camaExtra,
-      extraMayor: Number(Math.round(extraMayor)) || 0,
-      extraMenor: Number(Math.round(extraMenor)) || 0,
+      extraMayor: toRoundedNumber(extraMayor),
+      extraMenor: toRoundedNumber(extraMenor),
       minNoches: toNumber(minNoches),
       desayuno,
       tarifa,
@@ -62,14 +63,11 @@ const useAlojamientos = () => {
   };
 
   const reglasMapper = (row) => {
-    const columns = row.split(",");
-    validateColumns(columns, 2, "Reglas row");
+    const columns = splitCSVRow(row);
+    if (columns.length < 2) return null; // fila vacía o separador, ignorar
 
     const [hotel, traduccion] = trimColumns(columns);
-
-    if (!hotel || !traduccion) {
-      throw new Error("Hotel or traduccion is empty");
-    }
+    if (!hotel || !traduccion) return null; // fila incompleta, ignorar
 
     return { hotel, traduccion };
   };
@@ -85,13 +83,13 @@ const useAlojamientos = () => {
         Promise.all(
           centros.map(async ({ paquetesUrl }) => {
             const csv = await fetchCSV(paquetesUrl);
-            return parseCSV(csv, paquetesMapper, 17);
+            return parseCSV(csv, paquetesMapper);
           }),
         ),
         Promise.all(
           centros.map(async ({ reglasUrl }) => {
             const csv = await fetchCSV(reglasUrl);
-            return parseCSV(csv, reglasMapper, 2);
+            return parseCSV(csv, reglasMapper);
           }),
         ),
       ]);
@@ -104,7 +102,6 @@ const useAlojamientos = () => {
 
       setPaquetes(paquetesWithIds);
       setReglas(datosReglas.flat());
-      setError(null);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Unknown error loading accommodations";
