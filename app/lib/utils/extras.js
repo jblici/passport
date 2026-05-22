@@ -92,6 +92,7 @@ export const applyFamilyPlanDiscount = (packages) => {
         result[idx] = { ...pkg, count: payingCount, price: pricePerPerson * payingCount };
         result.push({
           ...pkg,
+          _key: crypto.randomUUID(),
           count: freeCount,
           price: 0,
           promo: true,

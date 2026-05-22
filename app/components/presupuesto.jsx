@@ -8,7 +8,7 @@ import { Button } from "./ui/button";
 import { useCotizador } from "@/app/context/CotizadorContext";
 
 const ResumenPresupuesto = () => {
-  const { searchState, cartState, setPaquetesSeleccionados, eliminarPaquete } = useCotizador();
+  const { searchState, cartState, setPaquetesSeleccionados, eliminarPaquete, agregarPaquete } = useCotizador();
   const { busqueda, cerro } = searchState;
   const { paquetesSeleccionados, originales } = cartState;
 
@@ -33,6 +33,7 @@ const ResumenPresupuesto = () => {
       <BudgetControls
         discount={budget.discount}
         handleDiscount={handleDiscount}
+        agregarPaquete={agregarPaquete}
         paquetesSeleccionados={paquetesSeleccionados}
         setPaquetesSeleccionados={setPaquetesSeleccionados}
         familyPlan={familyPlan}

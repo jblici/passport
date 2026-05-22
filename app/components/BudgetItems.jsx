@@ -34,8 +34,8 @@ const BudgetItems = ({
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-lg">{getSectionEmoji(paquete.seccion)}</span>
                   <span className="font-semibold text-gray-800">{paquete.name}</span>
-                  {paquete.count && paquete.seccion !== "alojamiento" && (
-                    <span className="text-sm text-gray-500">x {paquete.count} personas</span>
+                  {paquete.count > 1 && paquete.seccion !== "alojamiento" && (
+                    <span className="text-sm text-gray-500">x {paquete.count}</span>
                   )}
                 </div>
 

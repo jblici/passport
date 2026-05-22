@@ -39,13 +39,12 @@ const useBudgetState = (originales, paquetesSeleccionados, setPaquetesSelecciona
   const handleDiscount = (e) => {
     const descuento = parseInt(e.target.value) || 0;
 
-    setBudget((prev) => ({
-      ...prev,
-      discount: descuento,
-    }));
+    setBudget((prev) => ({ ...prev, discount: descuento }));
 
-    setPaquetesSeleccionados((prev) =>
-      prev.map((paquete) =>
+    // setPaquetesSeleccionados es un dispatch wrapper (no useState) — no soporta functional
+    // updater. Computamos el nuevo array directamente desde paquetesSeleccionados.
+    setPaquetesSeleccionados(
+      paquetesSeleccionados.map((paquete) =>
         paquete.seccion === "alojamiento"
           ? { ...paquete, discount: (paquete.price * descuento) / 100 }
           : paquete,
