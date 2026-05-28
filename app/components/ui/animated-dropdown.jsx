@@ -87,7 +87,7 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
             animate="open"
             exit="closed"
             transition={{ duration: 0.3 }}
-            className="absolute left-0 top-full mt-2 hidden md:flex overflow-hidden flex-col"
+            className="absolute left-0 top-full mt-2 flex overflow-hidden flex-col z-10"
           >
             <div className="flex flex-col space-y-2 bg-white rounded-lg shadow-lg border border-gray-200 p-2">
               <Button onClick={() => { setIsModalOpen(true); setIsOpen(false); }} variant="secondary" className="w-full justify-start">
