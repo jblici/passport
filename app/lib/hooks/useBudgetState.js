@@ -38,18 +38,7 @@ const useBudgetState = (originales, paquetesSeleccionados, setPaquetesSelecciona
 
   const handleDiscount = (e) => {
     const descuento = parseInt(e.target.value) || 0;
-
     setBudget((prev) => ({ ...prev, discount: descuento }));
-
-    // setPaquetesSeleccionados es un dispatch wrapper (no useState) — no soporta functional
-    // updater. Computamos el nuevo array directamente desde paquetesSeleccionados.
-    setPaquetesSeleccionados(
-      paquetesSeleccionados.map((paquete) =>
-        paquete.seccion === "alojamiento"
-          ? { ...paquete, discount: (paquete.price * descuento) / 100 }
-          : paquete,
-      ),
-    );
   };
 
   // Recalcular elegibilidad cada vez que cambia la lista base de paquetes
@@ -62,17 +51,23 @@ const useBudgetState = (originales, paquetesSeleccionados, setPaquetesSelecciona
     }));
   }, [originales]);
 
-  // Aplicar o remover descuento cuando cambia el toggle o la elegibilidad.
-  // setPaquetesSeleccionados se omite de las deps intencionalmente: es un dispatch wrapper
-  // estable (useCallback en useCotizadorState) y no cambia su comportamiento entre renders.
+  // Aplicar descuentos cada vez que cambia el toggle, la elegibilidad, los items, o el porcentaje.
+  // setPaquetesSeleccionados se omite de las deps intencionalmente: es un dispatch wrapper estable.
   useEffect(() => {
     if (familyPlan.isChecked && familyPlan.isEligible) {
       setPaquetesSeleccionados(applyFamilyPlanDiscount(originales));
     } else {
-      setPaquetesSeleccionados(originales);
+      const pct = budget.discount;
+      setPaquetesSeleccionados(
+        originales.map((paquete) =>
+          paquete.seccion === "alojamiento"
+            ? { ...paquete, discount: (paquete.price * pct) / 100 }
+            : paquete,
+        ),
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [familyPlan.isChecked, familyPlan.isEligible, originales]);
+  }, [familyPlan.isChecked, familyPlan.isEligible, originales, budget.discount]);
 
   useEffect(() => {
     const { totalPesos, totalDolares } = paquetesSeleccionados.reduce(
