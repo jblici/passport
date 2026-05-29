@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
@@ -22,6 +22,19 @@ export default function Clases({
   setStartDate,
 }) {
   const [dias, setDias] = useState("1");
+
+  const cerrosDias = useMemo(() => {
+    if (!clases) return {};
+    const diasPorCerro = {};
+    clases.forEach(({ cerro, dias: d }) => {
+      if (!d) return;
+      if (!diasPorCerro[cerro]) diasPorCerro[cerro] = new Set();
+      diasPorCerro[cerro].add(d);
+    });
+    return Object.fromEntries(
+      Object.entries(diasPorCerro).map(([c, s]) => [c, Array.from(s).sort((a, b) => a - b)])
+    );
+  }, [clases]);
 
   const disabled = !(cerro && dias && startDate);
 
@@ -61,7 +74,7 @@ export default function Clases({
                       <SelectValue placeholder="Seleccionar Días" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Array.from({ length: 8 }, (_, i) => i + 1).map((d) => (
+                      {(cerrosDias[cerro] ?? Array.from({ length: 8 }, (_, i) => i + 1)).map((d) => (
                         <SelectItem key={d} value={String(d)}>
                           {d} día{d > 1 ? "s" : ""}
                         </SelectItem>

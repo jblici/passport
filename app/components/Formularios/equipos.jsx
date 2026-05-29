@@ -26,16 +26,18 @@ export default function Equipos({
   const [dias, setDias] = useState("1");
   const [gama, setGama] = useState(null);
 
-  const cerrosGamas = useMemo(() => {
-    if (!equipos) return {};
-    const gamasPorCerro = {};
-    equipos.forEach(({ cerro, gama }) => {
-      if (!gamasPorCerro[cerro]) gamasPorCerro[cerro] = new Set();
-      if (gama?.trim()) gamasPorCerro[cerro].add(gama);
+  const { cerrosDias, cerrosGamas } = useMemo(() => {
+    if (!equipos) return { cerrosDias: {}, cerrosGamas: {} };
+    const dias = {};
+    const gamas = {};
+    equipos.forEach(({ cerro, dias: d, gama }) => {
+      if (d) { if (!dias[cerro]) dias[cerro] = new Set(); dias[cerro].add(d); }
+      if (gama?.trim()) { if (!gamas[cerro]) gamas[cerro] = new Set(); gamas[cerro].add(gama); }
     });
-    return Object.fromEntries(
-      Object.entries(gamasPorCerro).map(([c, s]) => [c, Array.from(s)])
-    );
+    return {
+      cerrosDias: Object.fromEntries(Object.entries(dias).map(([c, s]) => [c, Array.from(s).sort((a, b) => a - b)])),
+      cerrosGamas: Object.fromEntries(Object.entries(gamas).map(([c, s]) => [c, Array.from(s)])),
+    };
   }, [equipos]);
 
   const handleSubmit = (e) => {
@@ -76,7 +78,7 @@ export default function Equipos({
                       <SelectValue placeholder="Seleccionar Días" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Array.from({ length: 8 }, (_, i) => i + 1).map((d) => (
+                      {(cerrosDias[cerro] ?? Array.from({ length: 8 }, (_, i) => i + 1)).map((d) => (
                         <SelectItem key={d} value={String(d)}>
                           {d} día{d > 1 ? "s" : ""}
                         </SelectItem>
