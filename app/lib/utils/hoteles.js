@@ -81,6 +81,9 @@ function calcularHoteles(
     );
 
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.minNoches <= noches);
+    paquetesFiltrados = paquetesFiltrados.filter(
+      (paquete) => !paquete.maxNoches || paquete.maxNoches >= noches
+    );
 
     const startDateNormalized = normalizeDate(startDate);
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => {
@@ -119,6 +122,9 @@ function calcularHoteles(
     let resultadoIdCounter = 1;
     const cantidadNoches = calcularDiferenciaDias(inicio, fin);
     paquetesFiltrados = paquetesFiltrados.filter((paquete) => paquete.minNoches <= cantidadNoches);
+    paquetesFiltrados = paquetesFiltrados.filter(
+      (paquete) => !paquete.maxNoches || paquete.maxNoches >= cantidadNoches
+    );
 
     totalPersonas.habitaciones.forEach((habitacion, index) => {
       const { mayores, menores, total } = habitacion;

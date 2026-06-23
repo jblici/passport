@@ -258,6 +258,21 @@ describe("Escenario: Castor — período único, noches × precio", () => {
     expect(setter.mock.calls[0][0]["Habitacion 1"]).toHaveLength(0);
   });
 
+  it("descarta paquetes donde maxNoches < cantidadNoches", () => {
+    const setter = vi.fn();
+    const paquete = pkgCerro("Castor", { maxNoches: 2 }); // tope 2 noches, buscamos 4
+    handleHoteles(startDate, endDate, [], null, "Castor", [paquete], setter, hab(2));
+    expect(setter).toHaveBeenCalledOnce();
+    expect(setter.mock.calls[0][0]["Habitacion 1"]).toHaveLength(0);
+  });
+
+  it("incluye paquetes sin maxNoches definido (sin límite)", () => {
+    const setter = vi.fn();
+    const paquete = pkgCerro("Castor"); // maxNoches no seteado
+    handleHoteles(startDate, endDate, [], null, "Castor", [paquete], setter, hab(2));
+    expect(setter.mock.calls[0][0]["Habitacion 1"]).toHaveLength(1);
+  });
+
   it("incluye mayores y menores en el objeto de resultado", () => {
     const setter = vi.fn();
     // Paquete para 3 personas: 2 adultos + 1 menor con precioMenor
