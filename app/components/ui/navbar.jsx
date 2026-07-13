@@ -1,26 +1,16 @@
 "use client";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import SearchFilters from "../SearchFilters";
 
 const Navbar = () => {
-  const [activePath, setActivePath] = useState("");
-
-  useEffect(() => {
-    setActivePath(window.location.pathname);
-  }, [activePath]);
-
   return (
     <div className="flex flex-col w-screen text-xl">
-      <header className="bg-blue-500 text-primary-foreground p-6 px-8 flex items-center justify-between">
-        <div className="flex flex-col">
-          <Link
-            href="/"
-            className="text-2xl font-bold py-2"
-            prefetch={false}
-          >
-            Passport
-          </Link>
-        </div>
+      <header className="bg-blue-500 text-primary-foreground p-4 px-8 relative flex items-center justify-center">
+        <Link href="/" className="text-2xl font-bold absolute left-8" prefetch={false}>
+          Passport
+        </Link>
+        <SearchFilters />
       </header>
     </div>
   );

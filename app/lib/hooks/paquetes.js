@@ -1,129 +1,126 @@
 "use client";
 import { useState, useEffect } from "react";
+import {
+  fetchCSV,
+  parseCSV,
+  validateColumns,
+  trimColumns,
+  toNumber,
+  toRoundedNumber,
+  splitCSVRow,
+} from "@/app/lib/utils/csvParser";
+import { getAllPaqueteConfigs } from "@/app/lib/config/spreadsheetConfig";
 
 const useAlojamientos = () => {
-  const [paquetes, setPaquetes] = useState([]);
+  const [paquetes, setPaquetes] = useState(null);
   const [reglas, setReglas] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Función genérica para obtener datos desde una hoja de cálculo
-  const fetchCSV = async (url) => {
-    const response = await fetch(url);
-    const text = await response.text();
-    return text
-      .split("\n")
-      .slice(1)
-      .map((row, index) => {
-        const [
-          cerro,
-          hotel,
-          week,
-          habitacion,
-          fechaInicio,
-          fechaFinal,
-          personas,
-          precio,
-          precioMenor,
-          moneda,
-          camaExtra,
-          extraMayor,
-          extraMenor,
-          minNoches,
-          desayuno,
-          tarifa,
-          fechaVigencia,
-        ] = row.split(",");
+  const paquetesMapper = (row) => {
+    const cols = splitCSVRow(row);
+    validateColumns(cols, 18, "Paquetes row");
 
-        return {
-          id: index + 1,
-          cerro: cerro,
-          hotel,
-          week,
-          habitacion,
-          fechaInicio,
-          fechaFinal,
-          personas: Number(personas),
-          precio: Number(Math.round(precio)),
-          precioMenor: Number(Math.round(precioMenor)),
-          moneda,
-          camaExtra,
-          extraMayor: Number(Math.round(extraMayor)),
-          extraMenor: Number(Math.round(extraMenor)),
-          minNoches: Number(minNoches),
-          desayuno,
-          tarifa,
-          fechaVigencia,
-        };
-      });
+    const [
+      cerro,
+      hotel,
+      week,
+      habitacion,
+      fechaInicio,
+      fechaFinal,
+      personas,
+      precio,
+      precioMenor,
+      moneda,
+      camaExtra,
+      extraMayor,
+      extraMenor,
+      minNoches,
+      desayuno,
+      tarifa,
+      fechaVigencia,
+      maxNoches,
+    ] = trimColumns(cols);
+
+    return {
+      cerro,
+      hotel,
+      week,
+      habitacion,
+      fechaInicio,
+      fechaFinal,
+      personas: toNumber(personas),
+      precio: toRoundedNumber(precio),
+      precioMenor: toRoundedNumber(precioMenor),
+      moneda,
+      camaExtra,
+      extraMayor: toRoundedNumber(extraMayor),
+      extraMenor: toRoundedNumber(extraMenor),
+      minNoches: toNumber(minNoches),
+      desayuno,
+      tarifa,
+      fechaVigencia,
+      maxNoches: toNumber(maxNoches),
+    };
   };
 
-  const fetchReglas = async (url) => {
-    const response = await fetch(url);
-    const text = await response.text();
+  const reglasMapper = (row) => {
+    const columns = splitCSVRow(row);
+    if (columns.length < 2) return null; // fila vacía o separador, ignorar
 
-    return text
-      .split("\n")
-      .slice(1) // Omitimos la primera fila (headers)
-      .map((row) => {
-        const columns = row.split(","); // Dividimos la fila en columnas
-        const hotel = columns[0]?.trim(); // Primera columna (hotel)
-        const traduccion = columns[1]?.trim(); // Segunda columna (traducción)
+    const [hotel, traduccion] = trimColumns(columns);
+    if (!hotel || !traduccion) return null; // fila incompleta, ignorar
 
-        return { hotel, traduccion };
-      })
-      .filter((row) => row.hotel && row.traduccion); // Filtramos posibles filas vacías
+    return { hotel, traduccion };
   };
 
   const obtenerAlojamientos = async () => {
-    const centros = [
-      {
-        nombre: "Las Leñas",
-        paquetesUrl:
-          "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=0&single=true&output=csv",
-        reglasUrl:
-          "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1338090560&single=true&output=csv",
-      },
-      {
-        nombre: "Cerro Castor",
-        paquetesUrl:
-          "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=0&single=true&output=csv",
-        reglasUrl:
-          "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=395989538&single=true&output=csv",
-      },
-      {
-        nombre: "Catedral",
-        paquetesUrl:
-          "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrgSNgmR8oRvUSBWiPH7971xx2p37mw1w958m0T0PwR6yNiEO3c1PaDWTSjkaAgyz4sJfYfwM8_i5v/pub?gid=0&single=true&output=csv",
-        reglasUrl:
-          "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrgSNgmR8oRvUSBWiPH7971xx2p37mw1w958m0T0PwR6yNiEO3c1PaDWTSjkaAgyz4sJfYfwM8_i5v/pub?gid=395989538&single=true&output=csv",
-      },
-      {
-        nombre: "Chapelco",
-        paquetesUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv5Ek5FqxuWJf8cu6C1BBMp8EIpuFKZy8yIv--8JKkhcbiB-rGEPiw2YfgJF9CvF3PSKla1JXSygPu/pub?gid=0&single=true&output=csv",
-        reglasUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv5Ek5FqxuWJf8cu6C1BBMp8EIpuFKZy8yIv--8JKkhcbiB-rGEPiw2YfgJF9CvF3PSKla1JXSygPu/pub?gid=395989538&single=true&output=csv"
-      },
-      {
-        nombre: "Caviahue",
-        paquetesUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRxALEm1jwR3vFdfnJc-0XaURWP3lOlfRLsSkrbFnMuH-WpLrOdu0QrgLF5FrZ9kXzad1yHPsSUSJTQ/pub?gid=0&single=true&output=csv",
-        reglasUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRxALEm1jwR3vFdfnJc-0XaURWP3lOlfRLsSkrbFnMuH-WpLrOdu0QrgLF5FrZ9kXzad1yHPsSUSJTQ/pub?gid=1466940355&single=true&output=csv"
-      }
-      // Agrega aquí las URLs de los demás centros de ski
-    ];
+    try {
+      setError(null);
+      setLoading(true);
 
-    const [datosPaquetes, datosReglas] = await Promise.all([
-      Promise.all(centros.map(async ({ paquetesUrl }) => await fetchCSV(paquetesUrl))),
-      Promise.all(centros.map(async ({ reglasUrl }) => await fetchReglas(reglasUrl))),
-    ]);
+      const centros = getAllPaqueteConfigs();
 
-    // Unir los datos en arrays planos
-    setPaquetes(datosPaquetes.flat());
-    setReglas(datosReglas.flat());
+      const [datosPaquetes, datosReglas] = await Promise.all([
+        Promise.all(
+          centros.map(async ({ paquetesUrl }) => {
+            const csv = await fetchCSV(paquetesUrl);
+            return parseCSV(csv, paquetesMapper);
+          }),
+        ),
+        Promise.all(
+          centros.map(async ({ reglasUrl }) => {
+            const csv = await fetchCSV(reglasUrl);
+            return parseCSV(csv, reglasMapper);
+          }),
+        ),
+      ]);
+
+      // Add IDs to paquetes
+      const paquetesWithIds = datosPaquetes.flat().map((p, idx) => ({
+        ...p,
+        id: idx + 1,
+      }));
+
+      setPaquetes(paquetesWithIds);
+      setReglas(datosReglas.flat());
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Unknown error loading accommodations";
+      console.error("Error in obtenerAlojamientos:", errorMessage);
+      setError(errorMessage);
+      setPaquetes([]);
+      setReglas(null);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     obtenerAlojamientos();
   }, []);
 
-  return { paquetes, reglas };
+  return { paquetes, reglas, error, loading };
 };
 
 export default useAlojamientos;

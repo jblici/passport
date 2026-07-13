@@ -1,147 +1,94 @@
 "use client";
-import { useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { TableCell, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
 import { formatNumberWithDots } from "@/app/lib/utils/extras";
+import CountSelect from "../ui/CountSelect";
+import useSelectedCounts from "@/app/lib/hooks/useSelectedCounts";
+import DataTable from "../ui/DataTable";
+import EmptyState from "../EmptyState";
 
 const PaquetesClases = ({ resultados, agregarPaquete }) => {
-  const [selectedCounts, setSelectedCounts] = useState({});
+  const { selectedCounts, handleCountChange } = useSelectedCounts();
 
-  if (!resultados) return null;
-  //console.log(resultados);
-  if (Object.keys(resultados).length === 0) {
+  if (!resultados || resultados.length === 0) {
     return (
-      <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
-        <div className="p-4 sm:p-6 md:p-8 border-b">
-          <h2 className="text-xl font-bold mb-2">No hay Clases disponibles...</h2>
-        </div>
-      </div>
+      <EmptyState
+        title="No hay Clases disponibles"
+        description="No se encontraron opciones de clases para tu búsqueda. Intenta con otros filtros."
+        icon="👨‍🏫"
+      />
     );
   }
 
-  const handleCountChange = (index, value) => {
-    setSelectedCounts((prev) => ({
-      ...prev,
-      [index]: value,
-    }));
+  const calculatePrice = (clase) => {
+    let precioBase = clase.precio;
+    let cantidadPersonas = 1;
+
+    if (clase.cerro === "Castor" && clase.tipo.toLowerCase().includes("privada")) {
+      const partes = clase.tipo.split(" - ");
+      if (partes.length > 1) {
+        const match = partes[1].match(/\d+/);
+        if (match) {
+          cantidadPersonas = parseInt(match[0], 10);
+        }
+      }
+    }
+    return precioBase * cantidadPersonas;
   };
 
-  return (
-    <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
-      <div className="p-4 sm:p-6 md:p-8 border-b">
-        <h2 className="text-xl font-bold mb-2">Clases</h2>
-      </div>
-      <div className="p-4 sm:p-6 md:p-8">
-        <Table className="w-full">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Cerro</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead>Dias</TableHead>
-              <TableHead>Edades</TableHead>
-              <TableHead>Precio</TableHead>
-              <TableHead>Agregar</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {resultados?.map((r, index) => {
-              let precioBase = r.precio;
-              let cantidadPersonas = 1;
+  const handleAddClase = (clase, index) => {
+    const cData = clase.paquete || clase;
+    const count = selectedCounts[index] || 1;
+    const precioFinal = calculatePrice(clase);
 
-              if (r.cerro === "Castor" && r.tipo.toLowerCase().includes("privada")) {
-                const partes = r.tipo.split(" - ");
-                if (partes.length > 1) {
-                  const match = partes[1].match(/\d+/); // Busca número en "2 Personas"
-                  if (match) {
-                    cantidadPersonas = parseInt(match[0], 10);
-                  }
-                }
-              }
-              const precioFinal = precioBase * cantidadPersonas;
-              return r.paquete ? (
-                <TableRow key={index}>
-                  <TableCell>{r.paquete.cerro}</TableCell>
-                  <TableCell>{r.paquete.tipo}</TableCell>
-                  <TableCell>{r.paquete.dias}</TableCell>
-                  <TableCell>{r.paquete.edad}</TableCell>
-                  <TableCell>{`$ ${formatNumberWithDots(precioFinal)}`}</TableCell>
-                  <TableCell>
-                    <div className="flex">
-                      <select
-                        value={selectedCounts[index] || 1} // Valor por defecto
-                        onChange={(e) => handleCountChange(index, e.target.value)}
-                        className="mr-2"
-                      >
-                        {[...Array(5).keys()].map((num) => (
-                          <option key={num + 1} value={num + 1}>
-                            {num + 1}
-                          </option>
-                        ))}
-                      </select>
-                      <Button
-                        variant="outline"
-                        className="w-full bg-blue-500 text-white hover:bg-blue-600"
-                        onClick={() => {
-                          const count = selectedCounts[index] || 1; // Usar el valor seleccionado o 2 por defecto
-                          agregarPaquete({
-                            seccion: "clases",
-                            noches: r.paquete.dias,
-                            count: Number(count),
-                            name: `Clase ${r.paquete.tipo} (${r.paquete.edad}) - ${r.paquete.dias} días`,
-                            price: precioFinal * count,
-                          });
-                        }}
-                      >
-                        Agregar
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                <TableRow key={index}>
-                  <TableCell>{r.cerro}</TableCell>
-                  <TableCell>{r.tipo}</TableCell>
-                  <TableCell>{r.dias}</TableCell>
-                  <TableCell>{r.edad}</TableCell>
-                  <TableCell>{`$ ${formatNumberWithDots(precioFinal)}`}</TableCell>
-                  <TableCell>
-                    <div className="flex">
-                      <select
-                        value={selectedCounts[index] || 1} // Valor por defecto
-                        onChange={(e) => handleCountChange(index, e.target.value)}
-                        className="mr-2"
-                      >
-                        {[...Array(5).keys()].map((num) => (
-                          <option key={num + 1} value={num + 1}>
-                            {num + 1}
-                          </option>
-                        ))}
-                      </select>
-                      <Button
-                        variant="outline"
-                        className="w-full bg-blue-500 text-white hover:bg-blue-600"
-                        onClick={() => {
-                          const count = selectedCounts[index] || 1; // Usar el valor seleccionado o 2 por defecto
-                          agregarPaquete({
-                            seccion: "clases",
-                            noches: r.dias,
-                            count: Number(count),
-                            name: `Clase ${r.tipo} (${r.edad}) - ${r.dias} días`,
-                            price: precioFinal * count,
-                          });
-                        }}
-                      >
-                        Agregar
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </div>
-    </div>
+    agregarPaquete({
+      seccion: "clases",
+      noches: cData.dias,
+      count: Number(count),
+      name: `Clase ${cData.tipo} (${cData.edad}) - ${cData.dias} días`,
+      price: precioFinal * count,
+    });
+  };
+
+  const renderClaseRow = (clase, index) => {
+    const cData = clase.paquete || clase;
+    const precioFinal = calculatePrice(clase);
+
+    return (
+      <TableRow key={index}>
+        <TableCell>{cData.cerro}</TableCell>
+        <TableCell>{cData.tipo}</TableCell>
+        <TableCell>{cData.dias}</TableCell>
+        <TableCell>{cData.edad}</TableCell>
+        <TableCell>$ {formatNumberWithDots(precioFinal)}</TableCell>
+        <TableCell className="w-px whitespace-nowrap">
+          <div className="flex gap-2 items-center justify-end">
+            <CountSelect
+              index={index}
+              value={selectedCounts[index] || 1}
+              onChange={handleCountChange}
+            />
+            <Button
+              className="bg-blue-500 text-white hover:bg-blue-600"
+              onClick={() => handleAddClase(clase, index)}
+            >
+              Agregar
+            </Button>
+          </div>
+        </TableCell>
+      </TableRow>
+    );
+  };
+
+  const headers = ["Cerro", "Tipo", "Días", "Edades", "Precio", "Acción"];
+
+  return (
+    <DataTable
+      headers={headers}
+      rows={resultados}
+      renderRow={renderClaseRow}
+      title="👨‍🏫 Clases de Esquí"
+    />
   );
 };
 

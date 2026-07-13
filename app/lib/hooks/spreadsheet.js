@@ -1,84 +1,149 @@
 "use client";
 import { useState, useEffect } from "react";
+import {
+  fetchCSV,
+  parseCSV,
+  validateColumns,
+  trimColumns,
+  toNumber,
+  splitCSVRow,
+} from "@/app/lib/utils/csvParser";
+import { SPREADSHEET_URLS } from "@/app/lib/config/spreadsheetConfig";
+
+const mappers = {
+    pases: (row) => {
+      const cols = splitCSVRow(row);
+      validateColumns(cols, 9, "Pases row");
+      const [cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio, pack] =
+        trimColumns(cols);
+      return {
+        cerro,
+        temporada,
+        edad,
+        tipo,
+        fechaInicio,
+        fechaFinal,
+        dias: toNumber(dias),
+        precio: toNumber(precio),
+        pack,
+      };
+    },
+    clases: (row) => {
+      const cols = splitCSVRow(row);
+      validateColumns(cols, 11, "Clases row");
+      const [
+        cerro,
+        temporada,
+        tipo,
+        edad,
+        , // edad2 — present in sheet but not used
+        fechaInicio,
+        fechaFinal,
+        pack,
+        dias,
+        precio,
+        descripcion,
+      ] = trimColumns(cols);
+      return {
+        cerro,
+        temporada,
+        tipo,
+        edad,
+        fechaInicio,
+        fechaFinal,
+        pack,
+        dias: toNumber(dias),
+        precio: toNumber(precio),
+        descripcion,
+      };
+    },
+    rentals: (row) => {
+      const cols = splitCSVRow(row);
+      validateColumns(cols, 10, "Rentals row");
+      const [cerro, local, temporada, edad, gama, articulo, fechaInicio, fechaFinal, dias, precio] =
+        trimColumns(cols);
+      return {
+        cerro,
+        local,
+        temporada,
+        edad,
+        gama,
+        articulo,
+        fechaInicio,
+        fechaFinal,
+        dias: toNumber(dias),
+        precio: toNumber(precio),
+      };
+    },
+    traslados: (row) => {
+      const cols = splitCSVRow(row);
+      validateColumns(cols, 11, "Traslados row");
+      const [
+        cerro,
+        recorrido,
+        origen,
+        destino,
+        servicio,
+        descripcion,
+        tramo,
+        fechaInicio,
+        fechaFinal,
+        precio,
+        personas,
+      ] = trimColumns(cols);
+      return {
+        cerro,
+        recorrido,
+        origen,
+        destino,
+        servicio,
+        descripcion,
+        tramo,
+        fechaInicio,
+        fechaFinal,
+        precio: toNumber(precio),
+        personas: toNumber(personas),
+      };
+    },
+};
 
 const useGroupedSpreadsheets = () => {
   const [pases, setPases] = useState(null);
   const [clases, setClases] = useState(null);
   const [rentals, setRentals] = useState(null);
   const [traslados, setTraslados] = useState(null);
-
-  const fetchCSV = async (url) => {
-    const response = await fetch(url);
-    return response.text();
-  };
-
-  const parseCSV = (csv, mapper) => {
-    return csv.split("\n").slice(1).map(mapper);
-  };
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const obtenerDatos = async () => {
-    // URLs de los distintos archivos
-    const urls = {
-      pases: [
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=371646853&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1775784558&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrgSNgmR8oRvUSBWiPH7971xx2p37mw1w958m0T0PwR6yNiEO3c1PaDWTSjkaAgyz4sJfYfwM8_i5v/pub?gid=1775784558&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv5Ek5FqxuWJf8cu6C1BBMp8EIpuFKZy8yIv--8JKkhcbiB-rGEPiw2YfgJF9CvF3PSKla1JXSygPu/pub?gid=1775784558&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vRxALEm1jwR3vFdfnJc-0XaURWP3lOlfRLsSkrbFnMuH-WpLrOdu0QrgLF5FrZ9kXzad1yHPsSUSJTQ/pub?gid=438579692&single=true&output=csv"
-      ],
-      clases: [
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1901056977&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1969468282&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrgSNgmR8oRvUSBWiPH7971xx2p37mw1w958m0T0PwR6yNiEO3c1PaDWTSjkaAgyz4sJfYfwM8_i5v/pub?gid=1969468282&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv5Ek5FqxuWJf8cu6C1BBMp8EIpuFKZy8yIv--8JKkhcbiB-rGEPiw2YfgJF9CvF3PSKla1JXSygPu/pub?gid=1969468282&single=true&output=csv",
-      ],
-      rentals: [
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1647426432&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1939040620&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrgSNgmR8oRvUSBWiPH7971xx2p37mw1w958m0T0PwR6yNiEO3c1PaDWTSjkaAgyz4sJfYfwM8_i5v/pub?gid=1939040620&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv5Ek5FqxuWJf8cu6C1BBMp8EIpuFKZy8yIv--8JKkhcbiB-rGEPiw2YfgJF9CvF3PSKla1JXSygPu/pub?gid=1939040620&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vRxALEm1jwR3vFdfnJc-0XaURWP3lOlfRLsSkrbFnMuH-WpLrOdu0QrgLF5FrZ9kXzad1yHPsSUSJTQ/pub?gid=1693469524&single=true&output=csv"
-      ],
-      traslados: [
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzJo7lxeJJWTziphdCL_J1e_oBJdGFxAIJ6fU2qWTekLAuHW60pt_hwtfifRHktxKTqGSAzCG-WBZJ/pub?gid=1978072612&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTpZ6k2LPvKfrbjyCt00zTrD8ItDGYgzpQwIlHuFaBV-40ogah_HYEpYxBWG3Ue66u4KfFEyhFBHhqT/pub?gid=1194478962&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrgSNgmR8oRvUSBWiPH7971xx2p37mw1w958m0T0PwR6yNiEO3c1PaDWTSjkaAgyz4sJfYfwM8_i5v/pub?gid=1194478962&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv5Ek5FqxuWJf8cu6C1BBMp8EIpuFKZy8yIv--8JKkhcbiB-rGEPiw2YfgJF9CvF3PSKla1JXSygPu/pub?gid=1194478962&single=true&output=csv",
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vRxALEm1jwR3vFdfnJc-0XaURWP3lOlfRLsSkrbFnMuH-WpLrOdu0QrgLF5FrZ9kXzad1yHPsSUSJTQ/pub?gid=324871885&single=true&output=csv"
-      ]
-    };
+    try {
+      setError(null);
+      setLoading(true);
 
-    // Mapeo de cada tipo de datos
-    const mappers = {
-      pases: (row) => {
-        const [cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio, pack] = row.split(",");
-        return { cerro, temporada, edad, tipo, fechaInicio, fechaFinal, dias, precio: Number(precio), pack };
-      },
-      clases: (row) => {
-        const [cerro,	temporada,	tipo,	edad,	edad2,	fechaInicio,	fechaFinal,	pack,	dias,	precio,	descripcion] = row.split(",");
-        return { cerro, temporada, tipo, edad, fechaInicio, fechaFinal, pack, dias: Number(dias), precio: Number(precio), descripcion };
-      },
-      rentals: (row) => {
-        const [cerro, local, temporada, edad, gama, articulo, fechaInicio, fechaFinal, dias, precio] = row.split(",");
-        return { cerro, local, temporada, edad, gama, articulo, fechaInicio, fechaFinal, dias: Number(dias), precio: Number(precio) };
-      },
-      traslados: (row) => {
-        const [cerro, recorrido, origen, destino, servicio, descripcion, tramo, fechaInicio, fechaFinal, precio, personas] = row.split(",");
-        return { cerro, recorrido, origen, destino, servicio, descripcion, tramo, fechaInicio, fechaFinal, precio: Number(precio), personas: Number(personas) };
-      }
-    };
+      const entries = await Promise.all(
+        Object.entries(SPREADSHEET_URLS).map(async ([section, urls]) => {
+          const csvData = await Promise.all(urls.map(fetchCSV));
+          return [section, csvData.flatMap((csv) => parseCSV(csv, mappers[section]))];
+        }),
+      );
+      const data = Object.fromEntries(entries);
 
-    // Cargar datos de cada sección
-    const data = {};
-    for (const section in urls) {
-      const csvData = await Promise.all(urls[section].map(fetchCSV));
-      data[section] = csvData.flatMap(csv => parseCSV(csv, mappers[section]));
+      setPases(data.pases);
+      setClases(data.clases);
+      setRentals(data.rentals);
+      setTraslados(data.traslados);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Unknown error loading spreadsheet data";
+      console.error("Error in obtenerDatos:", errorMessage);
+      setError(errorMessage);
+      setPases(null);
+      setClases(null);
+      setRentals(null);
+      setTraslados(null);
+    } finally {
+      setLoading(false);
     }
-
-    setPases(data.pases);
-    setClases(data.clases);
-    setRentals(data.rentals);
-    setTraslados(data.traslados);
   };
 
   useEffect(() => {
@@ -90,6 +155,8 @@ const useGroupedSpreadsheets = () => {
     pases,
     clases,
     traslados,
+    error,
+    loading,
   };
 };
 

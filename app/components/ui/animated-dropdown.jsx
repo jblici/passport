@@ -5,14 +5,8 @@ import { ChevronRight, ChevronDown } from "lucide-react";
 import { formatNumberWithDots } from "@/app/lib/utils/extras";
 
 const dropdownVariants = {
-  desktop: {
-    open: { width: "auto", opacity: 1, x: 0 },
-    closed: { width: 0, opacity: 0, x: -20 },
-  },
-  mobile: {
-    open: { height: "auto", opacity: 1, y: 0 },
-    closed: { height: 0, opacity: 0, y: -20 },
-  },
+  open: { height: "auto", opacity: 1, y: 0 },
+  closed: { height: 0, opacity: 0, y: -20 },
 };
 
 export default function AnimatedDropdown({ discount, handleDiscount, agregarPaquete }) {
@@ -33,8 +27,8 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
     }
 
     agregarPaquete({
-      seccion: `item`,
-      name: `${name}`,
+      seccion: "item",
+      name,
       price: price * count,
       count,
     });
@@ -51,10 +45,9 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
       setError(true);
       return;
     }
-    console.log("agregue observacion");
 
     agregarPaquete({
-      seccion: `observacion`,
+      seccion: "observacion",
       name: observacion,
       price: 0,
       count: 0,
@@ -65,7 +58,7 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
     setError(false);
   };
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
+  const toggleDropdown = () => setIsOpen((prev) => !prev);
 
   const handleModal = () => {
     setIsModalOpen(false);
@@ -77,7 +70,7 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
       <Button
         onClick={toggleDropdown}
         variant="default"
-        className={`flex items-center gap-2 ${isOpen & "bg-blue-500"}`}
+        className={`flex items-center gap-2 ${isOpen && "bg-blue-500"}`}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
@@ -85,184 +78,146 @@ export default function AnimatedDropdown({ discount, handleDiscount, agregarPaqu
         <ChevronRight className="h-4 w-4 transition-transform duration-200 rotate-90 md:rotate-0 md:block hidden" />
         <ChevronDown className="h-4 w-4 transition-transform duration-200 md:hidden" />
       </Button>
+
       <AnimatePresence>
         {isOpen && (
-          <React.Fragment>
-            {/* Desktop version - animates to the right */}
-            <motion.div
-              variants={dropdownVariants.desktop}
-              initial="closed"
-              animate="open"
-              exit="closed"
-              transition={{ duration: 0.3 }}
-              className="absolute left-full top-0 ml-2 hidden md:flex overflow-hidden whitespace-nowrap"
-            >
-              <div className="flex space-x-2">
-                <Button onClick={() => setIsModalOpen(true)} variant="default">
-                  Descuento Alojamiento
-                </Button>
-                {isModalOpen && (
-                  <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-white rounded-2xl shadow-2xl p-6 w-[90%] max-w-md animate-fade-in">
-                      <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
-                        Ingresar % de descuento
-                      </h2>
-
-                      <input
-                        type="number"
-                        min={0}
-                        value={discount}
-                        onChange={(e) => handleDiscount(e)}
-                        placeholder="%"
-                        className="w-full p-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-
-                      <div className="flex justify-end gap-2 pt-2">
-                        <button
-                          onClick={() => handleModal()}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-                        >
-                          Aceptar
-                        </button>
-                        <button
-                          onClick={() => handleModal()}
-                          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition"
-                        >
-                          Cancelar
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                <Button variant="default" onClick={() => setIsItemOpen(true)}>
-                  Item
-                </Button>
-                {isItemOpen && (
-                  <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-white rounded-2xl shadow-2xl p-6 w-[90%] max-w-md animate-fade-in">
-                      <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
-                        Agregar ítem
-                      </h2>
-
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-600">Nombre</label>
-                        <input
-                          type="text"
-                          value={name}
-                          onChange={(e) => {
-                            setName(e.target.value);
-                            if (error) setError(false);
-                          }}
-                          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="Nombre del ítem"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-600">
-                          Precio unitario
-                        </label>
-                        <input
-                          type="text"
-                          min={0}
-                          value={price}
-                          onChange={(e) => {
-                            const raw = e.target.value.replace(/\./g, ""); // quitar puntos si vienen
-                            const parsed = Number(raw);
-                            setPrice(parsed);
-                            if (error) setError(false);
-                          }}
-                          onBlur={(e) => {
-                            // Formatear con puntos al salir del input si querés
-                            const raw = e.target.value.replace(/\./g, "");
-                            const parsed = Number(raw);
-                            if (!isNaN(parsed)) {
-                              e.target.value = formatNumberWithDots(parsed);
-                            }
-                          }}
-                          onFocus={(e) => {
-                            // Mostrar el valor sin puntos al enfocar
-                            e.target.value = price.toString();
-                          }}
-                          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="Precio"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-600">Cantidad</label>
-                        <input
-                          type="number"
-                          min={1}
-                          value={count}
-                          onChange={(e) => {
-                            setCount(Number(e.target.value));
-                            if (error) setError(false);
-                          }}
-                          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="Cantidad"
-                        />
-                      </div>
-
-                      <div className="flex justify-end gap-2 pt-4">
-                        <button
-                          onClick={handleItem}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-                        >
-                          Guardar
-                        </button>
-                        <button
-                          onClick={() => setIsItemOpen(false)}
-                          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition"
-                        >
-                          Cancelar
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                <Button variant="default" onClick={() => setIsObservacionOpen(true)}>
-                  Observación
-                </Button>
-                {isObservacionOpen && (
-                  <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-white rounded-2xl shadow-2xl p-6 w-[90%] max-w-md animate-fade-in">
-                      <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
-                        Agregar Observacion
-                      </h2>
-                      <textarea
-                        value={observacion}
-                        onChange={(e) => setObservacion(e.target.value)}
-                        placeholder="Observación (esto aparecerá en el PDF)"
-                        rows={4}
-                        className="w-full p-2 mb-4 border rounded resize-none"
-                      />
-                      <div className="flex justify-end">
-                        <button
-                          onClick={handleObservation}
-                          className="mr-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                        >
-                          Aceptar
-                        </button>
-                        <button
-                          onClick={() => {
-                            setIsObservacionOpen(false);
-                            setObservacion("");
-                            setError(false);
-                          }}
-                          className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
-                        >
-                          Cancelar
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          </React.Fragment>
+          <motion.div
+            variants={dropdownVariants}
+            initial="closed"
+            animate="open"
+            exit="closed"
+            transition={{ duration: 0.3 }}
+            className="absolute left-0 top-full mt-2 flex overflow-hidden flex-col z-10"
+          >
+            <div className="flex flex-col space-y-2 bg-white rounded-lg shadow-lg border border-gray-200 p-2">
+              <Button onClick={() => { setIsModalOpen(true); setIsOpen(false); }} variant="secondary" className="w-full justify-start">
+                Descuento Alojamiento
+              </Button>
+              <Button variant="secondary" onClick={() => { setIsItemOpen(true); setIsOpen(false); }} className="w-full justify-start">
+                Item
+              </Button>
+              <Button variant="secondary" onClick={() => { setIsObservacionOpen(true); setIsOpen(false); }} className="w-full justify-start">
+                Observación
+              </Button>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Modal Descuento — fuera del dropdown para que no se desmonte al cerrarlo */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white rounded-lg shadow-2xl p-6 w-[90%] max-w-md animate-fade-in border border-gray-200">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">Descuento Alojamiento</h2>
+              <p className="text-sm text-gray-600 mt-1">Ingresa el porcentaje de descuento a aplicar</p>
+            </div>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Porcentaje de descuento (%)
+              </label>
+              <input
+                type="number"
+                min={0}
+                value={discount}
+                onChange={(e) => handleDiscount(e)}
+                placeholder="0"
+                className="w-full p-3 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="secondary" onClick={handleModal}>Cancelar</Button>
+              <Button variant="primary" onClick={handleModal}>Aceptar</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Ítem */}
+      {isItemOpen && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white rounded-lg shadow-2xl p-6 w-[90%] max-w-md animate-fade-in border border-gray-200">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">Agregar Ítem</h2>
+              <p className="text-sm text-gray-600 mt-1">Crea un ítem personalizado para el presupuesto</p>
+            </div>
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => { setName(e.target.value); if (error) setError(false); }}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Ej. Servicio adicional"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Precio unitario</label>
+                <input
+                  type="text"
+                  value={price}
+                  onChange={(e) => {
+                    const parsed = Number(e.target.value.replace(/\./g, ""));
+                    setPrice(parsed);
+                    if (error) setError(false);
+                  }}
+                  onBlur={(e) => {
+                    const parsed = Number(e.target.value.replace(/\./g, ""));
+                    if (!isNaN(parsed)) e.target.value = formatNumberWithDots(parsed);
+                  }}
+                  onFocus={(e) => { e.target.value = price.toString(); }}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="0"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Cantidad</label>
+                <input
+                  type="number"
+                  min={1}
+                  value={count}
+                  onChange={(e) => { setCount(Number(e.target.value)); if (error) setError(false); }}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="1"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="secondary" onClick={() => setIsItemOpen(false)}>Cancelar</Button>
+              <Button variant="primary" onClick={handleItem}>Guardar</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Observación */}
+      {isObservacionOpen && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white rounded-lg shadow-2xl p-6 w-[90%] max-w-md animate-fade-in border border-gray-200">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">Agregar Observación</h2>
+              <p className="text-sm text-gray-600 mt-1">Esta observación aparecerá en el PDF del presupuesto</p>
+            </div>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Observación</label>
+              <textarea
+                value={observacion}
+                onChange={(e) => setObservacion(e.target.value)}
+                placeholder="Ingresa notas adicionales..."
+                rows={4}
+                className="w-full p-3 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="secondary" onClick={() => { setIsObservacionOpen(false); setObservacion(""); setError(false); }}>
+                Cancelar
+              </Button>
+              <Button variant="primary" onClick={handleObservation}>Guardar</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

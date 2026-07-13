@@ -1,192 +1,111 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { TableCell, TableRow } from "../ui/table";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import DataTable from "../ui/DataTable";
+import EmptyState from "../EmptyState";
+import CountSelect from "../ui/CountSelect";
+import useSelectedCounts from "@/app/lib/hooks/useSelectedCounts";
+import { formatNumberWithDots } from "@/app/lib/utils/extras";
 
 const PaquetesTransporte = ({ resultados, agregarPaquete }) => {
-  const [selectedCounts, setSelectedCounts] = useState({});
+  const { selectedCounts, handleCountChange } = useSelectedCounts();
 
-  //console.log(resultados);
-
-  if (!resultados) return null;
-  if (Object.keys(resultados).length === 0) {
+  if (!resultados || Object.keys(resultados).length === 0) {
     return (
-      <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
-        <div className="p-4 sm:p-6 md:p-8 border-b">
-          <h2 className="text-xl font-bold mb-2">No hay transporte disponible...</h2>
-        </div>
-      </div>
+      <EmptyState
+        title="No hay Transporte disponible"
+        description="No se encontraron opciones de transporte para tu búsqueda. Intenta con otros filtros."
+        icon="🚌"
+      />
     );
   }
 
-  const handleCountChange = (index, value) => {
-    setSelectedCounts((prev) => ({
-      ...prev,
-      [index]: value,
-    }));
+  const handleAddTransporte = (transporte, index, tipoTramo = null) => {
+    const count = selectedCounts[index] || 1;
+
+    agregarPaquete({
+      seccion: "transporte",
+      fechaInicio: transporte.inicio,
+      fechaFin: transporte.fin,
+      clave: tipoTramo,
+      name: `${transporte.descripcion} - ${transporte.origen} / ${transporte.destino}${
+        transporte.personas > 1
+          ? ` - ${transporte.personas} PAX${count > 1 ? ` x ${count}` : ""}`
+          : count > 1
+            ? ` x ${count}`
+            : ""
+      }`,
+      price: transporte.precio * count,
+    });
   };
+
+  const renderTransporteRow = (transporte, index, tipoTramo = null) => (
+    <TableRow key={`transporte-${index}`}>
+      <TableCell>{transporte.cerro}</TableCell>
+      <TableCell>{transporte.servicio}</TableCell>
+      <TableCell>{transporte.origen}</TableCell>
+      <TableCell>{transporte.destino}</TableCell>
+      <TableCell>{transporte.descripcion.toLowerCase()}</TableCell>
+      <TableCell>{transporte.personas}</TableCell>
+      <TableCell>$ {formatNumberWithDots(transporte.precio)}</TableCell>
+      <TableCell className="w-px whitespace-nowrap">
+        <div className="flex gap-2 items-center justify-end">
+          <CountSelect
+            index={index}
+            value={selectedCounts[index] || 1}
+            onChange={handleCountChange}
+          />
+          <Button
+            className="bg-blue-500 text-white hover:bg-blue-600"
+            onClick={() => handleAddTransporte(transporte, index, tipoTramo)}
+          >
+            Agregar
+          </Button>
+        </div>
+      </TableCell>
+    </TableRow>
+  );
+
+  const headers = [
+    "Cerro",
+    "Servicio",
+    "Origen",
+    "Destino",
+    "Descripción",
+    "Pax",
+    "Precio",
+    "Acción",
+  ];
+
+  // Si es un array simple (sin ida/vuelta separadas)
   if (!resultados.ida) {
     return (
-      <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
-        <div className="p-4 sm:p-6 md:p-8 border-b">
-          <h2 className="text-xl font-bold mb-2">Transporte</h2>
-        </div>
-        <div className="p-4 sm:p-6 md:p-8">
-          <h3 className="text-lg font-bold mb-2">Ida y Vuelta</h3>
-          <Table className="w-full">
-            <TableHeader>
-              <TableRow>
-                <TableHead>Cerro</TableHead>
-                <TableHead>Servicio</TableHead>
-                <TableHead>Origen</TableHead>
-                <TableHead>Destino</TableHead>
-                <TableHead>Tramo</TableHead>
-                <TableHead>Descripción</TableHead>
-                <TableHead>Pax</TableHead>
-                <TableHead>Precio</TableHead>
-                <TableHead>Cantidad</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {resultados?.map((r, index) => (
-                <TableRow key={Math.floor(Math.random() * 1000000)}>
-                  <TableCell>{r.cerro}</TableCell>
-                  <TableCell>{r.servicio}</TableCell>
-                  <TableCell>{r.origen}</TableCell>
-                  <TableCell>{r.destino}</TableCell>
-                  <TableCell>{r.tramo}</TableCell>
-                  <TableCell>{r.descripcion.toLowerCase()}</TableCell>
-                  <TableCell>{r.personas}</TableCell>
-                  <TableCell>{`$ ${r.precio}`}</TableCell>
-                  <TableCell>
-                    <div className="flex">
-                      <select
-                        value={selectedCounts[index] || 1} // Valor por defecto
-                        onChange={(e) => handleCountChange(index, e.target.value)}
-                        className="mr-2"
-                      >
-                        {[...Array(5).keys()].map((num) => (
-                          <option key={num + 1} value={num + 1}>
-                            {num + 1}
-                          </option>
-                        ))}
-                      </select>
-                      <Button
-                        variant="outline"
-                        className="w-full bg-blue-500 text-white hover:bg-blue-600"
-                        onClick={() => {
-                          const count = selectedCounts[index] || 1; // Usar el valor seleccionado o 2 por defecto
-                          agregarPaquete({
-                            seccion: "transporte",
-                            fechaInicio: r.inicio,
-                            fechaFin: r.fin,
-                            name: `${r.descripcion} - ${r.origen} / ${r.destino} ${
-                              r.personas > 1
-                                ? ` - ${r.personas} PAX ${count > 1 ? `x ${count}` : ""}`
-                                : count > 1
-                                ? `x ${count}`
-                                : ""
-                            }`,
-                            price: r.precio * count,
-                          });
-                        }}
-                      >
-                        Agregar
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
-    );
-  } else {
-    return (
-      <div className="bg-card rounded-lg shadow-lg col-span-1 md:col-span-2">
-        <div className="p-4 sm:p-6 md:p-8 border-b">
-          <h2 className="text-xl font-bold mb-2">Transporte</h2>
-        </div>
-        <div className="p-4 sm:p-6 md:p-8">
-          {Object.keys(resultados).map((clave) => {
-            const paquetes = resultados[clave];
-            return (
-              <div key={clave} className="p-4 sm:p-6 md:p-8">
-                <h3 className="text-lg font-bold mb-2 capitalize">
-                  {clave === "idayvuelta" ? "Ida y Vuelta" : clave}
-                </h3>
-                <Table className="w-full">
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Cerro</TableHead>
-                      <TableHead>Servicio</TableHead>
-                      <TableHead>Origen</TableHead>
-                      <TableHead>Destino</TableHead>
-                      <TableHead>Descripcion</TableHead>
-                      <TableHead>Pax</TableHead>
-                      <TableHead>Precio</TableHead>
-                      <TableHead>Cantidad</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {paquetes?.map((r, index) => (
-                      <TableRow key={Math.floor(Math.random() * 1000000)}>
-                        <TableCell>{r.cerro}</TableCell>
-                        <TableCell>{r.servicio}</TableCell>
-                        <TableCell>{r.origen}</TableCell>
-                        <TableCell>{r.destino}</TableCell>
-                        <TableCell>{r.descripcion.toLowerCase()}</TableCell>
-                        <TableCell>{r.personas}</TableCell>
-                        <TableCell>{`$ ${r.precio}`}</TableCell>
-                        <TableCell>
-                          <div className="flex">
-                            <select
-                              value={selectedCounts[index] || 1} // Valor por defecto
-                              onChange={(e) => handleCountChange(index, e.target.value)}
-                              className="mr-2"
-                            >
-                              {[...Array(5).keys()].map((num) => (
-                                <option key={num + 1} value={num + 1}>
-                                  {num + 1}
-                                </option>
-                              ))}
-                            </select>
-                            <Button
-                              variant="outline"
-                              className="w-full bg-blue-500 text-white hover:bg-blue-600"
-                              onClick={() => {
-                                const count = selectedCounts[index] || 1; // Usar el valor seleccionado o 2 por defecto
-                                agregarPaquete({
-                                  seccion: "transporte",
-                                  fechaInicio: r.inicio,
-                                  clave: clave,
-                                  fechaFin: r.fin,
-                                  name: `${r.descripcion} - ${r.origen} / ${r.destino}${
-                                    r.personas > 1
-                                      ? ` - ${r.personas} PAX${count > 1 ? ` x ${count}` : ""}`
-                                      : count > 1
-                                      ? ` x ${count}`
-                                      : ""
-                                  }`,
-                                  price: r.precio * count,
-                                });
-                              }}
-                            >
-                              Agregar
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      <DataTable
+        headers={headers}
+        rows={resultados}
+        renderRow={renderTransporteRow}
+        title="🚌 Transporte"
+      />
     );
   }
+
+  // Si tiene ida/vuelta separadas
+  return (
+    <div className="space-y-6">
+      {Object.keys(resultados).map((tipoTramo) => {
+        const labelMap = { ida: "🚌 Ida", vuelta: "🚌 Vuelta", idayvuelta: "🚌 Ida y Vuelta" };
+        const label = labelMap[tipoTramo] || `🚌 ${tipoTramo.charAt(0).toUpperCase() + tipoTramo.slice(1)}`;
+        return (
+          <DataTable
+            key={tipoTramo}
+            headers={headers}
+            rows={resultados[tipoTramo]}
+            renderRow={(row, index) => renderTransporteRow(row, index, tipoTramo)}
+            title={label}
+          />
+        );
+      })}
+    </div>
+  );
 };
 
 export default PaquetesTransporte;
