@@ -3,13 +3,42 @@
  * Consolidates duplicated parsing logic from paquetes.js and spreadsheet.js
  */
 
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 horas
+const CACHE_PREFIX = "csv_cache_";
+
+const getCached = (url) => {
+  try {
+    const raw = localStorage.getItem(CACHE_PREFIX + url);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL_MS) {
+      localStorage.removeItem(CACHE_PREFIX + url);
+      return null;
+    }
+    return data;
+  } catch {
+    return null;
+  }
+};
+
+const setCache = (url, data) => {
+  try {
+    localStorage.setItem(CACHE_PREFIX + url, JSON.stringify({ data, ts: Date.now() }));
+  } catch {
+    // localStorage lleno u otro error — ignorar, la app sigue funcionando
+  }
+};
+
 /**
- * Fetch CSV data from a URL with error handling
+ * Fetch CSV data from a URL with error handling.
+ * Cachea en localStorage por 24hs para reducir requests a Google Sheets.
  */
 export const fetchCSV = async (url) => {
+  const cached = getCached(url);
+  if (cached) return cached;
+
   try {
-    const cacheBustUrl = `${url}&_t=${Date.now()}`;
-    const response = await fetch(cacheBustUrl, { redirect: "follow", cache: "no-store" });
+    const response = await fetch(url, { redirect: "follow" });
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: Failed to fetch ${url}`);
     }
@@ -19,6 +48,7 @@ export const fetchCSV = async (url) => {
       throw new Error("CSV file is empty");
     }
 
+    setCache(url, text);
     return text;
   } catch (err) {
     console.error("Error fetching CSV:", err);
