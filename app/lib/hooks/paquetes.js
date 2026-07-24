@@ -19,7 +19,7 @@ const useAlojamientos = () => {
 
   const paquetesMapper = (row) => {
     const cols = splitCSVRow(row);
-    validateColumns(cols, 18, "Paquetes row");
+    validateColumns(cols, 17, "Paquetes row");
 
     const [
       cerro,
